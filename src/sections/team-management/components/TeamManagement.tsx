@@ -363,7 +363,6 @@ export function TeamManagement({
       if (q && !l.name.toLowerCase().includes(q) && !l.specialization.toLowerCase().includes(q))
         return false
       if (specFilter !== 'all' && l.specialization !== specFilter) return false
-      if (availFilter !== 'all' && l.availability !== availFilter) return false
       return true
     }),
     sort.key,
@@ -990,16 +989,6 @@ function LawyersTab({
             {specializations.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
-          </select>
-          <select
-            value={availFilter}
-            onChange={(e) => onAvailFilter(e.target.value)}
-            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-          >
-            <option value="all">All Availability</option>
-            <option value="available">Available</option>
-            <option value="on-leave">On Leave</option>
-            <option value="overloaded">Overloaded</option>
           </select>
         </div>
         <button
