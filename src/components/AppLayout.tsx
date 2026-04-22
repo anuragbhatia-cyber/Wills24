@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Layers, ArrowLeft } from 'lucide-react'
 import { PhaseNav } from './PhaseNav'
 import { ThemeToggle } from './ThemeToggle'
+import { PreviewButton } from './PreviewButton'
 import { Button } from '@/components/ui/button'
 
 interface AppLayoutProps {
@@ -73,8 +74,9 @@ export function AppLayout({
                 </div>
               )}
 
-              {/* Theme Toggle */}
-              <div className="w-10 shrink-0 flex justify-end">
+              {/* Preview and Theme Toggle */}
+              <div className="w-auto shrink-0 flex justify-end gap-1">
+                <PreviewButton />
                 <ThemeToggle />
               </div>
             </div>

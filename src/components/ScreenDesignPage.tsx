@@ -6,6 +6,8 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { loadScreenDesignComponent, sectionUsesShell } from '@/lib/section-loader'
 import { loadAppShell, hasShellComponents, loadShellInfo } from '@/lib/shell-loader'
 import { loadProductData } from '@/lib/product-loader'
+import { navigateToSection } from '@/lib/preview-navigation'
+import LoginPage from '@/sections/dashboard-home/components/LoginPage'
 import React from 'react'
 
 const MIN_WIDTH = 320
@@ -194,6 +196,8 @@ export function ScreenDesignPage() {
  */
 export function ScreenDesignFullscreen() {
   const { sectionId, screenDesignName } = useParams<{ sectionId: string; screenDesignName: string }>()
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
+  const logoutRef = useRef(() => setIsLoggedIn(false))
 
   // Load screen design component
   const ScreenDesignComponent = useMemo(() => {
@@ -248,21 +252,22 @@ export function ScreenDesignFullscreen() {
         }
 
         // Create a wrapper that provides default props to the shell
-        const ShellWrapper = ({ children }: { children?: React.ReactNode }) => {
+        const ShellWrapper = ({ children, onLogout: externalLogout }: { children?: React.ReactNode; onLogout?: () => void }) => {
           // Try to get navigation items from shell spec
           const shellInfo = loadShellInfo()
           const specNavItems = shellInfo?.spec?.navigationItems || []
 
           // Parse navigation items from spec (format: "**Label** → Description")
           const navigationItems = specNavItems.length > 0
-            ? specNavItems.map((item, index) => {
+            ? specNavItems.map((item) => {
                 // Extract label from **Label** format
                 const labelMatch = item.match(/\*\*([^*]+)\*\*/)
-                const label = labelMatch ? labelMatch[1] : item.split('→')[0]?.trim() || `Item ${index + 1}`
+                const label = labelMatch ? labelMatch[1] : item.split('→')[0]?.trim() || 'Item'
+                const href = `/${label.toLowerCase().replace(/[&]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')}`
                 return {
                   label,
-                  href: `/${label.toLowerCase().replace(/\s+/g, '-')}`,
-                  isActive: index === 0,
+                  href,
+                  isActive: sectionId ? href === `/${sectionId}` : false,
                 }
               })
             : [
@@ -272,7 +277,7 @@ export function ScreenDesignFullscreen() {
               ]
 
           const defaultUser = {
-            name: 'Demo User',
+            name: 'Anurag Bhatia',
           }
 
           // Pass props dynamically - the shell component decides what it needs
@@ -280,8 +285,8 @@ export function ScreenDesignFullscreen() {
             <ShellComponent
               navigationItems={navigationItems}
               user={defaultUser}
-              onNavigate={() => {}}
-              onLogout={() => {}}
+              onNavigate={(href: string) => navigateToSection(href)}
+              onLogout={() => externalLogout?.()}
             >
               {children}
             </ShellComponent>
@@ -330,6 +335,10 @@ export function ScreenDesignFullscreen() {
     }
   }, [])
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />
+  }
+
   if (!ScreenDesignComponent) {
     return (
       <div className="h-screen flex items-center justify-center bg-background">
@@ -348,7 +357,7 @@ export function ScreenDesignFullscreen() {
           </div>
         }
       >
-        <AppShellComponent>
+        <AppShellComponent onLogout={() => logoutRef.current()}>
           <ScreenDesignComponent />
         </AppShellComponent>
       </Suspense>
