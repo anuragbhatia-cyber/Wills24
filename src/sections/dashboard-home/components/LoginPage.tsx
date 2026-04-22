@@ -135,7 +135,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
         {/* Footer */}
         <p className="text-center text-[11px] text-neutral-300 dark:text-neutral-700 mt-8 tracking-wide">
-          Powered by <span className="font-bold text-neutral-400 dark:text-neutral-600">Lawyered</span>
+          Powered by <span className="font-bold text-neutral-400 dark:text-neutral-600">Wills24</span>
         </p>
       </div>
     </div>

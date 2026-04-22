@@ -261,7 +261,7 @@ export function InvoiceDetail({
                     From
                   </p>
                   <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                    Lawyered (Wills24)
+                    Wills24
                   </p>
                   <div className="mt-1.5 space-y-0.5 text-xs text-neutral-500 dark:text-neutral-400">
                     <p className="flex items-center gap-1.5">

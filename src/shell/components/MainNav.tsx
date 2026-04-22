@@ -88,7 +88,7 @@ export default function MainNav({ items, onNavigate }: MainNavProps) {
       {/* Footer */}
       <div className="shrink-0 border-t border-neutral-800/50 px-5 py-3">
         <p className="text-[10px] font-medium tracking-wide text-neutral-600">
-          Powered by <span className="text-neutral-500">Lawyered</span>
+          Powered by <span className="text-neutral-500">Wills24</span>
         </p>
       </div>
     </aside>
