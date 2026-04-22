@@ -607,11 +607,6 @@ export function CustomerList({
                       <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100 tabular-nums font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
                         {formatCurrency(customer.totalPayments)}
                       </p>
-                      {customer.pendingAmount > 0 && (
-                        <p className="text-[10px] text-red-500 dark:text-red-400 mt-0.5 font-medium">
-                          {formatCurrency(customer.pendingAmount)} due
-                        </p>
-                      )}
                     </div>
 
                     {/* Status */}
