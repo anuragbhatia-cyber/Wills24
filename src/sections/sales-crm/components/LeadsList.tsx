@@ -1,4 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useDebounce } from '@/lib/use-debounce'
+import { useInitialLoading } from '@/lib/use-initial-loading'
+import { Pagination } from '@/components/ui/pagination'
+import { ListSkeleton } from '@/components/ui/list-skeleton'
 import {
   Search,
   Plus,
@@ -18,12 +22,15 @@ import {
   X,
   Trash2,
   Send,
+  Check,
+  Minus,
 } from 'lucide-react'
 import type {
   SalesCRMProps,
   Lead,
   LeadStatus,
 } from '@/../product/sections/sales-crm/types'
+import { LeadForm } from './LeadForm'
 import {
   Dialog,
   DialogContent,
@@ -32,6 +39,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { toast } from '@/components/ui/toaster'
 
 // ---------------------------------------------------------------------------
 // Status configuration
@@ -157,6 +165,7 @@ function formatDate(dateStr: string): string {
 export function LeadsList({
   leads,
   statusCounts,
+  wealthManagers,
   onViewLead,
   onEditLead,
   onDeleteLead,
@@ -168,10 +177,19 @@ export function LeadsList({
 }: SalesCRMProps) {
   const [activeTab, setActiveTab] = useState<'all' | LeadStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearch = useDebounce(searchQuery, 250)
   const [sourceFilter, setSourceFilter] = useState<string>('')
   const [employeeFilter, setEmployeeFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [openActionMenu, setOpenActionMenu] = useState<string | null>(null)
+
+  const isLoading = useInitialLoading()
+
+  // Bulk-select state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, LeadStatus>>({})
+  const [bulkMoveConfirm, setBulkMoveConfirm] = useState<{ open: boolean; status: LeadStatus | null }>({ open: false, status: null })
+  const getStatus = (lead: Lead): LeadStatus => statusOverrides[lead.id] ?? lead.status
 
   // Modal states
   const [editModal, setEditModal] = useState<{ open: boolean; lead: Lead | null }>({ open: false, lead: null })
@@ -179,14 +197,6 @@ export function LeadsList({
   const [followUpModal, setFollowUpModal] = useState<{ open: boolean; lead: Lead | null }>({ open: false, lead: null })
   const [sendQuotationModal, setSendQuotationModal] = useState<{ open: boolean; lead: Lead | null }>({ open: false, lead: null })
   const [importModal, setImportModal] = useState(false)
-
-  // Edit form state
-  const [editName, setEditName] = useState('')
-  const [editPhone, setEditPhone] = useState('')
-  const [editEmail, setEditEmail] = useState('')
-  const [editStatus, setEditStatus] = useState<LeadStatus>('new')
-  const [editSource, setEditSource] = useState('')
-  const [editAssignedEmployee, setEditAssignedEmployee] = useState('')
 
   // Follow-up form state
   const [followUpDate, setFollowUpDate] = useState('')
@@ -211,14 +221,14 @@ export function LeadsList({
   const filteredLeads = useMemo(() => {
     let result = leads
 
-    // Status tab filter
+    // Status tab filter (uses override if set)
     if (activeTab !== 'all') {
-      result = result.filter((l) => l.status === activeTab)
+      result = result.filter((l) => getStatus(l) === activeTab)
     }
 
-    // Search
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
+    // Search (debounced)
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase()
       result = result.filter(
         (l) =>
           l.name.toLowerCase().includes(q) ||
@@ -241,19 +251,93 @@ export function LeadsList({
     }
 
     return result
-  }, [leads, activeTab, searchQuery, sourceFilter, employeeFilter])
+  }, [leads, activeTab, debouncedSearch, sourceFilter, employeeFilter, statusOverrides])
+
+  // Override-aware status counts (so tab badges reflect bulk moves)
+  const effectiveStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: leads.length }
+    leads.forEach((l) => {
+      const s = getStatus(l)
+      counts[s] = (counts[s] ?? 0) + 1
+    })
+    return counts
+  }, [leads, statusOverrides])
+
+  // Pagination
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, sourceFilter, employeeFilter, activeTab, pageSize])
+  const pagedLeads = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filteredLeads.slice(start, start + pageSize)
+  }, [filteredLeads, page, pageSize])
+
+  // Bulk-select helpers
+  const allFilteredSelected =
+    filteredLeads.length > 0 && filteredLeads.every((l) => selectedIds.has(l.id))
+  const someFilteredSelected =
+    !allFilteredSelected && filteredLeads.some((l) => selectedIds.has(l.id))
+
+  function toggleSelectAll() {
+    if (allFilteredSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev)
+        filteredLeads.forEach((l) => next.delete(l.id))
+        return next
+      })
+    } else {
+      setSelectedIds((prev) => {
+        const next = new Set(prev)
+        filteredLeads.forEach((l) => next.add(l.id))
+        return next
+      })
+    }
+  }
+
+  function toggleSelectOne(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set())
+  }
+
+  function bulkMoveToStatus(status: LeadStatus) {
+    const count = selectedIds.size
+    setStatusOverrides((prev) => {
+      const next = { ...prev }
+      selectedIds.forEach((id) => {
+        next[id] = status
+      })
+      return next
+    })
+    clearSelection()
+    toast.success(
+      `${count} lead${count === 1 ? '' : 's'} moved`,
+      `Stage updated to ${TAB_LABELS[status] ?? status}`,
+    )
+  }
+
+  function requestBulkMove(status: LeadStatus) {
+    if (selectedIds.size >= 5) {
+      setBulkMoveConfirm({ open: true, status })
+    } else {
+      bulkMoveToStatus(status)
+    }
+  }
 
   const hasActiveFilters = sourceFilter || employeeFilter
   const activeFilterCount = [sourceFilter, employeeFilter].filter(Boolean).length
 
   // Modal handlers
   const openEditModal = (lead: Lead) => {
-    setEditName(lead.name)
-    setEditPhone(lead.phone)
-    setEditEmail(lead.email)
-    setEditStatus(lead.status)
-    setEditSource(lead.source)
-    setEditAssignedEmployee(lead.assignedEmployee)
     setEditModal({ open: true, lead })
   }
 
@@ -274,6 +358,29 @@ export function LeadsList({
     setSendQuotationModal({ open: true, lead })
   }
 
+  if (editModal.open && editModal.lead) {
+    const employeeOptions = Array.from(
+      new Set(leads.map((l) => l.assignedEmployee).filter(Boolean)),
+    ).sort()
+    return (
+      <LeadForm
+        lead={editModal.lead}
+        wealthManagers={wealthManagers}
+        employees={employeeOptions}
+        onSave={() => {
+          if (editModal.lead) {
+            onEditLead?.(editModal.lead.id)
+            toast.success('Lead updated', `${editModal.lead.name}'s details saved`)
+          }
+          setEditModal({ open: false, lead: null })
+        }}
+        onCancel={() => setEditModal({ open: false, lead: null })}
+      />
+    )
+  }
+
+  if (isLoading) return <ListSkeleton kpis={4} rows={6} />
+
   return (
     <div className="space-y-6 pb-8">
       {/* ----------------------------------------------------------------- */}
@@ -284,9 +391,6 @@ export function LeadsList({
           <h1 className="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
             Sales CRM
           </h1>
-          <p className="mt-0.5 text-[13px] text-neutral-600 dark:text-neutral-400">
-            Manage leads, follow-ups, and quotations across the sales pipeline.
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -319,7 +423,7 @@ export function LeadsList({
       <div className="border-b border-neutral-200 dark:border-neutral-700/60">
         <div className="-mb-px flex gap-0 overflow-x-auto">
           {TAB_ORDER.map((tab) => {
-            const count = statusCounts[tab as keyof typeof statusCounts] ?? 0
+            const count = effectiveStatusCounts[tab as string] ?? 0
             const isActive = activeTab === tab
             return (
               <button
@@ -354,6 +458,7 @@ export function LeadsList({
       {/* ----------------------------------------------------------------- */}
       {/* Search & Filters Bar                                              */}
       {/* ----------------------------------------------------------------- */}
+      <div className="space-y-2">
       <div className="flex items-center gap-2">
         {/* Search */}
         <div className="relative flex-1">
@@ -399,8 +504,46 @@ export function LeadsList({
       </div>
 
       {/* Expanded filter row */}
+      {hasActiveFilters && !showFilters && (
+        <div className="flex items-center flex-wrap gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 mr-1">
+            Active filters
+          </span>
+          {sourceFilter && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              Source: {sourceFilter}
+              <button
+                onClick={() => setSourceFilter('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter Source: ${sourceFilter}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          {employeeFilter && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              Assignee: {employeeFilter}
+              <button
+                onClick={() => setEmployeeFilter('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter Assignee: ${employeeFilter}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => { setSourceFilter(''); setEmployeeFilter('') }}
+            className="ml-1 text-[11px] font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
       {showFilters && (
-        <div className="flex items-center gap-3 rounded-lg border border-neutral-100 bg-neutral-50/60 px-4 py-3 dark:border-neutral-800 dark:bg-neutral-800/40">
+        <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900">
           {/* Source filter */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
@@ -466,13 +609,71 @@ export function LeadsList({
           )}
         </div>
       )}
+      </div>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Bulk Action Bar                                                   */}
+      {/* ----------------------------------------------------------------- */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 px-4 py-2.5 dark:border-orange-800 dark:bg-orange-950/30">
+          <span className="text-[12px] font-medium text-orange-700 dark:text-orange-300">
+            {selectedIds.size} selected
+          </span>
+
+          <div className="ml-2 flex items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-orange-600/70 dark:text-orange-400/70">
+              Move to
+            </span>
+            <div className="relative">
+              <select
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) requestBulkMove(e.target.value as LeadStatus)
+                }}
+                className="h-[30px] appearance-none rounded-md border border-orange-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-orange-700 outline-none focus:border-orange-400 dark:border-orange-700 dark:bg-neutral-900 dark:text-orange-300"
+              >
+                <option value="">Select stage…</option>
+                {TAB_ORDER.filter((t) => t !== 'all').map((s) => (
+                  <option key={s} value={s}>{TAB_LABELS[s]}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-orange-500" />
+            </div>
+          </div>
+
+          <button
+            onClick={clearSelection}
+            className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+          >
+            <X size={12} />
+            Cancel
+          </button>
+        </div>
+      )}
 
       {/* ----------------------------------------------------------------- */}
       {/* Data Table                                                        */}
       {/* ----------------------------------------------------------------- */}
       <div className="overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/60">
         {/* Table header */}
-        <div className="grid grid-cols-[80px_80px_minmax(140px,1.5fr)_minmax(100px,1fr)_minmax(100px,0.8fr)_minmax(100px,0.8fr)_100px_70px_40px] border-b border-neutral-100 bg-neutral-50/80 px-4 py-2.5 dark:border-neutral-700/50 dark:bg-neutral-800/80">
+        <div className="hidden lg:grid grid-cols-[40px_80px_90px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px_80px_40px] gap-4 items-center border-b border-neutral-100 bg-neutral-50 px-4 py-2.5 dark:border-neutral-700/50 dark:bg-neutral-800 sticky top-0 z-10">
+          <span className="flex items-center">
+            <button
+              onClick={toggleSelectAll}
+              aria-label="Select all"
+              className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
+                allFilteredSelected || someFilteredSelected
+                  ? 'border-orange-500 bg-orange-500'
+                  : 'border-neutral-300 dark:border-neutral-600'
+              }`}
+            >
+              {allFilteredSelected ? (
+                <Check size={10} className="text-white" strokeWidth={3} />
+              ) : someFilteredSelected ? (
+                <Minus size={10} className="text-white" strokeWidth={3} />
+              ) : null}
+            </button>
+          </span>
           {[
             'Lead ID',
             'Source',
@@ -500,20 +701,46 @@ export function LeadsList({
               <Search size={20} className="text-neutral-400" />
             </div>
             <p className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400">
-              No leads found
+              {leads.length === 0 ? 'No leads yet' : 'No leads found'}
             </p>
             <p className="mt-0.5 text-[12px] text-neutral-400 dark:text-neutral-500">
-              {searchQuery || hasActiveFilters
-                ? 'Try adjusting your search or filters'
-                : 'Create your first lead to get started'}
+              {leads.length === 0
+                ? 'Get started by creating your first lead'
+                : searchQuery || hasActiveFilters
+                  ? 'Try adjusting your search or filters'
+                  : activeTab !== 'all'
+                    ? 'No leads in this stage'
+                    : 'No leads match your criteria'}
             </p>
+            {leads.length === 0 ? (
+              <button
+                onClick={() => onCreateLead?.()}
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+              >
+                <Plus size={13} />
+                Add your first lead
+              </button>
+            ) : (searchQuery || hasActiveFilters) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setSourceFilter('')
+                  setEmployeeFilter('')
+                }}
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+              >
+                Clear search & filters
+              </button>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-neutral-100 dark:divide-neutral-700/40">
-            {filteredLeads.map((lead) => (
+            {pagedLeads.map((lead) => (
               <LeadRow
                 key={lead.id}
-                lead={lead}
+                lead={{ ...lead, status: getStatus(lead) }}
+                selected={selectedIds.has(lead.id)}
+                onToggleSelect={() => toggleSelectOne(lead.id)}
                 isActionMenuOpen={openActionMenu === lead.id}
                 onToggleActionMenu={() =>
                   setOpenActionMenu(openActionMenu === lead.id ? null : lead.id)
@@ -530,130 +757,39 @@ export function LeadsList({
           </div>
         )}
 
-        {/* Table footer */}
+        {/* Table footer — pagination */}
         {filteredLeads.length > 0 && (
-          <div className="flex items-center justify-between border-t border-neutral-100 px-4 py-2.5 dark:border-neutral-700/50">
-            <span
-              className="text-[11px] text-neutral-400 dark:text-neutral-500"
-              style={{ fontFamily: '"IBM Plex Mono", monospace' }}
-            >
-              {filteredLeads.length} of {leads.length} leads
-            </span>
-            <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
-              Showing page 1 of 1
-            </span>
+          <div className="border-t border-neutral-100 dark:border-neutral-700/50">
+            <Pagination
+              page={page}
+              pageSize={pageSize}
+              totalItems={filteredLeads.length}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+              itemLabel="leads"
+            />
           </div>
         )}
       </div>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Edit Lead Modal                                                   */}
-      {/* ----------------------------------------------------------------- */}
-      <Dialog open={editModal.open} onOpenChange={(open) => setEditModal({ open, lead: open ? editModal.lead : null })}>
-        <DialogContent className="sm:max-w-lg bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-          <DialogHeader>
-            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Edit Lead</DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
-              Update the lead information below.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Name</label>
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Phone</label>
-                <input
-                  type="text"
-                  value={editPhone}
-                  onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
-              <select
-                value={editStatus}
-                onChange={(e) => setEditStatus(e.target.value as LeadStatus)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                {TAB_ORDER.filter((t) => t !== 'all').map((status) => (
-                  <option key={status} value={status}>
-                    {TAB_LABELS[status]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Source</label>
-                <select
-                  value={editSource}
-                  onChange={(e) => setEditSource(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-                >
-                  <option value="Website">Website</option>
-                  <option value="Referral">Referral</option>
-                  <option value="Wealth Manager">Wealth Manager</option>
-                  <option value="Walk-in">Walk-in</option>
-                  <option value="Campaign">Campaign</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Assigned Employee</label>
-                <input
-                  type="text"
-                  value={editAssignedEmployee}
-                  onChange={(e) => setEditAssignedEmployee(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setEditModal({ open: false, lead: null })}
-              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                if (editModal.lead) {
-                  onEditLead?.(editModal.lead.id)
-                }
-                setEditModal({ open: false, lead: null })
-              }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 transition-colors"
-            >
-              Save Changes
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* ----------------------------------------------------------------- */}
       {/* Delete Confirmation Modal                                         */}
       {/* ----------------------------------------------------------------- */}
       <Dialog open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ open, lead: open ? deleteModal.lead : null })}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+        <DialogContent
+          className="sm:max-w-md bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              if (deleteModal.lead) {
+                onDeleteLead?.(deleteModal.lead.id)
+                toast.success('Lead deleted', `${deleteModal.lead.name} removed`)
+              }
+              setDeleteModal({ open: false, lead: null })
+            }
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="text-neutral-900 dark:text-neutral-100">Delete Lead</DialogTitle>
             <DialogDescription className="text-neutral-500 dark:text-neutral-400">
@@ -671,12 +807,59 @@ export function LeadsList({
               onClick={() => {
                 if (deleteModal.lead) {
                   onDeleteLead?.(deleteModal.lead.id)
+                  toast.success('Lead deleted', `${deleteModal.lead.name} removed`)
                 }
                 setDeleteModal({ open: false, lead: null })
               }}
               className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
             >
-              Delete
+              Delete <span className="ml-1 text-[10px] text-red-100/80 font-mono">↵</span>
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Bulk Move Confirm                                                 */}
+      {/* ----------------------------------------------------------------- */}
+      <Dialog
+        open={bulkMoveConfirm.open}
+        onOpenChange={(open) => setBulkMoveConfirm({ open, status: open ? bulkMoveConfirm.status : null })}
+      >
+        <DialogContent
+          className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              if (bulkMoveConfirm.status) bulkMoveToStatus(bulkMoveConfirm.status)
+              setBulkMoveConfirm({ open: false, status: null })
+            }
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Move {selectedIds.size} leads?</DialogTitle>
+            <DialogDescription className="text-neutral-600 dark:text-neutral-400">
+              This will update the stage of <span className="font-semibold text-neutral-700 dark:text-neutral-200">{selectedIds.size} selected lead{selectedIds.size === 1 ? '' : 's'}</span> to{' '}
+              <span className="font-semibold text-neutral-700 dark:text-neutral-200">
+                {bulkMoveConfirm.status ? (TAB_LABELS[bulkMoveConfirm.status] ?? bulkMoveConfirm.status) : ''}
+              </span>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={() => setBulkMoveConfirm({ open: false, status: null })}
+              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (bulkMoveConfirm.status) bulkMoveToStatus(bulkMoveConfirm.status)
+                setBulkMoveConfirm({ open: false, status: null })
+              }}
+              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+            >
+              Move {selectedIds.size} lead{selectedIds.size === 1 ? '' : 's'} <span className="ml-1 text-[10px] text-orange-100/80 font-mono">↵</span>
             </button>
           </DialogFooter>
         </DialogContent>
@@ -887,6 +1070,8 @@ export function LeadsList({
 
 interface LeadRowProps {
   lead: Lead
+  selected: boolean
+  onToggleSelect: () => void
   isActionMenuOpen: boolean
   onToggleActionMenu: () => void
   onCloseActionMenu: () => void
@@ -900,6 +1085,8 @@ interface LeadRowProps {
 
 function LeadRow({
   lead,
+  selected,
+  onToggleSelect,
   isActionMenuOpen,
   onToggleActionMenu,
   onCloseActionMenu,
@@ -914,11 +1101,89 @@ function LeadRow({
   const sourceColor = SOURCE_COLORS[lead.source] ?? 'bg-neutral-100 text-neutral-600'
 
   return (
+    <>
+    {/* ── Mobile card (< lg) ──────────────────────────────────────────── */}
     <div
-      className="group grid grid-cols-[80px_80px_minmax(140px,1.5fr)_minmax(100px,1fr)_minmax(100px,0.8fr)_minmax(100px,0.8fr)_100px_70px_40px] items-center px-4 py-3 transition-colors hover:bg-orange-50/30 dark:hover:bg-orange-950/10"
+      className={`lg:hidden px-4 py-3 transition-colors hover:bg-orange-50/30 dark:hover:bg-orange-950/10 cursor-pointer ${
+        selected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
+      }`}
+      onClick={onView}
+    >
+      <div className="flex items-start gap-3">
+        <div onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={onToggleSelect}
+            aria-label={selected ? 'Deselect lead' : 'Select lead'}
+            className={`mt-0.5 flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
+              selected
+                ? 'border-orange-500 bg-orange-500'
+                : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+            }`}
+          >
+            {selected && <Check size={10} className="text-white" strokeWidth={3} />}
+          </button>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-semibold text-neutral-900 dark:text-neutral-100">
+                {lead.name}
+              </p>
+              <p className="text-[10px] text-neutral-400 font-mono mt-0.5">{lead.id.replace('W24-LEAD-', 'L-')}</p>
+            </div>
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 ${status.bg} ${status.text}`}>
+              {status.label}
+            </span>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 dark:text-neutral-400">
+            <span className={`inline-block rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${sourceColor}`}>
+              {lead.source}
+            </span>
+            <span className="flex items-center gap-1"><Phone size={10} /> {lead.phone}</span>
+            {lead.city && <span className="flex items-center gap-1"><MapPin size={10} /> {lead.city}</span>}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+            <span className="truncate">{lead.serviceInterest}</span>
+            {lead.company && <span className="truncate">· {lead.company}</span>}
+          </div>
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={onToggleActionMenu}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            aria-label={`Actions for ${lead.name}`}
+            aria-haspopup="menu"
+            aria-expanded={isActionMenuOpen}
+          >
+            <MoreHorizontal size={15} />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {/* ── Desktop row (≥ lg) ──────────────────────────────────────────── */}
+    <div
+      className={`group hidden lg:grid grid-cols-[40px_80px_90px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px_80px_40px] gap-4 items-center px-4 py-3 transition-colors hover:bg-orange-50/30 dark:hover:bg-orange-950/10 ${
+        selected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
+      }`}
       onClick={onView}
       style={{ cursor: 'pointer' }}
     >
+      {/* Select checkbox */}
+      <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={onToggleSelect}
+          aria-label={selected ? 'Deselect lead' : 'Select lead'}
+          className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
+            selected
+              ? 'border-orange-500 bg-orange-500'
+              : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+          }`}
+        >
+          {selected && <Check size={10} className="text-white" strokeWidth={3} />}
+        </button>
+      </div>
+
       {/* Lead ID */}
       <div>
         <span
@@ -943,7 +1208,7 @@ function LeadRow({
       </div>
 
       {/* Contact */}
-      <div className="min-w-0 overflow-hidden pr-2">
+      <div className="min-w-0 overflow-hidden">
         <p className="truncate text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">
           {lead.name}
         </p>
@@ -952,15 +1217,11 @@ function LeadRow({
             <Phone size={9} strokeWidth={2} />
             <span className="truncate">{lead.phone}</span>
           </span>
-          <span className="flex items-center gap-1 truncate text-[11px] text-neutral-400">
-            <Mail size={9} strokeWidth={2} className="shrink-0" />
-            <span className="truncate">{lead.email}</span>
-          </span>
         </div>
       </div>
 
       {/* Company */}
-      <div className="min-w-0 overflow-hidden pr-2">
+      <div className="min-w-0 overflow-hidden">
         {lead.company ? (
           <>
             <p className="truncate text-[12px] font-medium text-neutral-700 dark:text-neutral-300">
@@ -1013,6 +1274,9 @@ function LeadRow({
         <button
           onClick={onToggleActionMenu}
           className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+          aria-label={`Actions for ${lead.name}`}
+          aria-haspopup="menu"
+          aria-expanded={isActionMenuOpen}
         >
           <MoreHorizontal size={15} />
         </button>
@@ -1078,5 +1342,6 @@ function LeadRow({
         )}
       </div>
     </div>
+    </>
   )
 }

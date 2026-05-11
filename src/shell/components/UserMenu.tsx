@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, LogOut, User, Settings } from 'lucide-react'
+import { ChevronDown, LogOut } from 'lucide-react'
 
 interface UserMenuProps {
   user?: {
@@ -54,11 +54,6 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
           <p className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">
             {user?.name || 'User'}
           </p>
-          {user?.role && (
-            <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-              {user.role}
-            </p>
-          )}
         </div>
         <ChevronDown
           size={14}
@@ -74,26 +69,10 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
               {user?.name}
             </p>
             <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-              {user?.role || 'User'}
+              {user?.role || 'Product Manager'}
             </p>
           </div>
           <div className="py-1">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="flex w-full items-center gap-2.5 px-4 py-2 text-[13px] text-neutral-600 transition-colors hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-700/60"
-            >
-              <User size={15} strokeWidth={1.5} />
-              Profile
-            </button>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="flex w-full items-center gap-2.5 px-4 py-2 text-[13px] text-neutral-600 transition-colors hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-700/60"
-            >
-              <Settings size={15} strokeWidth={1.5} />
-              Settings
-            </button>
-          </div>
-          <div className="border-t border-neutral-100 py-1 dark:border-neutral-700">
             <button
               onClick={() => {
                 setIsOpen(false)

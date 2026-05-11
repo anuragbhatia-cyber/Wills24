@@ -2,6 +2,7 @@ import { useState } from 'react'
 import data from '@/../product/sections/case-management/data.json'
 import { AddCaseForm } from './components/AddCaseForm'
 import { navigateToScreen } from '@/lib/preview-navigation'
+import { toast } from '@/components/ui/toaster'
 
 // Store edit data globally so CaseDetail can pass it
 let pendingEditData: any = null
@@ -16,7 +17,10 @@ export default function AddCaseFormPreview() {
       customers={data.customers as any[]}
       lawyers={data.lawyers as any[]}
       initialData={editData ?? undefined}
-      onSubmit={() => navigateToScreen('case-management', editData ? 'CaseDetail' : 'CaseList')}
+      onSubmit={() => {
+        toast.success(editData ? 'Case updated' : 'Case created')
+        navigateToScreen('case-management', editData ? 'CaseDetail' : 'CaseList')
+      }}
       onCancel={() => navigateToScreen('case-management', editData ? 'CaseDetail' : 'CaseList')}
     />
   )

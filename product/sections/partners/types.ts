@@ -260,4 +260,8 @@ export interface AddWMFormProps {
   }) => void
   /** Called when the form is cancelled */
   onCancel?: () => void
+  /** Optional existing partner for edit mode */
+  initialData?: WealthManager
+  /** Form mode (defaults to 'create') */
+  mode?: 'create' | 'edit'
 }

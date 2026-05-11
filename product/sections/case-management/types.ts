@@ -60,6 +60,8 @@ export interface Case {
   serviceName: string
   assignedLawyer: string
   lawyerId: string
+  assignedEmployee: string
+  employeeId: string
   status: CaseStatus
   caseLevel: CaseLevel
   priority: CasePriority
@@ -230,7 +232,6 @@ export interface AddCaseFormProps {
     customerId: string
     serviceType: string
     lawyerId: string
-    priority: CasePriority
     description: string
     notes: string
   }) => void

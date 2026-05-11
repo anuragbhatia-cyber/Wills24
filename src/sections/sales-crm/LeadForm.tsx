@@ -1,6 +1,7 @@
 import data from '@/../product/sections/sales-crm/data.json'
 import { LeadForm } from './components/LeadForm'
 import { navigateToScreen } from '@/lib/preview-navigation'
+import { toast } from '@/components/ui/toaster'
 
 /**
  * Preview wrapper for Design OS.
@@ -15,7 +16,10 @@ export default function LeadFormPreview() {
     <LeadForm
       wealthManagers={data.wealthManagers as any}
       employees={employees}
-      onSave={() => navigateToScreen('sales-crm', 'LeadsList')}
+      onSave={(lead) => {
+        toast.success('Lead created', lead?.name ? `${lead.name} added to your pipeline` : undefined)
+        navigateToScreen('sales-crm', 'LeadsList')
+      }}
       onCancel={() => navigateToScreen('sales-crm', 'LeadsList')}
     />
   )

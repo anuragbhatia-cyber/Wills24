@@ -345,7 +345,7 @@ export function RefundWorkflow({
       {/* ── Refund Cards ────────────────────────────────────────────────── */}
       <div className="space-y-4">
         {refunds.length === 0 ? (
-          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 py-16 text-center">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none py-16 text-center">
             <RotateCcw
               size={36}
               className="mx-auto text-neutral-300 dark:text-neutral-600 mb-3"
@@ -367,7 +367,7 @@ export function RefundWorkflow({
             return (
               <div
                 key={refund.id}
-                className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden"
+                className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none overflow-hidden"
               >
                 {/* Card Header — always visible */}
                 <button
@@ -1023,7 +1023,7 @@ function StatCard({
   iconColor: string
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3">
       <div className="flex items-center gap-2 mb-1.5">
         <div
           className={`w-7 h-7 rounded-lg flex items-center justify-center ${iconBg}`}

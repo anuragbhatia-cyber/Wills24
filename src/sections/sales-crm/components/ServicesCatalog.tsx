@@ -277,7 +277,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
                     </div>
                   ) : (
                     /* ── List View ─────────────────────────────────────────── */
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none overflow-hidden">
                       {/* Table header */}
                       <div className="grid grid-cols-[1fr_100px_90px_80px_70px_90px] gap-3 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                         <span>Service</span>
@@ -316,7 +316,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
 
 function StatCard({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string | number; accent: string }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3">
       <div className="flex items-center gap-2 text-neutral-400 dark:text-neutral-500 mb-1.5">
         {icon}
         <span className="text-[11px] font-semibold uppercase tracking-wider">{label}</span>

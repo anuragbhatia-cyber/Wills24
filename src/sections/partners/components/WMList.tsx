@@ -1,4 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useDebounce } from '@/lib/use-debounce'
+import { useInitialLoading } from '@/lib/use-initial-loading'
+import { Pagination } from '@/components/ui/pagination'
+import { ListSkeleton } from '@/components/ui/list-skeleton'
+import { formatCurrency as formatCurrencyFull, timeAgo } from '@/lib/format'
 import {
   Search,
   Users,
@@ -24,6 +29,8 @@ import {
   Briefcase,
   IndianRupee,
   Package,
+  Filter,
+  X,
 } from 'lucide-react'
 import {
   Dialog,
@@ -33,6 +40,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { AddWMForm } from './AddWMForm'
 import type {
   WMListProps,
   WealthManager,
@@ -103,23 +111,6 @@ function formatCurrency(amount: number) {
   return amount.toLocaleString('en-IN')
 }
 
-function formatCurrencyFull(amount: number) {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount)
-}
-
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return `${days}d ago`
-  if (days < 30) return `${Math.floor(days / 7)}w ago`
-  return `${Math.floor(days / 30)}mo ago`
-}
-
 function getInitials(name: string) {
   return name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
 }
@@ -158,10 +149,32 @@ export function WMList({
   const [activeTab, setActiveTab] = useState<StatusTab>('all')
   const [tierFilter, setTierFilter] = useState<TierFilter>('all')
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 250)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('lastActive')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [expandedRow, setExpandedRow] = useState<string | null>(null)
+
+  // Filter state
+  const [showFilters, setShowFilters] = useState(false)
+  const [filterCity, setFilterCity] = useState('')
+  const [filterState, setFilterState] = useState('')
+
+  const cityOptions = useMemo(() => {
+    const set = new Set<string>()
+    wealthManagers.forEach((wm) => set.add(wm.address.city))
+    return Array.from(set).sort()
+  }, [wealthManagers])
+
+  const stateOptions = useMemo(() => {
+    const set = new Set<string>()
+    wealthManagers.forEach((wm) => set.add(wm.address.state))
+    return Array.from(set).sort()
+  }, [wealthManagers])
+
+  const activeFilterCount = (filterCity ? 1 : 0) + (filterState ? 1 : 0)
+  const hasActiveFilters = activeFilterCount > 0
+  const isLoading = useInitialLoading()
 
   // Modal states
   const [editModalWM, setEditModalWM] = useState<WealthManager | null>(null)
@@ -177,8 +190,8 @@ export function WMList({
 
     if (tierFilter !== 'all') list = list.filter((wm) => wm.tier === tierFilter)
 
-    if (search.trim()) {
-      const q = search.toLowerCase()
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase()
       list = list.filter(
         (wm) =>
           wm.id.toLowerCase().includes(q) ||
@@ -189,6 +202,9 @@ export function WMList({
           wm.address.city.toLowerCase().includes(q),
       )
     }
+
+    if (filterCity) list = list.filter((wm) => wm.address.city === filterCity)
+    if (filterState) list = list.filter((wm) => wm.address.state === filterState)
 
     list = [...list].sort((a, b) => {
       let cmp = 0
@@ -210,7 +226,18 @@ export function WMList({
     })
 
     return list
-  }, [wealthManagers, activeTab, tierFilter, search, sortKey, sortDir])
+  }, [wealthManagers, activeTab, tierFilter, debouncedSearch, sortKey, sortDir, filterCity, filterState])
+
+  // Pagination
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, filterCity, filterState, tierFilter, activeTab, pageSize])
+  const pagedWMs = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filtered.slice(start, start + pageSize)
+  }, [filtered, page, pageSize])
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
@@ -243,6 +270,23 @@ export function WMList({
     setToggleStatusWM(null)
   }
 
+  // Early return: if editing a partner, render the full Add Partner form in edit mode
+  if (editModalWM) {
+    return (
+      <AddWMForm
+        mode="edit"
+        initialData={editModalWM}
+        onCancel={() => setEditModalWM(null)}
+        onSubmit={() => {
+          onEdit?.(editModalWM.id)
+          setEditModalWM(null)
+        }}
+      />
+    )
+  }
+
+  if (isLoading) return <ListSkeleton kpis={4} rows={6} />
+
   return (
     <div className="space-y-6 pb-8">
       {/* ── Header ──────────────────────────────────────────────────────── */}
@@ -251,9 +295,6 @@ export function WMList({
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
             Partners
           </h1>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">
-            Manage wealth managers, packages & channel performance
-          </p>
         </div>
         <div className="flex items-center gap-2 mt-3 sm:mt-0">
           <button className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800 rounded-lg hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-600 dark:hover:bg-neutral-700 transition-all cursor-pointer">
@@ -303,6 +344,7 @@ export function WMList({
       </div>
 
       {/* ── Toolbar ─────────────────────────────────────────────────────── */}
+      <div className="space-y-2">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Status tabs */}
           <div className="flex items-center gap-1 bg-neutral-200/50 dark:bg-neutral-800 rounded-lg p-1 overflow-x-auto">
@@ -370,23 +412,133 @@ export function WMList({
             })}
           </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-            <input
-              type="text"
-              placeholder="Search partners, company..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
-            />
+          {/* Search + filter */}
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <input
+                type="text"
+                placeholder="Search partners, company..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+              />
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
+                showFilters || hasActiveFilters
+                  ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                  : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
+              }`}
+            >
+              <Filter size={13} strokeWidth={2} />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
           </div>
       </div>
 
+      {/* Expanded filter row */}
+      {hasActiveFilters && !showFilters && (
+        <div className="flex items-center flex-wrap gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 mr-1">
+            Active filters
+          </span>
+          {filterCity && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              City: {filterCity}
+              <button
+                onClick={() => setFilterCity('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter City: ${filterCity}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          {filterState && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              State: {filterState}
+              <button
+                onClick={() => setFilterState('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter State: ${filterState}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => { setFilterCity(''); setFilterState('') }}
+            className="ml-1 text-[11px] font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {showFilters && (
+        <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+              City
+            </span>
+            <div className="relative">
+              <select
+                value={filterCity}
+                onChange={(e) => setFilterCity(e.target.value)}
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+              >
+                <option value="">All Cities</option>
+                {cityOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+              State
+            </span>
+            <div className="relative">
+              <select
+                value={filterState}
+                onChange={(e) => setFilterState(e.target.value)}
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+              >
+                <option value="">All States</option>
+                {stateOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400" />
+            </div>
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={() => { setFilterCity(''); setFilterState('') }}
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+            >
+              <X size={12} />
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+      </div>
+
       {/* ── Table ────────────────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none overflow-hidden">
           {/* Desktop header */}
-          <div className="hidden lg:grid grid-cols-[70px_minmax(140px,1.5fr)_minmax(120px,1.2fr)_minmax(120px,1.2fr)_80px_90px_80px_90px_40px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          <div className="hidden lg:grid grid-cols-[70px_minmax(140px,1.5fr)_minmax(120px,1.2fr)_minmax(120px,1.2fr)_80px_90px_80px_90px_40px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 sticky top-0 z-10">
             <span>ID</span>
             <SortHeader label="Partner" sortKey="name" current={sortKey} dir={sortDir} onSort={toggleSort} />
             <span>Company</span>
@@ -402,14 +554,44 @@ export function WMList({
           {filtered.length === 0 ? (
             <div className="py-16 text-center">
               <Users size={36} className="mx-auto text-neutral-300 dark:text-neutral-600 mb-3" />
-              <p className="font-medium text-neutral-500 dark:text-neutral-400">No partners found</p>
-              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-                {search ? 'Try a different search term' : 'No partners in this category'}
+              <p className="font-medium text-neutral-500 dark:text-neutral-400">
+                {wealthManagers.length === 0 ? 'No partners yet' : 'No partners found'}
               </p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                {wealthManagers.length === 0
+                  ? 'Get started by onboarding your first partner'
+                  : search
+                    ? 'Try a different search term'
+                    : hasActiveFilters
+                      ? 'Try clearing filters to see more results'
+                      : activeTab !== 'all'
+                        ? 'No partners in this category'
+                        : 'No partners match your criteria'}
+              </p>
+              {wealthManagers.length === 0 ? (
+                <button
+                  onClick={onCreate}
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+                >
+                  <Plus size={13} />
+                  Add your first partner
+                </button>
+              ) : (search || hasActiveFilters) && (
+                <button
+                  onClick={() => {
+                    setSearch('')
+                    setFilterCity('')
+                    setFilterState('')
+                  }}
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                >
+                  Clear search & filters
+                </button>
+              )}
             </div>
           ) : (
-            filtered.map((wm, idx) => {
-              const isLast = idx === filtered.length - 1
+            pagedWMs.map((wm, idx) => {
+              const isLast = idx === pagedWMs.length - 1
               const isMenuOpen = openMenu === wm.id
               const tierCfg = TIER_CONFIG[wm.tier]
               const statusCfg = STATUS_BADGE[wm.status]
@@ -508,6 +690,9 @@ export function WMList({
                       <button
                         onClick={() => setOpenMenu(isMenuOpen ? null : wm.id)}
                         className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                        aria-label={`Actions for ${wm.name}`}
+                        aria-haspopup="menu"
+                        aria-expanded={isMenuOpen}
                       >
                         <MoreVertical size={14} />
                       </button>
@@ -602,108 +787,20 @@ export function WMList({
             })
           )}
 
-          {/* Footer */}
+          {/* Footer — pagination */}
           {filtered.length > 0 && (
-            <div className="px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-              <p className="text-xs text-neutral-400 dark:text-neutral-500">
-                {filtered.length} {filtered.length === 1 ? 'partner' : 'partners'}
-                {activeTab !== 'all' && ` · ${STATUS_TABS.find((t) => t.key === activeTab)?.label}`}
-                {tierFilter !== 'all' && ` · ${TIER_CONFIG[tierFilter].label} tier`}
-              </p>
-              <p className="text-xs text-neutral-400 dark:text-neutral-500">
-                Total sales: <span className="font-semibold text-neutral-600 dark:text-neutral-300">{formatCurrencyFull(kpiStats.totalSales)}</span>
-              </p>
+            <div className="border-t border-neutral-200 dark:border-neutral-800">
+              <Pagination
+                page={page}
+                pageSize={pageSize}
+                totalItems={filtered.length}
+                onPageChange={setPage}
+                onPageSizeChange={setPageSize}
+                itemLabel="partners"
+              />
             </div>
           )}
       </div>
-
-      {/* ── Edit WM Modal ─────────────────────────────────────────────── */}
-      <Dialog open={!!editModalWM} onOpenChange={(open) => { if (!open) setEditModalWM(null) }}>
-        <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-          <DialogHeader>
-            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Edit Partner</DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
-              Update partner profile information.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Name</label>
-              <input
-                type="text"
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-              <input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Phone</label>
-              <input
-                type="tel"
-                value={editForm.phone}
-                onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Company</label>
-              <input
-                type="text"
-                value={editForm.company}
-                onChange={(e) => setEditForm((f) => ({ ...f, company: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tier</label>
-              <select
-                value={editForm.tier}
-                onChange={(e) => setEditForm((f) => ({ ...f, tier: e.target.value as WMTier }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="platinum">Platinum</option>
-                <option value="gold">Gold</option>
-                <option value="silver">Silver</option>
-                <option value="bronze">Bronze</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
-              <select
-                value={editForm.status}
-                onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value as WMStatus }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setEditModalWM(null)}
-              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleEditSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
-            >
-              Save Changes
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* ── Toggle Status Confirmation Modal ──────────────────────────── */}
       <Dialog open={!!toggleStatusWM} onOpenChange={(open) => { if (!open) setToggleStatusWM(null) }}>
@@ -757,7 +854,7 @@ function KpiCard({
   iconColor: string
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
       <div className="flex items-center justify-between mb-2">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
           <span className={iconColor}>{icon}</span>
@@ -784,7 +881,12 @@ function SortHeader({
 }) {
   const isActive = current === key
   return (
-    <button className="flex items-center gap-1 cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors" onClick={() => onSort(key)}>
+    <button
+      className="flex items-center gap-1 cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+      onClick={() => onSort(key)}
+      aria-label={`Sort by ${label}${isActive ? ` (currently ${dir === 'asc' ? 'ascending' : 'descending'})` : ''}`}
+      aria-sort={isActive ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
       <span>{label}</span>
       <ArrowUpDown size={10} className={isActive ? 'text-orange-500' : 'text-neutral-300 dark:text-neutral-600'} />
     </button>

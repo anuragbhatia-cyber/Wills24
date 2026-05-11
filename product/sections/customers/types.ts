@@ -210,6 +210,8 @@ export interface CustomerListProps {
   onViewCases?: (id: string) => void
   /** Called when user wants to view a customer's documents */
   onViewDocuments?: (id: string) => void
+  /** Called when user submits the New Customer form */
+  onCreate?: (customer: Customer) => void
 }
 
 export interface CustomerDetailProps {

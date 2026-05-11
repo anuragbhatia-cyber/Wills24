@@ -18,7 +18,7 @@ export default function RefundWorkflowPreview() {
       onProcess={(id) => console.log('Process refund:', id)}
       onComplete={(id) => console.log('Complete refund:', id)}
       onInitiateRefund={(paymentId) => console.log('Initiate refund for payment:', paymentId)}
-      onBack={() => navigateToScreen('accounts', 'InvoiceDetail')}
+      onBack={() => navigateToScreen('accounts', 'AccountsList')}
     />
   )
 }

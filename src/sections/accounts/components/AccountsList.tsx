@@ -1,4 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useDebounce } from '@/lib/use-debounce'
+import { useInitialLoading } from '@/lib/use-initial-loading'
+import { Pagination } from '@/components/ui/pagination'
+import { ListSkeleton } from '@/components/ui/list-skeleton'
+import { formatCurrency, formatDate, timeAgo } from '@/lib/format'
 import {
   Search,
   FileText,
@@ -15,11 +20,12 @@ import {
   Filter,
   Download,
   MessageSquare,
-  Eye,
   Pencil,
   X,
   Check,
   Minus,
+  ChevronDown,
+  Paperclip,
 } from 'lucide-react'
 import {
   Dialog,
@@ -44,12 +50,10 @@ export interface AccountsListProps {
   accountEntries: AccountEntry[]
   kpiStats: KpiStats
   statusCounts: StatusCounts
-  onView?: (id: string) => void
   onEdit?: (id: string) => void
   onFollowUp?: (id: string) => void
   onSendPI?: (id: string) => void
   onSendInvoice?: (id: string) => void
-  onRecordPayment?: (id: string) => void
   onConvertToCustomer?: (id: string) => void
 }
 
@@ -98,24 +102,6 @@ const STATUS_CONFIG: Record<AccountEntryStatus, { label: string; dot: string; bg
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount)
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime()
-  const days = Math.floor(diff / 86400000)
-  if (days === 0) return 'Today'
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return `${days}d ago`
-  if (days < 30) return `${Math.floor(days / 7)}w ago`
-  return `${Math.floor(days / 30)}mo ago`
-}
-
 // ---------------------------------------------------------------------------
 // Modal State Types
 // ---------------------------------------------------------------------------
@@ -142,6 +128,7 @@ interface SendPIModalState {
   entryName: string
   email: string
   message: string
+  attachments: string[]
 }
 
 interface SendInvoiceModalState {
@@ -149,6 +136,7 @@ interface SendInvoiceModalState {
   entryName: string
   email: string
   message: string
+  attachments: string[]
 }
 
 // ---------------------------------------------------------------------------
@@ -159,32 +147,60 @@ export function AccountsList({
   accountEntries,
   kpiStats,
   statusCounts,
-  onView,
   onEdit,
   onFollowUp,
   onSendPI,
   onSendInvoice,
-  onRecordPayment,
   onConvertToCustomer,
 }: AccountsListProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('all')
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 250)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, AccountEntryStatus>>({})
+  const getStatus = (entry: AccountEntry): AccountEntryStatus =>
+    statusOverrides[entry.id] ?? entry.status
+
+  function changeStatus(id: string, status: AccountEntryStatus) {
+    setStatusOverrides((prev) => ({ ...prev, [id]: status }))
+  }
+
+  // Filter state
+  const [showFilters, setShowFilters] = useState(false)
+  const [filterWM, setFilterWM] = useState('')
+  const [filterService, setFilterService] = useState('')
+
+  const wmOptions = useMemo(() => {
+    const set = new Set<string>()
+    accountEntries.forEach((e) => set.add(e.wealthManagerName))
+    return Array.from(set).sort()
+  }, [accountEntries])
+
+  const serviceOptions = useMemo(() => {
+    const set = new Set<string>()
+    accountEntries.forEach((e) => set.add(e.serviceInterest))
+    return Array.from(set).sort()
+  }, [accountEntries])
+
+  const activeFilterCount = (filterWM ? 1 : 0) + (filterService ? 1 : 0)
+  const hasActiveFilters = activeFilterCount > 0
+  const isLoading = useInitialLoading()
 
   // Modal states
   const [editModal, setEditModal] = useState<EditModalState | null>(null)
   const [followUpModal, setFollowUpModal] = useState<FollowUpModalState | null>(null)
   const [sendPIModal, setSendPIModal] = useState<SendPIModalState | null>(null)
   const [sendInvoiceModal, setSendInvoiceModal] = useState<SendInvoiceModalState | null>(null)
+  const [viewQuotation, setViewQuotation] = useState<AccountEntry | null>(null)
 
   // --- Filter ---------------------------------------------------------------
 
   const filtered = useMemo(() => {
     let list = accountEntries
-    if (activeTab !== 'all') list = list.filter((e) => e.status === activeTab)
-    if (search.trim()) {
-      const q = search.toLowerCase()
+    if (activeTab !== 'all') list = list.filter((e) => getStatus(e) === activeTab)
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase()
       list = list.filter(
         (e) =>
           e.name.toLowerCase().includes(q) ||
@@ -196,8 +212,31 @@ export function AccountsList({
           e.quotationRef.toLowerCase().includes(q),
       )
     }
+    if (filterWM) list = list.filter((e) => e.wealthManagerName === filterWM)
+    if (filterService) list = list.filter((e) => e.serviceInterest === filterService)
     return list
-  }, [accountEntries, activeTab, search])
+  }, [accountEntries, activeTab, debouncedSearch, filterWM, filterService, statusOverrides])
+
+  // Pagination
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, filterWM, filterService, activeTab, pageSize])
+  const pagedEntries = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return filtered.slice(start, start + pageSize)
+  }, [filtered, page, pageSize])
+
+  // Override-aware status counts so tab badges reflect status changes
+  const effectiveStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: accountEntries.length }
+    accountEntries.forEach((e) => {
+      const s = getStatus(e)
+      counts[s] = (counts[s] ?? 0) + 1
+    })
+    return counts
+  }, [accountEntries, statusOverrides])
 
   const allSelected = filtered.length > 0 && filtered.every(e => selectedIds.has(e.id))
 
@@ -249,6 +288,7 @@ export function AccountsList({
       entryName: entry.name,
       email: entry.email,
       message: '',
+      attachments: [],
     })
     setOpenMenu(null)
   }
@@ -259,9 +299,12 @@ export function AccountsList({
       entryName: entry.name,
       email: entry.email,
       message: '',
+      attachments: [],
     })
     setOpenMenu(null)
   }
+
+  if (isLoading) return <ListSkeleton kpis={4} rows={6} />
 
   return (
     <div className="space-y-6 pb-8">
@@ -271,9 +314,6 @@ export function AccountsList({
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
             Accounts
           </h1>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">
-            Payment confirmation, invoicing, and lead-to-customer conversion
-          </p>
         </div>
         <div className="flex items-center gap-2 mt-3 sm:mt-0">
           <button className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800 rounded-lg hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-600 dark:hover:bg-neutral-700 transition-all cursor-pointer">
@@ -318,12 +358,13 @@ export function AccountsList({
       </div>
 
       {/* ── Toolbar ─────────────────────────────────────────────────────── */}
+      <div className="space-y-2">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Status tabs */}
         <div className="flex items-center gap-1 bg-neutral-200/50 dark:bg-neutral-800 rounded-lg p-1 overflow-x-auto">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.key
-            const count = tab.key === 'all' ? statusCounts.all : (statusCounts as any)[tab.key] ?? 0
+            const count = effectiveStatusCounts[tab.key as string] ?? 0
             return (
               <button
                 key={tab.key}
@@ -359,16 +400,121 @@ export function AccountsList({
               className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
             />
           </div>
-          <button className="p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg transition-colors cursor-pointer">
-            <Filter size={14} />
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
+              showFilters || hasActiveFilters
+                ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
+            }`}
+          >
+            <Filter size={13} strokeWidth={2} />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
 
+      {/* Expanded filter row */}
+      {hasActiveFilters && !showFilters && (
+        <div className="flex items-center flex-wrap gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 mr-1">
+            Active filters
+          </span>
+          {filterWM && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              WM: {filterWM}
+              <button
+                onClick={() => setFilterWM('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter Wealth Manager: ${filterWM}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          {filterService && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+              Service: {filterService}
+              <button
+                onClick={() => setFilterService('')}
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                aria-label={`Clear filter Service: ${filterService}`}
+              >
+                <X size={10} />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => { setFilterWM(''); setFilterService('') }}
+            className="ml-1 text-[11px] font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {showFilters && (
+        <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+              Wealth Manager
+            </span>
+            <div className="relative">
+              <select
+                value={filterWM}
+                onChange={(e) => setFilterWM(e.target.value)}
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+              >
+                <option value="">All Wealth Managers</option>
+                {wmOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+              Service
+            </span>
+            <div className="relative">
+              <select
+                value={filterService}
+                onChange={(e) => setFilterService(e.target.value)}
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+              >
+                <option value="">All Services</option>
+                {serviceOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400" />
+            </div>
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={() => { setFilterWM(''); setFilterService('') }}
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+            >
+              <X size={12} />
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+      </div>
+
       {/* ── Table ────────────────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[32px_90px_minmax(160px,1.5fr)_minmax(120px,1fr)_120px_110px_100px_100px_48px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          <div className="hidden lg:grid grid-cols-[32px_90px_minmax(160px,1.5fr)_minmax(120px,1fr)_110px_120px_150px_90px_48px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 sticky top-0 z-10">
             <span className="flex items-center">
               <button
                 onClick={toggleSelectAll}
@@ -397,24 +543,93 @@ export function AccountsList({
           {filtered.length === 0 ? (
             <div className="py-16 text-center">
               <Receipt size={36} className="mx-auto text-neutral-300 dark:text-neutral-600 mb-3" />
-              <p className="font-medium text-neutral-500 dark:text-neutral-400">No entries found</p>
-              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-                {search ? 'Try a different search term' : 'No leads assigned to accounts in this status'}
+              <p className="font-medium text-neutral-500 dark:text-neutral-400">
+                {accountEntries.length === 0 ? 'No entries yet' : 'No entries found'}
               </p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                {accountEntries.length === 0
+                  ? 'Entries appear here once leads are assigned to accounts'
+                  : search
+                    ? 'Try a different search term'
+                    : hasActiveFilters
+                      ? 'Try clearing filters to see more results'
+                      : activeTab !== 'all'
+                        ? 'No entries in this status'
+                        : 'No entries match your criteria'}
+              </p>
+              {(search || hasActiveFilters) && accountEntries.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSearch('')
+                    setFilterWM('')
+                    setFilterService('')
+                  }}
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                >
+                  Clear search & filters
+                </button>
+              )}
             </div>
           ) : (
-            filtered.map((entry, idx) => {
-              const statusCfg = STATUS_CONFIG[entry.status]
-              const isLast = idx === filtered.length - 1
+            pagedEntries.map((entry, idx) => {
+              const effectiveStatus = getStatus(entry)
+              const statusCfg = STATUS_CONFIG[effectiveStatus]
+              const isLast = idx === pagedEntries.length - 1
               const isMenuOpen = openMenu === entry.id
 
               return (
-                <div
-                  key={entry.id}
-                  className={`grid grid-cols-[32px_90px_minmax(160px,1.5fr)_minmax(120px,1fr)_120px_110px_100px_100px_48px] gap-2 px-5 py-3 items-center hover:bg-neutral-50 dark:hover:bg-neutral-800/30 transition-colors ${
-                    !isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''
-                  }`}
-                >
+                <div key={entry.id}>
+                  {/* ── Mobile / Tablet card ──────────────────────── */}
+                  <div
+                    className={`lg:hidden px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/30 transition-colors ${
+                      !isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => toggleSelect(entry.id)}
+                          aria-label={selectedIds.has(entry.id) ? 'Deselect entry' : 'Select entry'}
+                          className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ${
+                            selectedIds.has(entry.id)
+                              ? 'border-orange-500 bg-orange-500'
+                              : 'border-neutral-300 dark:border-neutral-600'
+                          }`}
+                        >
+                          {selectedIds.has(entry.id) && <Check size={10} className="text-white" />}
+                        </button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">{entry.name}</p>
+                            <p className="text-[10px] text-neutral-400 font-mono mt-0.5">{entry.leadId.replace('W24-LEAD-', 'L-')}</p>
+                          </div>
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 ${statusCfg.bg} ${statusCfg.text}`}>
+                            {statusCfg.label}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                          <span>WM: {entry.wealthManagerName}</span>
+                          <span>{formatCurrency(entry.quotationAmount)}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setViewQuotation(entry) }}
+                          className="mt-1.5 text-[11px] font-medium text-orange-600 dark:text-orange-400 hover:underline cursor-pointer"
+                        >
+                          View quotation {entry.quotationRef.replace('W24-QT-2026-', 'QT-')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Desktop row (≥ lg) ────────────────────────── */}
+                  <div
+                    className={`hidden lg:grid grid-cols-[32px_90px_minmax(160px,1.5fr)_minmax(120px,1fr)_110px_120px_150px_90px_48px] gap-2 px-5 py-3 items-center hover:bg-neutral-50 dark:hover:bg-neutral-800/30 transition-colors ${
+                      !isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''
+                    }`}
+                  >
                   {/* Checkbox */}
                   <span className="flex items-center" onClick={e => e.stopPropagation()}>
                     <button
@@ -448,25 +663,48 @@ export function AccountsList({
                   </div>
 
                   {/* Quotation Ref */}
-                  <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
-                    {entry.quotationRef.replace('W24-QT-2026-', 'QT-')}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setViewQuotation(entry)
+                    }}
+                    className="group flex items-center gap-1.5 text-left cursor-pointer"
+                  >
+                    <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                      {entry.quotationRef.replace('W24-QT-2026-', 'QT-')}
+                    </span>
+                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 group-hover:underline">
+                      View
+                    </span>
+                  </button>
 
                   {/* Amount */}
                   <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 text-right font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
                     {formatCurrency(entry.quotationAmount)}
                   </p>
 
-                  {/* Status */}
-                  <div className="flex justify-center">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusCfg.bg} ${statusCfg.text}`}>
-                      {statusCfg.label.split(' ')[0]}
-                    </span>
+                  {/* Status (inline change) */}
+                  <div className="flex justify-center min-w-0" onClick={e => e.stopPropagation()}>
+                    <div className="relative max-w-full">
+                      <select
+                        value={effectiveStatus}
+                        onChange={(e) => changeStatus(entry.id, e.target.value as AccountEntryStatus)}
+                        className={`appearance-none cursor-pointer pl-2.5 pr-6 py-0.5 rounded-full text-[10px] font-semibold border border-transparent focus:outline-none focus:ring-1 focus:ring-orange-300 max-w-full truncate ${statusCfg.bg} ${statusCfg.text}`}
+                      >
+                        {(Object.keys(STATUS_CONFIG) as AccountEntryStatus[]).map((s) => (
+                          <option key={s} value={s} className="bg-white text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100">
+                            {STATUS_CONFIG[s].label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown size={10} className={`pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 ${statusCfg.text}`} />
+                    </div>
                   </div>
 
                   {/* Assigned date */}
                   <p className="text-[11px] text-neutral-400 dark:text-neutral-500 text-center">
-                    {timeAgo(entry.assignedAt)}
+                    {formatDate(entry.assignedAt)}
                   </p>
 
                   {/* Actions */}
@@ -474,6 +712,9 @@ export function AccountsList({
                     <button
                       onClick={() => setOpenMenu(isMenuOpen ? null : entry.id)}
                       className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                      aria-label={`Actions for ${entry.name}`}
+                      aria-haspopup="menu"
+                      aria-expanded={isMenuOpen}
                     >
                       <MoreVertical size={14} />
                     </button>
@@ -482,25 +723,21 @@ export function AccountsList({
                       <>
                         <div className="fixed inset-0 z-10" onClick={() => setOpenMenu(null)} />
                         <div className="absolute right-0 top-8 z-20 w-52 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg py-1.5 text-sm">
-                          <MenuItem icon={<Eye size={13} />} label="View Details" onClick={() => { onView?.(entry.id); setOpenMenu(null) }} />
                           <MenuItem icon={<Pencil size={13} />} label="Edit" onClick={() => openEditModal(entry)} />
                           <div className="my-1 border-t border-neutral-100 dark:border-neutral-700" />
-                          {(entry.status === 'pi-sent' || entry.status === 'payment-received') && (
+                          {(effectiveStatus === 'pi-sent' || effectiveStatus === 'payment-received') && (
                             <MenuItem icon={<FileText size={13} />} label="Send PI" onClick={() => openSendPIModal(entry)} accent />
                           )}
-                          {entry.status === 'payment-received' && (
+                          {effectiveStatus === 'payment-received' && (
                             <MenuItem icon={<Receipt size={13} />} label="Send Invoice" onClick={() => openSendInvoiceModal(entry)} accent />
                           )}
-                          {entry.status !== 'subscription-enabled' && (
-                            <MenuItem icon={<IndianRupee size={13} />} label="Record Payment" onClick={() => { onRecordPayment?.(entry.id); setOpenMenu(null) }} accent />
-                          )}
-                          {(entry.status === 'payment-received' || entry.status === 'invoice-sent') && (
+                          {(effectiveStatus === 'payment-received' || effectiveStatus === 'invoice-sent') && (
                             <>
                               <div className="my-1 border-t border-neutral-100 dark:border-neutral-700" />
                               <MenuItem icon={<UserCheck size={13} />} label="Convert to Customer" onClick={() => { onConvertToCustomer?.(entry.id); setOpenMenu(null) }} highlight />
                             </>
                           )}
-                          {entry.status === 'subscription-enabled' && entry.customerId && (
+                          {effectiveStatus === 'subscription-enabled' && entry.customerId && (
                             <>
                               <div className="my-1 border-t border-neutral-100 dark:border-neutral-700" />
                               <div className="px-3 py-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5">
@@ -513,21 +750,23 @@ export function AccountsList({
                       </>
                     )}
                   </div>
+                  </div>
                 </div>
               )
             })
           )}
 
-          {/* Table footer */}
+          {/* Table footer — pagination */}
           {filtered.length > 0 && (
-            <div className="px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-              <p className="text-xs text-neutral-400 dark:text-neutral-500">
-                {filtered.length} {filtered.length === 1 ? 'entry' : 'entries'}
-                {activeTab !== 'all' && ` in ${TABS.find((t) => t.key === activeTab)?.label}`}
-              </p>
-              <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-300 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
-                Total: {formatCurrency(filtered.reduce((sum, e) => sum + e.quotationAmount, 0))}
-              </p>
+            <div className="border-t border-neutral-200 dark:border-neutral-800">
+              <Pagination
+                page={page}
+                pageSize={pageSize}
+                totalItems={filtered.length}
+                onPageChange={setPage}
+                onPageSizeChange={setPageSize}
+                itemLabel="entries"
+              />
             </div>
           )}
       </div>
@@ -552,13 +791,6 @@ export function AccountsList({
           >
             <FileText size={12} />
             Send Invoice
-          </button>
-          <button
-            onClick={() => { selectedIds.forEach(id => onRecordPayment?.(id)); setSelectedIds(new Set()) }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-200 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition-colors cursor-pointer"
-          >
-            <IndianRupee size={12} />
-            Mark Payment
           </button>
           <div className="w-px h-5 bg-neutral-700 dark:bg-neutral-600" />
           <button
@@ -770,6 +1002,37 @@ export function AccountsList({
                   className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Attachments</label>
+                {sendPIModal.attachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {sendPIModal.attachments.map((file, i) => (
+                      <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                        <FileText size={11} />
+                        {file}
+                        <button
+                          onClick={() => setSendPIModal({ ...sendPIModal, attachments: sendPIModal.attachments.filter((_, idx) => idx !== i) })}
+                          className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const names = ['Invoice.pdf', 'Quotation.pdf', 'Engagement_Letter.pdf', 'Service_Agreement.pdf', 'Tax_Certificate.pdf']
+                    const randomFile = names[Math.floor(Math.random() * names.length)]
+                    setSendPIModal({ ...sendPIModal, attachments: [...sendPIModal.attachments, randomFile] })
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                >
+                  <Paperclip size={12} />
+                  Add Attachment
+                </button>
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -828,6 +1091,37 @@ export function AccountsList({
                   className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Attachments</label>
+                {sendInvoiceModal.attachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {sendInvoiceModal.attachments.map((file, i) => (
+                      <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                        <FileText size={11} />
+                        {file}
+                        <button
+                          onClick={() => setSendInvoiceModal({ ...sendInvoiceModal, attachments: sendInvoiceModal.attachments.filter((_, idx) => idx !== i) })}
+                          className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const names = ['Invoice.pdf', 'Quotation.pdf', 'Engagement_Letter.pdf', 'Service_Agreement.pdf', 'Tax_Certificate.pdf']
+                    const randomFile = names[Math.floor(Math.random() * names.length)]
+                    setSendInvoiceModal({ ...sendInvoiceModal, attachments: [...sendInvoiceModal.attachments, randomFile] })
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                >
+                  <Paperclip size={12} />
+                  Add Attachment
+                </button>
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -847,6 +1141,85 @@ export function AccountsList({
               className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
             >
               Send Invoice
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── View Quotation Modal ──────────────────────────────────────── */}
+      <Dialog open={viewQuotation !== null} onOpenChange={(open) => { if (!open) setViewQuotation(null) }}>
+        <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Quotation Details</DialogTitle>
+            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
+              {viewQuotation?.name}
+            </DialogDescription>
+          </DialogHeader>
+          {viewQuotation && (() => {
+            const subtotal = viewQuotation.quotationAmount
+            const taxRate = 18
+            const taxAmount = Math.round((subtotal * taxRate) / 100)
+            const total = subtotal + taxAmount
+            const cfg = STATUS_CONFIG[getStatus(viewQuotation)]
+            return (
+              <div className="rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/40 px-5 py-4">
+                <div className="mb-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-[12px] font-semibold text-neutral-800 dark:text-neutral-200"
+                      style={{ fontFamily: '"IBM Plex Mono", monospace' }}
+                    >
+                      {viewQuotation.quotationRef}
+                    </span>
+                    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${cfg.bg} ${cfg.text}`}>
+                      {cfg.label}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
+                    {formatDate(viewQuotation.piSentDate)}
+                  </span>
+                </div>
+
+                <div className="mb-2.5 space-y-1">
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-neutral-600 dark:text-neutral-300">{viewQuotation.serviceInterest}</span>
+                    <span
+                      className="text-neutral-500 dark:text-neutral-400"
+                      style={{ fontFamily: '"IBM Plex Mono", monospace' }}
+                    >
+                      {formatCurrency(subtotal)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 border-t border-neutral-100 pt-2.5 dark:border-neutral-700/40">
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-neutral-500">Subtotal</span>
+                    <span className="text-neutral-700 dark:text-neutral-200" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12px]">
+                    <span className="text-neutral-500">GST ({taxRate}%)</span>
+                    <span className="text-neutral-700 dark:text-neutral-200" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{formatCurrency(taxAmount)}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-700/50">
+                    <span className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">Total</span>
+                    <span className="text-[16px] font-bold text-neutral-900 dark:text-neutral-50" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{formatCurrency(total)}</span>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex items-center gap-2 text-[10px] text-neutral-400 dark:text-neutral-500 border-t border-neutral-100 pt-2.5 dark:border-neutral-700/40">
+                  <UserCheck size={11} />
+                  <span>Wealth Manager: {viewQuotation.wealthManagerName}</span>
+                </div>
+              </div>
+            )
+          })()}
+          <DialogFooter>
+            <button
+              onClick={() => setViewQuotation(null)}
+              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+            >
+              Close
             </button>
           </DialogFooter>
         </DialogContent>
@@ -877,7 +1250,7 @@ function KpiCard({
   trend?: { direction: 'up' | 'down'; label: string }
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
       <div className="flex items-center justify-between mb-2">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
           <span className={iconColor}>{icon}</span>

@@ -1,4 +1,6 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { useInitialLoading } from '@/lib/use-initial-loading'
+import { Skeleton } from '@/components/ui/skeleton'
 import type {
   DashboardHomeProps,
   KpiStats,
@@ -33,6 +35,8 @@ import {
   Target,
   TrendingUp,
   GitMerge,
+  Sparkles,
+  X,
 } from 'lucide-react'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -323,7 +327,7 @@ function CaseStatusDonut({ data, total }: { data: { status: string; count: numbe
   const hovered = hoverIndex !== null ? data[hoverIndex] : null
 
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
       <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
         <div className="flex items-center justify-between">
           <div>
@@ -399,7 +403,7 @@ function CaseStatusDonut({ data, total }: { data: { status: string; count: numbe
                   {item.count}
                 </span>
                 <span className="text-[10px] text-neutral-500 font-mono w-8 text-right">
-                  {((item.count / total) * 100).toFixed(0)}%
+                  {total > 0 ? ((item.count / total) * 100).toFixed(0) : 0}%
                 </span>
               </div>
             </div>
@@ -427,7 +431,7 @@ function KpiCard({
 }) {
   return (
     <div
-      className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow"
+      className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between mb-2">
         <p className="text-[11px] font-medium text-neutral-600 dark:text-neutral-400 uppercase tracking-wider leading-tight">
@@ -472,7 +476,7 @@ function ChartCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
       <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
         <div className="flex items-center justify-between">
           <div>
@@ -509,8 +513,44 @@ export function DashboardHome({
   onPendingItemClick,
 }: DashboardHomeProps) {
   const [selectedPreset, setSelectedPreset] = useState<string>('This Month')
+  const isLoading = useInitialLoading()
 
   const firstName = user.name.split(' ')[0]
+
+  // ─── Since-last-visit banner ─────────────────────────────────────────
+  const STORAGE_KEY = 'wills24:lastVisitedAt'
+  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [lastVisitedAt, setLastVisitedAt] = useState<string | null>(null)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    setLastVisitedAt(stored)
+  }, [])
+
+  const sinceLastVisit = useMemo(() => {
+    // Use the most recent activity as the "now" anchor (data uses 2026-04 dates)
+    if (!activityFeed.length) return { total: 0, byType: {} as Record<string, number> }
+    const anchor = Math.max(...activityFeed.map((a) => new Date(a.timestamp).getTime()))
+    // Default cutoff: 24h before the most recent activity, so first-time users see "new" items
+    const cutoff = lastVisitedAt
+      ? new Date(lastVisitedAt).getTime()
+      : anchor - 24 * 60 * 60 * 1000
+    const recent = activityFeed.filter((a) => new Date(a.timestamp).getTime() > cutoff)
+    const byType: Record<string, number> = {}
+    recent.forEach((a) => {
+      byType[a.entityType] = (byType[a.entityType] ?? 0) + 1
+    })
+    return { total: recent.length, byType }
+  }, [activityFeed, lastVisitedAt])
+
+  function dismissBanner() {
+    setBannerDismissed(true)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(STORAGE_KEY, new Date().toISOString())
+    }
+  }
+
+  const showSinceBanner = !bannerDismissed && sinceLastVisit.total > 0
 
   // Scale data based on selected timeframe
   const scaledKpiStats = useMemo(() => scaleKpis(kpiStats, selectedPreset), [kpiStats, selectedPreset])
@@ -612,7 +652,7 @@ export function DashboardHome({
       iconColor: 'text-violet-500',
     },
     {
-      label: 'Wills Remaining',
+      label: 'Cases Remaining',
       value: scaledKpiStats.willsRemaining.toString(),
       icon: FileText,
 
@@ -625,6 +665,64 @@ export function DashboardHome({
       iconColor: 'text-violet-400',
     },
   ]
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 pb-8">
+        {/* Greeting */}
+        <div className="flex items-end justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-72" />
+            <Skeleton className="h-3 w-48" />
+          </div>
+          <Skeleton className="h-9 w-64" />
+        </div>
+        {/* KPIs */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 space-y-2"
+            >
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-7 w-24" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          ))}
+        </div>
+        {/* Charts row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 space-y-3"
+            >
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-44 w-full" />
+            </div>
+          ))}
+        </div>
+        {/* Charts row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 space-y-3"
+            >
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-44 w-full" />
+            </div>
+          ))}
+        </div>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-14 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 pb-8">
@@ -693,7 +791,7 @@ export function DashboardHome({
         />
 
         {/* Recent Activity */}
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
             <div className="flex items-center justify-between">
               <div>
@@ -709,13 +807,15 @@ export function DashboardHome({
               const dotColor = ROLE_DOT[item.actorRole] || 'bg-neutral-400'
               const EntityIcon = ENTITY_ICONS[item.entityType] || CircleDot
               return (
-                <div
+                <button
                   key={item.id}
-                  className="px-5 py-3 flex items-start gap-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                  type="button"
                   onClick={() => onActivityClick?.(item.entityType, item.entityId)}
+                  className="group w-full px-5 py-3 flex items-center gap-3 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                  aria-label={`${item.actor} ${item.action} — open ${item.entityType}`}
                 >
                   <div
-                    className={`w-7 h-7 rounded-full ${dotColor} flex items-center justify-center shrink-0 mt-0.5`}
+                    className={`w-7 h-7 rounded-full ${dotColor} flex items-center justify-center shrink-0`}
                   >
                     <EntityIcon className="w-3 h-3 text-white" />
                   </div>
@@ -726,14 +826,14 @@ export function DashboardHome({
                       </span>{' '}
                       {item.action}
                     </p>
-                    <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">
-                      {item.entityName}
-                    </p>
                   </div>
                   <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono whitespace-nowrap shrink-0">
                     {timeAgo(item.timestamp)}
                   </span>
-                </div>
+                  <ChevronRight
+                    className="w-3.5 h-3.5 shrink-0 text-neutral-300 dark:text-neutral-600 opacity-0 group-hover:opacity-100 group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-opacity"
+                  />
+                </button>
               )
             })}
           </div>
@@ -784,7 +884,7 @@ export function DashboardHome({
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 mb-3">
           Quick Actions
         </h3>
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
           {quickActions.map((action) => {
             const Icon = ACTION_ICONS[action.icon] || CircleDot
             const modStyle =
@@ -794,14 +894,14 @@ export function DashboardHome({
               <button
                 key={action.id}
                 onClick={() => onQuickAction?.(action.id)}
-                className="flex flex-col items-center gap-2 p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-orange-300 dark:hover:border-orange-700 hover:shadow-md transition-all group"
+                className="flex items-center gap-3 p-3 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none hover:border-orange-300 dark:hover:border-orange-700 hover:shadow-md transition-all group text-left cursor-pointer"
               >
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center ${modStyle} group-hover:scale-110 transition-transform`}
+                  className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center ${modStyle} group-hover:scale-110 transition-transform`}
                 >
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-[11px] font-medium text-neutral-700 dark:text-neutral-300 text-center leading-tight">
+                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300 leading-tight">
                   {action.label}
                 </span>
               </button>

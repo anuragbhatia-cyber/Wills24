@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatCurrency, formatDate, timeAgo } from '@/lib/format'
 import {
   ArrowLeft,
   Pencil,
@@ -18,8 +19,6 @@ import {
   Crown,
   Award,
   Medal,
-  MessageSquare,
-  Plus,
   ArrowUpRight,
   ArrowDownLeft,
   FileText,
@@ -29,6 +28,8 @@ import {
   ChevronRight,
   Gem,
   Package,
+  User,
+  Scale,
 } from 'lucide-react'
 import {
   Dialog,
@@ -38,10 +39,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { AddWMForm } from './AddWMForm'
 import type {
   WMDetailProps,
   WealthManager,
-  WMFollowUp,
   WMWalletTransaction,
   WMTeamMember,
   WMCustomer,
@@ -49,8 +50,6 @@ import type {
   WMPackageStatus,
   WMTier,
   WMStatus,
-  WMFollowUpType,
-  WMAuthorRole,
   WalletTransactionType,
   TeamMemberStatus,
 } from '@/../product/sections/partners/types'
@@ -59,13 +58,14 @@ import type {
 // Constants
 // ---------------------------------------------------------------------------
 
-type TabKey = 'followups' | 'wallet' | 'team' | 'customers' | 'packages'
+type TabKey = 'details' | 'wallet' | 'team' | 'customers' | 'cases' | 'packages'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: 'followups', label: 'Follow-ups', icon: <MessageSquare size={14} /> },
+  { key: 'details', label: 'Details', icon: <User size={14} /> },
   { key: 'wallet', label: 'Wallet', icon: <Wallet size={14} /> },
   { key: 'team', label: 'Team', icon: <Users size={14} /> },
   { key: 'customers', label: 'Customers', icon: <Briefcase size={14} /> },
+  { key: 'cases', label: 'Cases', icon: <Scale size={14} /> },
   { key: 'packages', label: 'Packages', icon: <Package size={14} /> },
 ]
 
@@ -74,16 +74,6 @@ const TIER_CONFIG: Record<WMTier, { label: string; icon: React.ReactNode; bg: st
   gold: { label: 'Gold', icon: <Crown size={12} />, bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-800/60' },
   silver: { label: 'Silver', icon: <Award size={12} />, bg: 'bg-neutral-100 dark:bg-neutral-800', text: 'text-neutral-600 dark:text-neutral-400', border: 'border-neutral-300 dark:border-neutral-700' },
   bronze: { label: 'Bronze', icon: <Medal size={12} />, bg: 'bg-orange-50 dark:bg-orange-950/20', text: 'text-orange-700 dark:text-orange-400', border: 'border-orange-200 dark:border-orange-800/60' },
-}
-
-const FOLLOWUP_TYPE_CONFIG: Record<WMFollowUpType, { label: string; bg: string; text: string }> = {
-  meeting: { label: 'Meeting', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-400' },
-  update: { label: 'Update', bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400' },
-}
-
-const AUTHOR_ROLE_CONFIG: Record<WMAuthorRole, { label: string; bg: string; text: string }> = {
-  admin: { label: 'Admin', bg: 'bg-orange-50 dark:bg-orange-950/20', text: 'text-orange-700 dark:text-orange-400' },
-  operations: { label: 'Operations', bg: 'bg-sky-50 dark:bg-sky-950/20', text: 'text-sky-700 dark:text-sky-400' },
 }
 
 const TXN_TYPE_CONFIG: Record<WalletTransactionType, { label: string; icon: React.ReactNode; color: string; sign: string }> = {
@@ -113,36 +103,11 @@ const PERMISSION_LABELS: Record<string, string> = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount)
-}
-
 function formatCurrencyShort(amount: number) {
   if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(2)}Cr`
   if (amount >= 100000) return `₹${(amount / 100000).toFixed(2)}L`
   if (amount >= 1000) return `₹${(amount / 1000).toFixed(1)}K`
   return `₹${amount.toLocaleString('en-IN')}`
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-}
-
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return `${days}d ago`
-  if (days < 30) return `${Math.floor(days / 7)}w ago`
-  return `${Math.floor(days / 30)}mo ago`
 }
 
 function getInitials(name: string) {
@@ -170,41 +135,23 @@ function getAvatarColor(name: string) {
 
 export function WMDetail({
   wealthManager: wm,
-  followUps,
   walletTransactions,
   teamMembers,
   customers,
   packages,
   onEdit,
   onToggleStatus,
-  onAddFollowUp,
   onViewCustomer,
   onAddTeamMember,
   onBack,
 }: WMDetailProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>('followups')
+  const [activeTab, setActiveTab] = useState<TabKey>('details')
   const tierCfg = TIER_CONFIG[wm.tier]
 
   // Modal states
   const [showEditModal, setShowEditModal] = useState(false)
   const [showToggleStatus, setShowToggleStatus] = useState(false)
-  const [showAddFollowUp, setShowAddFollowUp] = useState(false)
   const [showAddTeamMember, setShowAddTeamMember] = useState(false)
-
-  const [editForm, setEditForm] = useState({
-    name: wm.name,
-    email: wm.email,
-    phone: wm.phone,
-    company: wm.company.name,
-    tier: wm.tier as WMTier,
-    status: wm.status as WMStatus,
-  })
-
-  const [followUpForm, setFollowUpForm] = useState({
-    date: '',
-    type: 'meeting' as 'meeting' | 'update',
-    notes: '',
-  })
 
   const [teamMemberForm, setTeamMemberForm] = useState({
     name: '',
@@ -213,26 +160,30 @@ export function WMDetail({
     designation: '',
   })
 
-  function handleEditSave() {
-    onEdit?.()
-    setShowEditModal(false)
-  }
-
   function handleToggleStatusConfirm() {
     onToggleStatus?.()
     setShowToggleStatus(false)
-  }
-
-  function handleAddFollowUpSave() {
-    onAddFollowUp?.()
-    setShowAddFollowUp(false)
-    setFollowUpForm({ date: '', type: 'meeting', notes: '' })
   }
 
   function handleAddTeamMemberSave() {
     onAddTeamMember?.()
     setShowAddTeamMember(false)
     setTeamMemberForm({ name: '', email: '', phone: '', designation: '' })
+  }
+
+  // Early return: render AddWMForm in edit mode when Edit Profile is invoked
+  if (showEditModal) {
+    return (
+      <AddWMForm
+        mode="edit"
+        initialData={wm}
+        onCancel={() => setShowEditModal(false)}
+        onSubmit={() => {
+          onEdit?.()
+          setShowEditModal(false)
+        }}
+      />
+    )
   }
 
   return (
@@ -312,46 +263,6 @@ export function WMDetail({
             <QuickStat label="Wills Left" value={wm.willsRemaining} />
             <QuickStat label="Wills Used" value={wm.willsUsed} />
           </div>
-
-          {/* Company + Permissions row */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-5 pt-4 border-t border-neutral-100 dark:border-neutral-800/60">
-            {/* Company */}
-            {wm.company.name ? (
-              <div className="flex items-start gap-2 min-w-0">
-                <Building2 size={14} className="text-neutral-400 dark:text-neutral-500 mt-0.5 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300">{wm.company.name}</p>
-                  <div className="flex items-center gap-3 mt-0.5 text-[10px] text-neutral-400 dark:text-neutral-500 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
-                    {wm.company.gstNumber && <span>GST: {wm.company.gstNumber}</span>}
-                    {wm.company.panNumber && <span>PAN: {wm.company.panNumber}</span>}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-xs text-neutral-400 dark:text-neutral-500">
-                <Building2 size={14} />
-                <span className="italic">Individual partner (no company)</span>
-              </div>
-            )}
-
-            {/* Permissions */}
-            <div className="flex items-start gap-2 sm:ml-auto">
-              <Shield size={14} className="text-neutral-400 dark:text-neutral-500 mt-0.5 shrink-0" />
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {wm.permissions.map((p) => (
-                  <span key={p} className="inline-block px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded">
-                    {PERMISSION_LABELS[p] || p}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Date info */}
-          <div className="flex items-center gap-4 mt-3 text-[10px] text-neutral-400 dark:text-neutral-500">
-            <span className="flex items-center gap-1"><Calendar size={10} /> Joined {formatDate(wm.joinedAt)}</span>
-            <span className="flex items-center gap-1"><Clock size={10} /> Last active {timeAgo(wm.lastActive)}</span>
-          </div>
         </div>
       </div>
 
@@ -361,10 +272,11 @@ export function WMDetail({
           {TABS.map((tab) => {
             const isActive = activeTab === tab.key
             const count =
-              tab.key === 'followups' ? followUps.length :
+              tab.key === 'details' ? null :
               tab.key === 'wallet' ? walletTransactions.length :
               tab.key === 'team' ? teamMembers.length :
               tab.key === 'customers' ? customers.length :
+              tab.key === 'cases' ? customers.reduce((sum, c) => sum + c.totalCases, 0) :
               packages.length
             return (
               <button
@@ -378,9 +290,11 @@ export function WMDetail({
               >
                 {tab.icon}
                 {tab.label}
-                <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
-                  {count}
-                </span>
+                {count !== null && (
+                  <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
+                    {count}
+                  </span>
+                )}
               </button>
             )
           })}
@@ -389,8 +303,8 @@ export function WMDetail({
 
       {/* ── Tab Content ─────────────────────────────────────────────────── */}
       <div>
-        {activeTab === 'followups' && (
-          <FollowUpsTab followUps={followUps} onAddFollowUp={() => setShowAddFollowUp(true)} />
+        {activeTab === 'details' && (
+          <DetailsTab wm={wm} />
         )}
         {activeTab === 'wallet' && (
           <WalletTab transactions={walletTransactions} />
@@ -401,98 +315,13 @@ export function WMDetail({
         {activeTab === 'customers' && (
           <CustomersTab customers={customers} onViewCustomer={onViewCustomer} />
         )}
+        {activeTab === 'cases' && (
+          <CasesTab customers={customers} onViewCustomer={onViewCustomer} />
+        )}
         {activeTab === 'packages' && (
           <PackagesTab packages={packages} />
         )}
       </div>
-
-      {/* ── Edit WM Modal ─────────────────────────────────────────────── */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-          <DialogHeader>
-            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Edit Partner</DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
-              Update partner profile information.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Name</label>
-              <input
-                type="text"
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-              <input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Phone</label>
-              <input
-                type="tel"
-                value={editForm.phone}
-                onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Company</label>
-              <input
-                type="text"
-                value={editForm.company}
-                onChange={(e) => setEditForm((f) => ({ ...f, company: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tier</label>
-              <select
-                value={editForm.tier}
-                onChange={(e) => setEditForm((f) => ({ ...f, tier: e.target.value as WMTier }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="platinum">Platinum</option>
-                <option value="gold">Gold</option>
-                <option value="silver">Silver</option>
-                <option value="bronze">Bronze</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
-              <select
-                value={editForm.status}
-                onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value as WMStatus }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowEditModal(false)}
-              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleEditSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
-            >
-              Save Changes
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* ── Toggle Status Confirmation Modal ──────────────────────────── */}
       <Dialog open={showToggleStatus} onOpenChange={setShowToggleStatus}>
@@ -520,64 +349,6 @@ export function WMDetail({
               }
             >
               {wm.status === 'active' ? 'Deactivate' : 'Activate'}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Add Follow-up Modal ───────────────────────────────────────── */}
-      <Dialog open={showAddFollowUp} onOpenChange={setShowAddFollowUp}>
-        <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
-          <DialogHeader>
-            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Add Follow-up</DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
-              Record a new follow-up interaction with this partner.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Date</label>
-              <input
-                type="date"
-                value={followUpForm.date}
-                onChange={(e) => setFollowUpForm((f) => ({ ...f, date: e.target.value }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Type</label>
-              <select
-                value={followUpForm.type}
-                onChange={(e) => setFollowUpForm((f) => ({ ...f, type: e.target.value as 'meeting' | 'update' }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="meeting">Meeting</option>
-                <option value="update">Update</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Notes</label>
-              <textarea
-                rows={3}
-                value={followUpForm.notes}
-                onChange={(e) => setFollowUpForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder="Add follow-up details..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowAddFollowUp(false)}
-              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleAddFollowUpSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
-            >
-              Add Follow-up
             </button>
           </DialogFooter>
         </DialogContent>
@@ -658,72 +429,82 @@ export function WMDetail({
 // Tab Components
 // ===========================================================================
 
-// ── Follow-ups Tab ──────────────────────────────────────────────────────────
+// ── Details Tab ─────────────────────────────────────────────────────────────
 
-function FollowUpsTab({
-  followUps,
-  onAddFollowUp,
-}: {
-  followUps: WMFollowUp[]
-  onAddFollowUp?: () => void
-}) {
-  const sorted = [...followUps].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-
+function DetailsTab({ wm }: { wm: WealthManager }) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Follow-up Timeline</h2>
-        <button
-          onClick={onAddFollowUp}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
-        >
-          <Plus size={12} />
-          Add Follow-up
-        </button>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Contact */}
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
+          <User size={14} className="text-orange-500" />
+          Contact Information
+        </h3>
+        <div className="space-y-3">
+          <DetailRow icon={<Mail size={13} />} label="Email" value={wm.email} />
+          <DetailRow icon={<Phone size={13} />} label="Phone" value={wm.phone} />
+          <DetailRow icon={<Calendar size={13} />} label="Date of Birth" value={wm.dob || '—'} />
+          <DetailRow icon={<User size={13} />} label="Gender" value={wm.gender === 'male' ? 'Male' : 'Female'} />
+        </div>
       </div>
 
-      {sorted.length === 0 ? (
-        <EmptyState icon={<MessageSquare size={32} />} title="No follow-ups yet" subtitle="Add the first follow-up to start tracking interactions" />
-      ) : (
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-[15px] top-2 bottom-2 w-px bg-neutral-200 dark:bg-neutral-800" />
-
-          <div className="space-y-0">
-            {sorted.map((fu, idx) => {
-              const typeCfg = FOLLOWUP_TYPE_CONFIG[fu.type]
-              const roleCfg = AUTHOR_ROLE_CONFIG[fu.authorRole]
-              return (
-                <div key={fu.id} className="relative pl-10 pb-6">
-                  {/* Dot */}
-                  <div className={`absolute left-[10px] top-1.5 w-[11px] h-[11px] rounded-full border-2 border-white dark:border-neutral-950 ${fu.type === 'meeting' ? 'bg-blue-500' : 'bg-violet-500'}`} />
-
-                  <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{fu.title}</h3>
-                          <span className={`inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded ${typeCfg.bg} ${typeCfg.text}`}>
-                            {typeCfg.label}
-                          </span>
-                        </div>
-                        <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">{fu.notes}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 mt-3 text-[10px] text-neutral-400 dark:text-neutral-500">
-                      <span className="font-medium text-neutral-600 dark:text-neutral-300">{fu.author}</span>
-                      <span className={`inline-block px-1.5 py-0.5 rounded font-medium ${roleCfg.bg} ${roleCfg.text}`}>
-                        {roleCfg.label}
-                      </span>
-                      <span>{formatDate(fu.createdAt)}</span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+      {/* Address */}
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
+          <MapPin size={14} className="text-orange-500" />
+          Address
+        </h3>
+        <div className="space-y-3">
+          <DetailRow icon={<MapPin size={13} />} label="Country" value={wm.address.country} />
+          <DetailRow icon={<MapPin size={13} />} label="State" value={wm.address.state || '—'} />
+          <DetailRow icon={<MapPin size={13} />} label="City" value={wm.address.city || '—'} />
+          {wm.address.area && <DetailRow icon={<MapPin size={13} />} label="Area" value={wm.address.area} />}
+          {wm.address.address && <DetailRow icon={<MapPin size={13} />} label="Address" value={wm.address.address} />}
+          {wm.address.pinCode && <DetailRow icon={<MapPin size={13} />} label="PIN Code" value={wm.address.pinCode} />}
         </div>
-      )}
+      </div>
+
+      {/* Company */}
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 md:col-span-2">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
+          <Building2 size={14} className="text-orange-500" />
+          Company Details
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <DetailRow icon={<Building2 size={13} />} label="Company Name" value={wm.company.name || 'Individual'} />
+          {wm.company.email && <DetailRow icon={<Mail size={13} />} label="Company Email" value={wm.company.email} />}
+          {wm.company.gstNumber && <DetailRow icon={<FileText size={13} />} label="GST Number" value={wm.company.gstNumber} mono />}
+          <DetailRow icon={<FileText size={13} />} label="PAN Number" value={wm.company.panNumber || '—'} mono />
+          {wm.company.bankName && <DetailRow icon={<Building2 size={13} />} label="Bank Name" value={wm.company.bankName} />}
+          {wm.company.accountNumber && <DetailRow icon={<FileText size={13} />} label="Account Number" value={wm.company.accountNumber} mono />}
+          {wm.company.ifscCode && <DetailRow icon={<FileText size={13} />} label="IFSC Code" value={wm.company.ifscCode} mono />}
+          {wm.company.branch && <DetailRow icon={<MapPin size={13} />} label="Branch" value={wm.company.branch} />}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DetailRow({
+  icon,
+  label,
+  value,
+  mono,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: string
+  mono?: boolean
+}) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <span className="text-neutral-400 dark:text-neutral-500 mt-0.5 shrink-0">{icon}</span>
+      <div className="min-w-0">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{label}</p>
+        <p className={`text-sm text-neutral-700 dark:text-neutral-200 mt-0.5 ${mono ? 'font-[family-name:var(--font-mono,\'IBM_Plex_Mono\',ui-monospace,monospace)]' : ''}`}>
+          {value}
+        </p>
+      </div>
     </div>
   )
 }
@@ -740,19 +521,19 @@ function WalletTab({ transactions }: { transactions: WMWalletTransaction[] }) {
     <div>
       {/* Wallet summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">Total Purchased</p>
           <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {totalPurchased}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 mb-0.5">Total Used</p>
           <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {totalUsed}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-red-500 dark:text-red-400 mb-0.5">Total Spent</p>
           <p className="text-xl font-bold text-red-500 dark:text-red-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {formatCurrency(totalSpent)}
@@ -761,7 +542,7 @@ function WalletTab({ transactions }: { transactions: WMWalletTransaction[] }) {
       </div>
 
       {/* Transaction list */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Transaction History</h3>
         </div>
@@ -840,7 +621,7 @@ function TeamTab({
       {teamMembers.length === 0 ? (
         <EmptyState icon={<Users size={32} />} title="No team members" subtitle="This partner hasn't added any team members yet" />
       ) : (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
           {/* Desktop table header */}
           <div className="hidden sm:grid grid-cols-[minmax(140px,2fr)_minmax(120px,1.5fr)_minmax(100px,1fr)_100px_80px_80px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             <span>Name</span>
@@ -931,7 +712,7 @@ function CustomersTab({
           {customers.map((cust) => (
             <div
               key={cust.id}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 hover:border-orange-300 dark:hover:border-orange-800 transition-colors cursor-pointer group"
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 hover:border-orange-300 dark:hover:border-orange-800 transition-colors cursor-pointer group"
               onClick={() => onViewCustomer?.(cust.customerId)}
             >
               <div className="flex items-start justify-between gap-3">
@@ -979,6 +760,116 @@ function CustomersTab({
   )
 }
 
+// ── Cases Tab ───────────────────────────────────────────────────────────────
+
+function CasesTab({
+  customers,
+  onViewCustomer,
+}: {
+  customers: WMCustomer[]
+  onViewCustomer?: (customerId: string) => void
+}) {
+  // Synthesize a flat per-case list from each customer's totalCases / activeCases.
+  const rows = customers.flatMap((cust) => {
+    const list: { caseId: string; customerId: string; customerName: string; serviceType: string; status: 'in-progress' | 'completed' }[] = []
+    for (let i = 0; i < cust.totalCases; i++) {
+      list.push({
+        caseId: `${cust.customerId}-${String(i + 1).padStart(2, '0')}`,
+        customerId: cust.customerId,
+        customerName: cust.customerName,
+        serviceType: cust.serviceType,
+        status: i < cust.activeCases ? 'in-progress' : 'completed',
+      })
+    }
+    return list
+  })
+
+  const total = rows.length
+  const active = rows.filter((r) => r.status === 'in-progress').length
+  const completed = rows.filter((r) => r.status === 'completed').length
+
+  return (
+    <div>
+      {/* Summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">Total Cases</p>
+          <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">{total}</p>
+        </div>
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">In Progress</p>
+          <p className="text-xl font-bold text-blue-600 dark:text-blue-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">{active}</p>
+        </div>
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">Completed</p>
+          <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">{completed}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">All Cases</h2>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">{total} case{total !== 1 ? 's' : ''}</p>
+      </div>
+
+      {total === 0 ? (
+        <EmptyState icon={<Scale size={32} />} title="No cases yet" subtitle="Cases linked to this partner's customers will appear here" />
+      ) : (
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
+          {/* Header */}
+          <div className="hidden lg:grid grid-cols-[120px_minmax(140px,1.5fr)_minmax(140px,1fr)_100px_24px] gap-2 px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+            <span>Case ID</span>
+            <span>Customer</span>
+            <span>Service Type</span>
+            <span className="text-center">Status</span>
+            <span />
+          </div>
+
+          {rows.map((r, idx) => {
+            const statusCfg = r.status === 'in-progress'
+              ? { label: 'In Progress', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-400' }
+              : { label: 'Completed', bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-400' }
+            const isLast = idx === rows.length - 1
+
+            return (
+              <div
+                key={r.caseId}
+                onClick={() => onViewCustomer?.(r.customerId)}
+                className={`flex lg:grid lg:grid-cols-[120px_minmax(140px,1.5fr)_minmax(140px,1fr)_100px_24px] gap-3 px-4 py-3 items-center hover:bg-neutral-50 dark:hover:bg-neutral-800/30 transition-colors cursor-pointer ${
+                  !isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''
+                }`}
+              >
+                <span className="hidden lg:inline text-xs font-medium text-neutral-500 dark:text-neutral-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
+                  {r.caseId}
+                </span>
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 lg:flex-initial">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${getAvatarColor(r.customerName)}`}>
+                    {getInitials(r.customerName)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{r.customerName}</p>
+                    <p className="lg:hidden text-[10px] text-neutral-400 dark:text-neutral-500 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">{r.caseId}</p>
+                  </div>
+                </div>
+                <div className="hidden lg:block min-w-0">
+                  <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded truncate max-w-full" title={r.serviceType}>
+                    {r.serviceType.length > 26 ? r.serviceType.slice(0, 24) + '…' : r.serviceType}
+                  </span>
+                </div>
+                <div className="flex lg:justify-center shrink-0">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap ${statusCfg.bg} ${statusCfg.text}`}>
+                    {statusCfg.label}
+                  </span>
+                </div>
+                <ChevronRight size={14} className="hidden lg:block text-neutral-300 dark:text-neutral-600" />
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Packages Tab ────────────────────────────────────────────────────────────
 
 function PackagesTab({ packages }: { packages: WMPackage[] }) {
@@ -991,19 +882,19 @@ function PackagesTab({ packages }: { packages: WMPackage[] }) {
     <div>
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">Total Wills Included</p>
           <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {totalWillsIncluded}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 mb-0.5">Wills Used</p>
           <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {totalWillsUsed}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3.5">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3.5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-violet-500 dark:text-violet-400 mb-0.5">Total Spent</p>
           <p className="text-xl font-bold text-violet-600 dark:text-violet-400 tracking-tight font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">
             {formatCurrency(totalSpent)}
@@ -1012,7 +903,7 @@ function PackagesTab({ packages }: { packages: WMPackage[] }) {
       </div>
 
       {/* Packages table */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="hidden sm:grid grid-cols-[80px_minmax(80px,1fr)_minmax(140px,1.5fr)_90px_90px_90px_70px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
           <span>Tier</span>
           <span>Wills</span>

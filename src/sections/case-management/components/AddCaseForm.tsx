@@ -5,7 +5,6 @@ import {
   User,
   Scale,
   Briefcase,
-  AlertTriangle,
   FileText,
   StickyNote,
   CheckSquare,
@@ -18,12 +17,12 @@ import {
   Search,
   Paperclip,
   Upload,
+  Loader2,
 } from 'lucide-react'
 import type {
   AddCaseFormProps,
   CustomerRef,
   Lawyer,
-  CasePriority,
 } from '@/../product/sections/case-management/types'
 
 // ---------------------------------------------------------------------------
@@ -38,12 +37,6 @@ const SERVICE_TYPES = [
   'Trust Advisory',
   'Succession Certificate',
 ] as const
-
-const PRIORITY_OPTIONS: { value: CasePriority; label: string; description: string; color: string }[] = [
-  { value: 'low', label: 'Low', description: 'Standard processing', color: 'border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800' },
-  { value: 'normal', label: 'Normal', description: 'Regular timeline', color: 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30' },
-  { value: 'high', label: 'High', description: 'Urgent attention', color: 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30' },
-]
 
 const DOCUMENT_CHECKLISTS: Record<string, string[]> = {
   'Will Drafting (Basic)': ['Property Documents', 'Beneficiary Details', 'ID Proofs', 'Witness Details'],
@@ -92,7 +85,6 @@ export function AddCaseForm({
     customerId: string
     serviceType: string
     lawyerId: string
-    priority: CasePriority
     description: string
     notes?: string
   }
@@ -105,9 +97,9 @@ export function AddCaseForm({
   const [lawyerId, setLawyerId] = useState(initialData?.lawyerId ?? '')
   const [lawyerSearch, setLawyerSearch] = useState('')
   const [lawyerDropdownOpen, setLawyerDropdownOpen] = useState(false)
-  const [priority, setPriority] = useState<CasePriority>(initialData?.priority ?? 'normal')
   const [description, setDescription] = useState(initialData?.description ?? '')
   const [notes, setNotes] = useState(initialData?.notes ?? '')
+  const [noteAttachments, setNoteAttachments] = useState<string[]>([])
   const [documents, setDocuments] = useState<string[]>([])
 
   // Derived
@@ -126,12 +118,17 @@ export function AddCaseForm({
   const checklist = serviceType ? (DOCUMENT_CHECKLISTS[serviceType] ?? []) : []
   const caseId = initialData?.caseId ?? ('W24-CASE-' + String(Math.floor(10000 + Math.random() * 90000)))
 
-  const isValid = customerId && serviceType && lawyerId && description.trim().length > 0
+  const isValid = customerId && serviceType && description.trim().length > 0
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!isValid) return
-    onSubmit?.({ customerId, serviceType, lawyerId, priority, description, notes })
+    if (!isValid || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      onSubmit?.({ customerId, serviceType, lawyerId, description, notes })
+      setIsSubmitting(false)
+    }, 600)
   }
 
   return (
@@ -239,7 +236,7 @@ export function AddCaseForm({
             </FormSection>
 
             {/* Lawyer Assignment */}
-            <FormSection icon={<Scale size={15} />} title="Assign Lawyer" description="Select a lawyer to handle this case">
+            <FormSection icon={<Scale size={15} />} title="Assign Lawyer" description="Optional — assign a lawyer to handle this case">
               <div className="relative">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                 <input
@@ -277,42 +274,6 @@ export function AddCaseForm({
               </div>
             </FormSection>
 
-            {/* Priority */}
-            <FormSection icon={<AlertTriangle size={15} />} title="Priority" description="Set the urgency level for this case">
-              <div className="grid grid-cols-3 gap-3">
-                {PRIORITY_OPTIONS.map(opt => {
-                  const isSelected = priority === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setPriority(opt.value)}
-                      className={`py-3 px-4 rounded-xl border-2 text-center transition-all cursor-pointer ${
-                        isSelected
-                          ? opt.value === 'high'
-                            ? 'border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-950/20 shadow-sm'
-                            : opt.value === 'normal'
-                              ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/20 shadow-sm'
-                              : 'border-neutral-400 dark:border-neutral-500 bg-neutral-100 dark:bg-neutral-800 shadow-sm'
-                          : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-600'
-                      }`}
-                    >
-                      <p className={`text-sm font-semibold ${
-                        isSelected
-                          ? opt.value === 'high' ? 'text-red-600 dark:text-red-400'
-                            : opt.value === 'normal' ? 'text-blue-600 dark:text-blue-400'
-                            : 'text-neutral-700 dark:text-neutral-300'
-                          : 'text-neutral-700 dark:text-neutral-300'
-                      }`}>
-                        {opt.label}
-                      </p>
-                      <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-0.5">{opt.description}</p>
-                    </button>
-                  )
-                })}
-              </div>
-            </FormSection>
-
             {/* Description */}
             <FormSection icon={<FileText size={15} />} title="Description" description="Describe the case details and requirements">
               <textarea
@@ -334,6 +295,37 @@ export function AddCaseForm({
                 placeholder="Add any internal observations, special instructions, or context..."
                 className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all resize-none"
               />
+              <div className="mt-3">
+                {noteAttachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {noteAttachments.map((file, i) => (
+                      <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                        <FileText size={11} />
+                        {file}
+                        <button
+                          type="button"
+                          onClick={() => setNoteAttachments(prev => prev.filter((_, idx) => idx !== i))}
+                          className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const names = ['Document.pdf', 'Agreement.pdf', 'ID_Proof.jpg', 'Court_Order.pdf', 'Will_Draft.docx', 'Receipt.pdf', 'Affidavit.pdf', 'Photo.png']
+                    const randomFile = names[Math.floor(Math.random() * names.length)]
+                    setNoteAttachments(prev => [...prev, randomFile])
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                >
+                  <Paperclip size={12} />
+                  Add Attachment
+                </button>
+              </div>
             </FormSection>
 
             {/* Documents */}
@@ -375,7 +367,7 @@ export function AddCaseForm({
           {/* Sidebar */}
           <div className="space-y-5">
             {/* Summary card */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 sticky top-4">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-5 sticky top-4">
               <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-4">Case Summary</h3>
               <div className="space-y-3">
                 <SummaryRow label="Case ID" value={caseId} mono />
@@ -385,26 +377,30 @@ export function AddCaseForm({
                 />
                 <SummaryRow label="Service" value={serviceType || '—'} />
                 <SummaryRow label="Lawyer" value={selectedLawyer?.name ?? '—'} />
-                <SummaryRow
-                  label="Priority"
-                  value={priority.charAt(0).toUpperCase() + priority.slice(1)}
-                  badge={
-                    priority === 'high' ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'
-                    : priority === 'normal' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
-                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
-                  }
-                />
               </div>
 
               <div className="mt-5 pt-4 border-t border-neutral-100 dark:border-neutral-800 space-y-2.5">
+                {!isValid && (
+                  <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-snug">
+                    {(() => {
+                      const missing: string[] = []
+                      if (!customerId) missing.push('Customer')
+                      if (!serviceType) missing.push('Service Type')
+                      if (!description.trim()) missing.push('Description')
+                      return `Required: ${missing.join(', ')}`
+                    })()}
+                  </p>
+                )}
                 <button
                   type="submit"
-                  disabled={!isValid}
+                  disabled={!isValid || isSubmitting}
                   onClick={handleSubmit}
                   className="w-full py-2.5 text-sm font-medium rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 bg-orange-500 text-white hover:bg-orange-500 shadow-sm flex items-center justify-center gap-1.5"
                 >
-                  <Send size={13} />
-                  {isEditMode ? 'Save Changes' : 'Create Case'}
+                  {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+                  {isSubmitting
+                    ? isEditMode ? 'Saving…' : 'Creating…'
+                    : isEditMode ? 'Save Changes' : 'Create Case'}
                 </button>
                 <button
                   type="button"
@@ -418,7 +414,7 @@ export function AddCaseForm({
 
             {/* Document checklist */}
             {checklist.length > 0 && (
-              <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+              <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <CheckSquare size={14} className="text-orange-500" />
                   <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">Document Checklist</h3>
@@ -458,7 +454,7 @@ function FormSection({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-5">
       <div className="flex items-center gap-2 mb-1">
         <span className="text-orange-500">{icon}</span>
         <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{title}</h2>

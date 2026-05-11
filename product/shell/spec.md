@@ -12,6 +12,7 @@ Wills24 Admin uses a sidebar + top bar layout pattern. A fixed sidebar on the le
 - Partners → /partners
 - Team Management → /team-management
 - Reports & Analytics → /reports-analytics
+- Lawyers Directory → /lawyers-directory
 
 ## User Menu
 Located in the top-right corner of the top bar. Displays user avatar (initials fallback), user name, and role. Dropdown contains Profile and Logout options.

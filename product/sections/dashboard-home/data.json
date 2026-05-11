@@ -283,11 +283,7 @@
     { "id": "qa-2", "label": "Create Case", "icon": "briefcase", "module": "case-management" },
     { "id": "qa-3", "label": "Create Quotation", "icon": "file-text", "module": "sales-crm" },
     { "id": "qa-4", "label": "Assign Lawyer", "icon": "scale", "module": "case-management" },
-    { "id": "qa-5", "label": "Add Partner", "icon": "handshake", "module": "partners" },
-    { "id": "qa-6", "label": "Process Payout", "icon": "wallet", "module": "accounts" },
-    { "id": "qa-7", "label": "Generate Invoice", "icon": "receipt", "module": "accounts" },
-    { "id": "qa-8", "label": "Upload Document", "icon": "upload", "module": "case-management" },
-    { "id": "qa-9", "label": "Schedule Follow-up", "icon": "calendar", "module": "sales-crm" }
+    { "id": "qa-5", "label": "Add Partner", "icon": "handshake", "module": "partners" }
   ],
   "user": {
     "name": "Anurag Bhatia",

@@ -20,6 +20,7 @@ import {
   Landmark,
   ChevronDown,
   Check,
+  Loader2,
 } from 'lucide-react'
 import type {
   AddWMFormProps,
@@ -68,37 +69,39 @@ const INDIAN_STATES = [
 // Component
 // ---------------------------------------------------------------------------
 
-export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
+export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: AddWMFormProps) {
+  const isEdit = mode === 'edit'
+
   // Basic Info
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [gender, setGender] = useState<WMGender>('male')
-  const [dob, setDob] = useState('')
+  const [name, setName] = useState(initialData?.name ?? '')
+  const [email, setEmail] = useState(initialData?.email ?? '')
+  const [phone, setPhone] = useState(initialData?.phone ?? '')
+  const [gender, setGender] = useState<WMGender>(initialData?.gender ?? 'male')
+  const [dob, setDob] = useState(initialData?.dob ?? '')
 
   // Address
-  const [country] = useState('India')
-  const [state, setState] = useState('')
-  const [city, setCity] = useState('')
-  const [area, setArea] = useState('')
-  const [address, setAddress] = useState('')
-  const [pinCode, setPinCode] = useState('')
+  const [country] = useState(initialData?.address?.country ?? 'India')
+  const [state, setState] = useState(initialData?.address?.state ?? '')
+  const [city, setCity] = useState(initialData?.address?.city ?? '')
+  const [area, setArea] = useState(initialData?.address?.area ?? '')
+  const [address, setAddress] = useState(initialData?.address?.address ?? '')
+  const [pinCode, setPinCode] = useState(initialData?.address?.pinCode ?? '')
 
   // Company
-  const [companyName, setCompanyName] = useState('')
-  const [companyEmail, setCompanyEmail] = useState('')
-  const [gstNumber, setGstNumber] = useState('')
-  const [panNumber, setPanNumber] = useState('')
-  const [bankName, setBankName] = useState('')
-  const [accountNumber, setAccountNumber] = useState('')
-  const [ifscCode, setIfscCode] = useState('')
-  const [branch, setBranch] = useState('')
+  const [companyName, setCompanyName] = useState(initialData?.company?.name ?? '')
+  const [companyEmail, setCompanyEmail] = useState(initialData?.company?.email ?? '')
+  const [gstNumber, setGstNumber] = useState(initialData?.company?.gstNumber ?? '')
+  const [panNumber, setPanNumber] = useState(initialData?.company?.panNumber ?? '')
+  const [bankName, setBankName] = useState(initialData?.company?.bankName ?? '')
+  const [accountNumber, setAccountNumber] = useState(initialData?.company?.accountNumber ?? '')
+  const [ifscCode, setIfscCode] = useState(initialData?.company?.ifscCode ?? '')
+  const [branch, setBranch] = useState(initialData?.company?.branch ?? '')
 
   // Tier
-  const [tier, setTier] = useState<WMTier>('bronze')
+  const [tier, setTier] = useState<WMTier>(initialData?.tier ?? 'bronze')
 
   // Permissions
-  const [permissions, setPermissions] = useState<WMPermission[]>(['leads', 'customers'])
+  const [permissions, setPermissions] = useState<WMPermission[]>(initialData?.permissions ?? ['leads', 'customers'])
 
   // Dropdown state
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false)
@@ -114,9 +117,18 @@ export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
   function selectTier(t: WMTier) { setTier(t) }
 
   const isFormValid = name.trim() && email.trim() && phone.trim() && dob && state && city && panNumber.trim()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function handleSubmit() {
-    if (!isFormValid) return
+    if (!isFormValid || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      doSubmit()
+      setIsSubmitting(false)
+    }, 600)
+  }
+
+  function doSubmit() {
     onSubmit?.({
       name,
       email,
@@ -145,11 +157,11 @@ export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
                   <ArrowLeft size={20} />
                 </button>
                 <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
-                  Add New Partner
+                  {isEdit ? 'Edit Partner' : 'Add New Partner'}
                 </h1>
               </div>
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 ml-10">
-                Onboard a new wealth manager to the partner program
+                {isEdit ? 'Update partner profile information' : 'Onboard a new wealth manager to the partner program'}
               </p>
             </div>
           </div>
@@ -498,7 +510,7 @@ export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
           <div className="lg:w-80 shrink-0">
             <div className="lg:sticky lg:top-6 space-y-4">
               {/* Partner Summary */}
-              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
                 <div className="px-4 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Partner Summary</h3>
                 </div>
@@ -554,7 +566,22 @@ export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
       </div>
 
       {/* ── Actions ──────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto flex items-center justify-end gap-2">
+      <div className="max-w-5xl mx-auto flex items-center justify-end gap-3 max-lg:sticky max-lg:bottom-0 max-lg:-mx-6 max-lg:px-6 max-lg:py-3 max-lg:bg-white/95 max-lg:dark:bg-neutral-900/95 max-lg:backdrop-blur max-lg:border-t max-lg:border-neutral-200 max-lg:dark:border-neutral-800 max-lg:z-10">
+        {!isFormValid && (
+          <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+            {(() => {
+              const missing: string[] = []
+              if (!name.trim()) missing.push('Name')
+              if (!email.trim()) missing.push('Email')
+              if (!phone.trim()) missing.push('Phone')
+              if (!dob) missing.push('Date of Birth')
+              if (!state) missing.push('State')
+              if (!city) missing.push('City')
+              if (!panNumber.trim()) missing.push('PAN')
+              return `Required: ${missing.join(', ')}`
+            })()}
+          </p>
+        )}
         <button
           onClick={onCancel}
           className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
@@ -564,15 +591,15 @@ export function AddWMForm({ onSubmit, onCancel }: AddWMFormProps) {
         </button>
         <button
           onClick={handleSubmit}
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg shadow-sm transition-colors cursor-pointer ${
-            isFormValid
+            isFormValid && !isSubmitting
               ? 'text-white bg-orange-500 hover:bg-orange-500'
               : 'text-neutral-400 bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-600 cursor-not-allowed'
           }`}
         >
-          <Send size={13} />
-          Create Partner
+          {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+          {isSubmitting ? (isEdit ? 'Saving…' : 'Creating…') : (isEdit ? 'Save Changes' : 'Create Partner')}
         </button>
       </div>
     </div>
@@ -595,7 +622,7 @@ function FormSection({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
       <div className="mb-1">
         <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{title}</h2>
       </div>

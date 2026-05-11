@@ -1,4 +1,7 @@
 export { default as AppShell } from './AppShell'
 export { default as MainNav } from './MainNav'
 export { default as UserMenu } from './UserMenu'
+export { default as QuickActionsMenu } from './QuickActionsMenu'
+export { default as CommandPalette } from './CommandPalette'
+export { default as CommandPaletteTrigger } from './CommandPaletteTrigger'
 export type { NavItem } from './MainNav'

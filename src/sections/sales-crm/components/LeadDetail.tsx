@@ -21,6 +21,11 @@ import {
   ChevronRight,
   ExternalLink,
   IndianRupee,
+  Paperclip,
+  Plus,
+  StickyNote,
+  UserCircle,
+  MessageSquare,
 } from 'lucide-react'
 import type {
   Lead,
@@ -29,7 +34,6 @@ import type {
   QuotationSentVia,
   LeadStatus,
   FollowUpType,
-  FollowUpPriority,
   QuotationStatus,
 } from '@/../product/sections/sales-crm/types'
 import {
@@ -150,15 +154,6 @@ const FOLLOWUP_TYPE_CONFIG: Record<
   },
 }
 
-const PRIORITY_CONFIG: Record<
-  FollowUpPriority,
-  { label: string; color: string }
-> = {
-  high: { label: 'High', color: 'text-rose-600 dark:text-rose-400' },
-  medium: { label: 'Medium', color: 'text-amber-600 dark:text-amber-400' },
-  low: { label: 'Low', color: 'text-neutral-400 dark:text-neutral-500' },
-}
-
 const QUOTATION_STATUS_CONFIG: Record<
   QuotationStatus,
   { label: string; icon: typeof CheckCircle2; color: string; bg: string }
@@ -214,14 +209,28 @@ function formatDate(dateStr: string): string {
 }
 
 function formatDateTime(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  })
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) +
+    ' at ' +
+    d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+}
+
+function getInitials(name: string): string {
+  return name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2)
+}
+
+const INITIAL_COLORS = [
+  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
+  'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
+  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
+]
+
+function getInitialColor(name: string): string {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  return INITIAL_COLORS[Math.abs(hash) % INITIAL_COLORS.length]
 }
 
 function formatCurrency(amount: number): string {
@@ -250,12 +259,32 @@ export function LeadDetail({
   const status = STATUS_CONFIG[lead.status]
 
   // Active tab
-  const [activeTab, setActiveTab] = useState<'overview' | 'quotations' | 'notes'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'quotations' | 'followups' | 'notes'>('overview')
 
   // Modal states
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [followUpModalOpen, setFollowUpModalOpen] = useState(false)
   const [sendQuotationModal, setSendQuotationModal] = useState<{ open: boolean; quotationId: string | null }>({ open: false, quotationId: null })
+  const [noteModalOpen, setNoteModalOpen] = useState(false)
+  const [noteContent, setNoteContent] = useState('')
+  const [noteAttachments, setNoteAttachments] = useState<string[]>([])
+  const [extraNotes, setExtraNotes] = useState<{ content: string; createdAt: string; attachments: string[] }[]>([])
+
+  function openNoteModal() {
+    setNoteContent('')
+    setNoteAttachments([])
+    setNoteModalOpen(true)
+  }
+
+  function handleNoteSave() {
+    if (noteContent.trim()) {
+      setExtraNotes((prev) => [
+        { content: noteContent.trim(), createdAt: new Date().toISOString(), attachments: [...noteAttachments] },
+        ...prev,
+      ])
+    }
+    setNoteModalOpen(false)
+  }
 
   // Edit form state
   const [editName, setEditName] = useState(lead.name)
@@ -373,7 +402,7 @@ export function LeadDetail({
               className="flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-[7px] text-[12px] font-medium text-neutral-600 transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-neutral-600"
             >
               <FileText size={12} strokeWidth={2} />
-              Quotation
+              Add Quotation
             </button>
             <button
               onClick={() => onAssignToAccounts?.(lead.id)}
@@ -393,6 +422,7 @@ export function LeadDetail({
         const TABS = [
           { id: 'overview', label: 'Overview' },
           { id: 'quotations', label: 'Quotations', count: sortedQuotations.length },
+          { id: 'followups', label: 'Follow-ups', count: sortedFollowUps.length },
           { id: 'notes', label: 'Notes' },
         ] as const
 
@@ -596,7 +626,18 @@ export function LeadDetail({
 
             {/* ── Quotations Tab ── */}
             {activeTab === 'quotations' && (
-              <div className="rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/60">
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Quotations</h2>
+                  <button
+                    onClick={() => onCreateQuotation?.(lead.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                  >
+                    <Plus size={12} />
+                    Add Quotation
+                  </button>
+                </div>
+                <div className="rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/60">
                 {sortedQuotations.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12">
                     <FileText size={24} className="mb-2 text-neutral-300 dark:text-neutral-600" />
@@ -690,53 +731,146 @@ export function LeadDetail({
                     })}
                   </div>
                 )}
+                </div>
+              </div>
+            )}
+
+            {/* ── Follow-ups Tab ── */}
+            {activeTab === 'followups' && (
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Follow-ups</h2>
+                  <button
+                    onClick={openFollowUpModal}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                  >
+                    <Plus size={12} />
+                    Add Follow-up
+                  </button>
+                </div>
+
+                {sortedFollowUps.length === 0 ? (
+                  <div className="py-16 text-center">
+                    <div className="text-neutral-300 dark:text-neutral-600 mb-3 flex justify-center">
+                      <MessageSquare size={32} />
+                    </div>
+                    <p className="font-medium text-neutral-500 dark:text-neutral-400">No follow-ups</p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">No follow-up entries have been recorded.</p>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <div className="absolute left-[19px] top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800" />
+
+                    <div className="space-y-0">
+                      {sortedFollowUps.map((fu, idx) => {
+                        const typeCfg = FOLLOWUP_TYPE_CONFIG[fu.type]
+                        const isFirst = idx === 0
+
+                        return (
+                          <div key={fu.id} className="relative pl-12 pb-6">
+                            <div
+                              className={`absolute left-3.5 top-1 w-3 h-3 rounded-full border-2 border-white dark:border-neutral-950 ${
+                                isFirst ? 'bg-orange-500' : 'bg-neutral-300 dark:bg-neutral-600'
+                              }`}
+                            />
+
+                            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4">
+                              <div className="flex items-start justify-between gap-2 mb-2">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${typeCfg.bg} ${typeCfg.color}`}>
+                                    {typeCfg.label}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
+                                  {formatDateTime(fu.createdAt)}
+                                </span>
+                              </div>
+
+                              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-1">{fu.title}</p>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{fu.notes}</p>
+
+                              <div className="flex items-center gap-2 mt-3 text-[10px] text-neutral-400 dark:text-neutral-500">
+                                <UserCircle size={11} />
+                                <span>{fu.author}</span>
+                                {fu.quotationRef && (
+                                  <>
+                                    <span>·</span>
+                                    <span style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fu.quotationRef}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
             {/* ── Notes Tab ── */}
             {activeTab === 'notes' && (
-              <div className="rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/60">
-                <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-3.5 dark:border-neutral-700/50">
-                  <h2 className="text-[14px] font-semibold text-neutral-800 dark:text-neutral-100">
-                    Notes
-                  </h2>
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Internal Notes</h2>
                   <button
-                    className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-3 py-[7px] text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.98] cursor-pointer"
+                    onClick={openNoteModal}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
                   >
-                    <MessageSquarePlus size={12} strokeWidth={2} />
+                    <Plus size={12} />
                     Add Note
                   </button>
                 </div>
 
-                {lead.notes ? (
-                  <div className="divide-y divide-neutral-100 dark:divide-neutral-700/40">
-                    <div className="px-5 py-4">
-                      <div className="mb-1.5 flex items-center justify-between">
-                        <span className="text-[12px] font-medium text-neutral-800 dark:text-neutral-200">
-                          Initial Note
-                        </span>
-                        <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
-                          {formatDate(lead.createdAt)}
-                        </span>
+                {(lead.notes || extraNotes.length > 0) ? (
+                  <div className="space-y-3">
+                    {extraNotes.map((n, i) => (
+                      <div key={i} className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-4">
+                        <div className="flex items-center justify-between mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${getInitialColor(lead.assignedEmployee)}`}>
+                              {getInitials(lead.assignedEmployee)}
+                            </div>
+                            <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{lead.assignedEmployee}</span>
+                          </div>
+                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{formatDateTime(n.createdAt)}</span>
+                        </div>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">{n.content}</p>
+                        {n.attachments.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-3">
+                            {n.attachments.map((file, idx) => (
+                              <span key={idx} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                                <FileText size={11} />
+                                {file}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <p className="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">
-                        {lead.notes}
-                      </p>
-                      <div className="mt-2 flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
-                        <User size={10} strokeWidth={2} />
-                        {lead.assignedEmployee}
+                    ))}
+                    {lead.notes && (
+                      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-4">
+                        <div className="flex items-center justify-between mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${getInitialColor(lead.assignedEmployee)}`}>
+                              {getInitials(lead.assignedEmployee)}
+                            </div>
+                            <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{lead.assignedEmployee}</span>
+                          </div>
+                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{formatDateTime(lead.createdAt)}</span>
+                        </div>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{lead.notes}</p>
                       </div>
-                    </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <FileText size={24} className="mb-2 text-neutral-300 dark:text-neutral-600" />
-                    <p className="text-[13px] text-neutral-400">No notes yet</p>
-                    <button
-                      className="mt-2 text-[12px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400"
-                    >
-                      Add the first note
-                    </button>
+                  <div className="py-16 text-center">
+                    <div className="text-neutral-300 dark:text-neutral-600 mb-3 flex justify-center">
+                      <StickyNote size={32} />
+                    </div>
+                    <p className="font-medium text-neutral-500 dark:text-neutral-400">No notes yet</p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">Add internal notes for private team observations.</p>
                   </div>
                 )}
               </div>
@@ -983,6 +1117,75 @@ export function LeadDetail({
                 <Send size={14} />
                 Send
               </span>
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Add Note Modal                                                    */}
+      {/* ----------------------------------------------------------------- */}
+      <Dialog open={noteModalOpen} onOpenChange={setNoteModalOpen}>
+        <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+          <DialogHeader>
+            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Add Note</DialogTitle>
+            <DialogDescription className="text-neutral-500 dark:text-neutral-400">Add an internal note to this lead.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Content</label>
+              <textarea
+                rows={4}
+                value={noteContent}
+                onChange={(e) => setNoteContent(e.target.value)}
+                placeholder="Write your note here..."
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Attachments</label>
+              {noteAttachments.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {noteAttachments.map((file, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                      <FileText size={11} />
+                      {file}
+                      <button
+                        onClick={() => setNoteAttachments(prev => prev.filter((_, idx) => idx !== i))}
+                        className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  const names = ['Document.pdf', 'Agreement.pdf', 'ID_Proof.jpg', 'Court_Order.pdf', 'Will_Draft.docx', 'Receipt.pdf', 'Affidavit.pdf', 'Photo.png']
+                  const randomFile = names[Math.floor(Math.random() * names.length)]
+                  setNoteAttachments(prev => [...prev, randomFile])
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+              >
+                <Paperclip size={12} />
+                Add Attachment
+              </button>
+            </div>
+          </div>
+          <DialogFooter>
+            <button
+              onClick={() => setNoteModalOpen(false)}
+              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleNoteSave}
+              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+            >
+              Add Note
             </button>
           </DialogFooter>
         </DialogContent>

@@ -4,7 +4,7 @@ import { navigateToScreen } from '@/lib/preview-navigation'
 import { setEditCaseData } from './AddCaseForm'
 
 export default function CaseDetailPreview() {
-  // Use W24-CASE-00001 (Prakash Jain) — high priority, court-filing, 4 follow-ups, 2 docs, 1 note
+  // Use W24-CASE-00001 (Prakash Jain) — court-filing, 4 follow-ups, 2 docs, 1 note
   const caseData = data.cases[0] as any
   const followUps = data.caseFollowUps.filter(fu => fu.caseId === caseData.id) as any[]
   const notes = data.caseNotes.filter(n => n.caseId === caseData.id) as any[]
@@ -23,7 +23,6 @@ export default function CaseDetailPreview() {
           customerId: caseData.customerId,
           serviceType: caseData.serviceType,
           lawyerId: caseData.lawyerId,
-          priority: caseData.priority,
           description: caseData.description,
         })
         navigateToScreen('case-management', 'AddCaseForm')

@@ -1,6 +1,9 @@
 import { ChevronRight } from 'lucide-react'
 import MainNav, { type NavItem } from './MainNav'
 import UserMenu from './UserMenu'
+import QuickActionsMenu from './QuickActionsMenu'
+import CommandPalette from './CommandPalette'
+import CommandPaletteTrigger from './CommandPaletteTrigger'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -64,8 +67,12 @@ export default function AppShell({
             )}
           </nav>
 
-          {/* Right: user menu */}
-          <UserMenu user={user} onLogout={onLogout} />
+          {/* Right: search + quick actions + user menu */}
+          <div className="flex items-center gap-3">
+            <CommandPaletteTrigger />
+            <QuickActionsMenu />
+            <UserMenu user={user} onLogout={onLogout} />
+          </div>
         </header>
 
         {/* Scrollable content area */}
@@ -73,6 +80,9 @@ export default function AppShell({
           {children}
         </main>
       </div>
+
+      {/* Global command palette (Cmd/Ctrl + K) */}
+      <CommandPalette />
     </div>
   )
 }

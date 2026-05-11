@@ -12,12 +12,10 @@ export default function AccountsListPreview() {
       accountEntries={data.accountEntries as any}
       kpiStats={data.kpiStats as any}
       statusCounts={data.statusCounts as any}
-      onView={() => navigateToScreen('accounts', 'InvoiceDetail')}
       onEdit={(id) => console.log('Edit account entry:', id)}
       onFollowUp={(id) => console.log('Follow-up on:', id)}
       onSendPI={(id) => console.log('Send PI for:', id)}
       onSendInvoice={(id) => console.log('Send Invoice for:', id)}
-      onRecordPayment={() => navigateToScreen('accounts', 'PaymentForm')}
       onConvertToCustomer={() => navigateToScreen('customers', 'CustomerList')}
     />
   )

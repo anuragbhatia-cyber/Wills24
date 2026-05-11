@@ -22,6 +22,14 @@ import type {
   Quotation,
   QuotationItem,
 } from '@/../product/sections/sales-crm/types'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -110,6 +118,13 @@ export function QuotationBuilder({
     return []
   })
 
+  // Manual discount (flat amount in INR)
+  const [discount, setDiscount] = useState<number>(0)
+
+  // Send modal state
+  const [sendModalOpen, setSendModalOpen] = useState(false)
+  const [sendVia, setSendVia] = useState<'email' | 'whatsapp'>('email')
+
   // Derived: group active services by category
   const activeServices = useMemo(
     () => services.filter((s) => s.isActive),
@@ -147,8 +162,10 @@ export function QuotationBuilder({
 
   // Pricing calculations
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.amount, 0), [items])
-  const taxAmount = Math.round((subtotal * TAX_RATE) / 100)
-  const total = subtotal + taxAmount
+  const cappedDiscount = Math.min(Math.max(0, discount), subtotal)
+  const discountedSubtotal = subtotal - cappedDiscount
+  const taxAmount = Math.round((discountedSubtotal * TAX_RATE) / 100)
+  const total = discountedSubtotal + taxAmount
 
   // Item management
   const addItem = (service: Service) => {
@@ -501,6 +518,25 @@ export function QuotationBuilder({
                         {formatCurrency(subtotal)}
                       </span>
                     </div>
+                    <div className="flex items-center justify-between gap-2 text-[12px]">
+                      <span className="text-neutral-500 shrink-0">Discount</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-neutral-400" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>−</span>
+                        <span className="text-neutral-400">₹</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={discount === 0 ? '' : discount}
+                          onChange={(e) => {
+                            const v = e.target.value
+                            setDiscount(v === '' ? 0 : Math.max(0, Number(v)))
+                          }}
+                          placeholder="0"
+                          className="w-24 rounded-md border border-neutral-200 bg-white px-2 py-1 text-right text-[12px] text-neutral-700 placeholder-neutral-300 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                          style={{ fontFamily: '"IBM Plex Mono", monospace' }}
+                        />
+                      </div>
+                    </div>
                     <div className="flex items-center justify-between text-[12px]">
                       <span className="text-neutral-500">GST ({TAX_RATE}%)</span>
                       <span
@@ -526,33 +562,17 @@ export function QuotationBuilder({
                   </div>
                 </div>
 
-                {/* Send actions */}
+                {/* Send action */}
                 <div className="border-t border-neutral-200 px-5 py-4 dark:border-neutral-700">
-                  <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                    Send Quotation
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => onSendEmail?.()}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-neutral-200 bg-white py-2 text-[12px] font-medium text-neutral-700 transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
-                    >
-                      <Send size={12} strokeWidth={2} />
-                      Email
-                    </button>
-                    <button
-                      onClick={() => onSendWhatsApp?.()}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 py-2 text-[12px] font-semibold text-emerald-700 transition-all hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300"
-                    >
-                      <MessageCircle size={12} strokeWidth={2} />
-                      WhatsApp
-                    </button>
-                  </div>
                   <button
-                    onClick={handleSave}
-                    className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg bg-orange-500 py-2.5 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md active:scale-[0.98]"
+                    onClick={() => {
+                      setSendVia('email')
+                      setSendModalOpen(true)
+                    }}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-orange-500 py-2.5 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md active:scale-[0.98]"
                   >
-                    <Save size={13} strokeWidth={2} />
-                    Save Quotation
+                    <Send size={13} strokeWidth={2} />
+                    Send Quotation
                   </button>
                 </div>
               </>
@@ -560,6 +580,92 @@ export function QuotationBuilder({
           </div>
         </div>
       </div>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Send Quotation Modal                                              */}
+      {/* ----------------------------------------------------------------- */}
+      <Dialog open={sendModalOpen} onOpenChange={setSendModalOpen}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+          <DialogHeader>
+            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Send Quotation</DialogTitle>
+            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
+              Choose how you'd like to send this quotation to {lead.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <button
+              type="button"
+              onClick={() => setSendVia('email')}
+              className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all ${
+                sendVia === 'email'
+                  ? 'border-orange-500 bg-orange-50 dark:border-orange-500 dark:bg-orange-950/20'
+                  : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600'
+              }`}
+            >
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                sendVia === 'email' ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+              }`}>
+                <Send size={14} strokeWidth={2} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">Email</p>
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400">{lead.email}</p>
+              </div>
+              <input
+                type="radio"
+                checked={sendVia === 'email'}
+                onChange={() => setSendVia('email')}
+                className="accent-orange-500"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSendVia('whatsapp')}
+              className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all ${
+                sendVia === 'whatsapp'
+                  ? 'border-orange-500 bg-orange-50 dark:border-orange-500 dark:bg-orange-950/20'
+                  : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600'
+              }`}
+            >
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                sendVia === 'whatsapp' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+              }`}>
+                <MessageCircle size={14} strokeWidth={2} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">WhatsApp</p>
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400">{lead.phone}</p>
+              </div>
+              <input
+                type="radio"
+                checked={sendVia === 'whatsapp'}
+                onChange={() => setSendVia('whatsapp')}
+                className="accent-orange-500"
+              />
+            </button>
+          </div>
+          <DialogFooter>
+            <button
+              onClick={() => setSendModalOpen(false)}
+              className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                handleSave()
+                if (sendVia === 'email') onSendEmail?.()
+                else onSendWhatsApp?.()
+                setSendModalOpen(false)
+              }}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+            >
+              <Send size={13} strokeWidth={2} />
+              Send
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -19,6 +19,7 @@ const SECTION_DEFAULT_SCREENS: Record<string, string> = {
   '/partners': 'partners:WMList',
   '/team-management': 'team-management:TeamManagement',
   '/reports-analytics': 'reports-analytics:ReportsAnalytics',
+  '/lawyers-directory': 'lawyers-directory:LawyersDirectory',
   '/invoices': 'invoices:InvoiceList',
 }
 

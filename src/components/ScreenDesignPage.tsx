@@ -278,6 +278,7 @@ export function ScreenDesignFullscreen() {
 
           const defaultUser = {
             name: 'Anurag Bhatia',
+            role: 'Product Manager',
           }
 
           // Pass props dynamically - the shell component decides what it needs

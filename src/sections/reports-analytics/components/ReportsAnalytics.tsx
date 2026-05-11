@@ -20,6 +20,7 @@ import {
   GitMerge,
   BarChart3,
   FileText,
+  Calendar,
 } from 'lucide-react'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -183,7 +184,7 @@ function KpiCard({
         ? ArrowDownRight
         : Minus
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 hover:shadow-md transition-shadow">
       <p className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2">
         {kpi.label}
       </p>
@@ -221,7 +222,7 @@ function ChartCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
       <div className="px-5 py-3.5 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
         <div>
           <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">
@@ -335,6 +336,8 @@ export function ReportsAnalytics({
   const [activeTab, setActiveTab] = useState<TabKey>('sales')
   const [preset, setPreset] = useState('This Month')
   const [compare, setCompare] = useState(true)
+  const [customStart, setCustomStart] = useState('')
+  const [customEnd, setCustomEnd] = useState('')
   const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' }>({
     key: '',
     dir: 'asc',
@@ -362,34 +365,34 @@ export function ReportsAnalytics({
   }
   const currentKpis = tabData[activeTab].kpis
 
-  // Chart computations
+  // Chart computations — guarded against empty arrays / zero divisors
+  const safeMax = (arr: number[]) => (arr.length === 0 ? 0 : Math.max(...arr))
   const salesFunnelMax = sales.pipelineByStage[0]?.value || 1
-  const leadSourceMax = Math.max(...sales.leadSourceROI.map((s) => s.value))
+  const leadSourceMax = safeMax(sales.leadSourceROI.map((s) => s.value))
   const caseTotal = cases.statusBreakdown.reduce((s, c) => s + c.value, 0)
-  const resTrendMax = Math.max(...cases.resolutionTrend.map((r) => r.avgDays))
-  const revMax = Math.max(
-    ...accounts.revenueByMonth.map((m) => Math.max(m.revenue, m.target)),
+  const resTrendMax = safeMax(cases.resolutionTrend.map((r) => r.avgDays))
+  const revMax = safeMax(
+    accounts.revenueByMonth.map((m) => Math.max(m.revenue, m.target)),
   )
-  const agingMax = Math.max(...accounts.agingAnalysis.map((a) => a.amount))
-  const wmSalesMax = Math.max(...wmPerformance.salesByWM.map((w) => w.value))
+  const agingMax = safeMax(accounts.agingAnalysis.map((a) => a.amount))
+  const wmSalesMax = safeMax(wmPerformance.salesByWM.map((w) => w.value))
   const wmFunnelMax = wmPerformance.conversionFunnel[0]?.value || 1
-  const docMonthMax = Math.max(
-    ...documents.statusOverTime.map((d) => d.created),
-  )
-  const tmplMax = Math.max(
-    ...documents.templateBreakdown.map((t) => t.created),
-  )
+  const docMonthMax = safeMax(documents.statusOverTime.map((d) => d.created))
+  const tmplMax = safeMax(documents.templateBreakdown.map((t) => t.created))
 
-  // Donut gradient for cases
+  // Donut gradient for cases — guarded against empty / zero total
   let cum = 0
-  const donutGrad = `conic-gradient(${cases.statusBreakdown
-    .map((item) => {
-      const s = cum
-      const p = (item.value / caseTotal) * 100
-      cum += p
-      return `${CHART_HEX[item.color] || '#a3a3a3'} ${s}% ${cum}%`
-    })
-    .join(', ')})`
+  const donutGrad =
+    caseTotal > 0
+      ? `conic-gradient(${cases.statusBreakdown
+          .map((item) => {
+            const s = cum
+            const p = (item.value / caseTotal) * 100
+            cum += p
+            return `${CHART_HEX[item.color] || '#a3a3a3'} ${s}% ${cum}%`
+          })
+          .join(', ')})`
+      : `conic-gradient(#e5e5e5 0% 100%)`
 
   return (
     <div className="space-y-6 pb-8">
@@ -413,7 +416,59 @@ export function ReportsAnalytics({
                 {p}
               </button>
             ))}
+            <button
+              onClick={() => {
+                setPreset('Custom')
+                onDateRangeChange?.({
+                  start: customStart,
+                  end: customEnd,
+                  preset: 'Custom',
+                })
+              }}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                preset === 'Custom'
+                  ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                  : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
+              }`}
+            >
+              <Calendar className="w-3 h-3" />
+              Custom
+            </button>
           </div>
+
+          {preset === 'Custom' && (
+            <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg px-2 py-1">
+              <input
+                type="date"
+                value={customStart}
+                max={customEnd || undefined}
+                onChange={(e) => {
+                  setCustomStart(e.target.value)
+                  onDateRangeChange?.({
+                    start: e.target.value,
+                    end: customEnd,
+                    preset: 'Custom',
+                  })
+                }}
+                className="text-xs font-mono bg-transparent text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              />
+              <span className="text-xs text-neutral-400 dark:text-neutral-500">→</span>
+              <input
+                type="date"
+                value={customEnd}
+                min={customStart || undefined}
+                onChange={(e) => {
+                  setCustomEnd(e.target.value)
+                  onDateRangeChange?.({
+                    start: customStart,
+                    end: e.target.value,
+                    preset: 'Custom',
+                  })
+                }}
+                className="text-xs font-mono bg-transparent text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              />
+            </div>
+          )}
 
           {/* Compare Toggle */}
           <button
@@ -489,7 +544,7 @@ export function ReportsAnalytics({
             >
               <div className="p-5 space-y-3">
                 {sales.pipelineByStage.map((stage, i) => {
-                  const w = (stage.value / salesFunnelMax) * 100
+                  const w = salesFunnelMax > 0 ? (stage.value / salesFunnelMax) * 100 : 0
                   return (
                     <div key={i}>
                       <div className="flex items-center justify-between mb-1">
@@ -581,7 +636,7 @@ export function ReportsAnalytics({
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs font-medium text-neutral-900 dark:text-neutral-100">{item.value}</span>
                         <span className="text-[10px] font-mono text-neutral-400 w-8 text-right">
-                          {((item.value / caseTotal) * 100).toFixed(0)}%
+                          {caseTotal > 0 ? ((item.value / caseTotal) * 100).toFixed(0) : 0}%
                         </span>
                       </div>
                     </div>
@@ -625,7 +680,7 @@ export function ReportsAnalytics({
               onExportExcel={() => onExportExcel?.('cases')}
               onExportPdf={() => onExportPdf?.('cases')}
             />
-            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
+            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none">
               <table className="w-full text-sm">
                 <thead className="border-b border-neutral-100 dark:border-neutral-800">
                   <tr>
@@ -665,7 +720,7 @@ export function ReportsAnalytics({
               onExportExcel={() => onExportExcel?.('accounts')}
               onExportPdf={() => onExportPdf?.('accounts')}
             />
-            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
+            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none">
               <table className="w-full text-sm">
                 <thead className="border-b border-neutral-100 dark:border-neutral-800">
                   <tr>
@@ -754,7 +809,7 @@ export function ReportsAnalytics({
             >
               <div className="p-5 space-y-3">
                 {wmPerformance.conversionFunnel.map((stage, i) => {
-                  const w = (stage.value / wmFunnelMax) * 100
+                  const w = wmFunnelMax > 0 ? (stage.value / wmFunnelMax) * 100 : 0
                   return (
                     <div key={i}>
                       <div className="flex items-center justify-between mb-1">
@@ -780,7 +835,7 @@ export function ReportsAnalytics({
               onExportExcel={() => onExportExcel?.('wmPerformance')}
               onExportPdf={() => onExportPdf?.('wmPerformance')}
             />
-            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
+            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none">
               <table className="w-full text-sm">
                 <thead className="border-b border-neutral-100 dark:border-neutral-800">
                   <tr>
@@ -908,7 +963,7 @@ export function ReportsAnalytics({
               onExportExcel={() => onExportExcel?.('documents')}
               onExportPdf={() => onExportPdf?.('documents')}
             />
-            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
+            <div className="overflow-x-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none">
               <table className="w-full text-sm">
                 <thead className="border-b border-neutral-100 dark:border-neutral-800">
                   <tr>

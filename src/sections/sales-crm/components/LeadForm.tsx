@@ -5,6 +5,10 @@ import {
   Save,
   AlertCircle,
   Check,
+  Paperclip,
+  FileText,
+  X,
+  Loader2,
 } from 'lucide-react'
 import type {
   Lead,
@@ -96,6 +100,7 @@ export function LeadForm({
     wealthManagerId: lead?.wealthManagerId ?? '',
     assignedEmployee: lead?.assignedEmployee ?? '',
     notes: lead?.notes ?? '',
+    attachments: [] as string[],
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -113,7 +118,7 @@ export function LeadForm({
   )
 
   // Handlers
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | string[]) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors((prev) => {
@@ -142,8 +147,6 @@ export function LeadForm({
       if (!form.source) newErrors.source = 'Source is required'
       if (!form.leadType) newErrors.leadType = 'Lead type is required'
       if (!form.serviceInterest) newErrors.serviceInterest = 'Service interest is required'
-    } else if (s === 3) {
-      if (!form.wealthManagerId) newErrors.wealthManagerId = 'Wealth Manager is mandatory'
     }
 
     setErrors((prev) => ({ ...prev, ...newErrors }))
@@ -151,7 +154,7 @@ export function LeadForm({
       ? ['name', 'phone', 'email', 'city', 'state']
       : s === 2
       ? ['source', 'leadType', 'serviceInterest']
-      : ['wealthManagerId']
+      : []
     const touchAll: Record<string, boolean> = {}
     stepFields.forEach((k) => (touchAll[k] = true))
     setTouched((prev) => ({ ...prev, ...touchAll }))
@@ -169,17 +172,20 @@ export function LeadForm({
     if (step > 1) setStep(step - 1)
   }
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const handleSubmit = () => {
-    if (!validateStep(3)) return
-
-    const wmName = wealthManagers.find((wm) => wm.id === form.wealthManagerId)?.name ?? ''
-
-    onSave?.({
-      ...form,
-      source: form.source as LeadSource,
-      leadType: form.leadType as LeadType,
-      wealthManagerName: wmName,
-    })
+    if (!validateStep(3) || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      const wmName = wealthManagers.find((wm) => wm.id === form.wealthManagerId)?.name ?? ''
+      onSave?.({
+        ...form,
+        source: form.source as LeadSource,
+        leadType: form.leadType as LeadType,
+        wealthManagerName: wmName,
+      })
+      setIsSubmitting(false)
+    }, 600)
   }
 
   return (
@@ -461,13 +467,11 @@ export function LeadForm({
           <>
             <FormSection
               title="Assignment"
-              highlight
             >
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <FormField
                     label="Wealth Manager"
-                    required
                     error={touched.wealthManagerId ? errors.wealthManagerId : undefined}
                   >
                     <select
@@ -539,6 +543,55 @@ export function LeadForm({
                   className={`${inputClass(false)} resize-none`}
                 />
               </FormField>
+
+              <FormField label="Attachments">
+                {form.attachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {form.attachments.map((file, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700"
+                      >
+                        <FileText size={11} />
+                        {file}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateField(
+                              'attachments',
+                              form.attachments.filter((_, idx) => idx !== i),
+                            )
+                          }
+                          className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                          aria-label="Remove attachment"
+                        >
+                          <X size={11} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const names = [
+                      'Document.pdf',
+                      'Agreement.pdf',
+                      'ID_Proof.jpg',
+                      'Brochure.pdf',
+                      'Will_Draft.docx',
+                      'Receipt.pdf',
+                      'Photo.png',
+                    ]
+                    const randomFile = names[Math.floor(Math.random() * names.length)]
+                    updateField('attachments', [...form.attachments, randomFile])
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+                >
+                  <Paperclip size={12} />
+                  Add Attachment
+                </button>
+              </FormField>
             </FormSection>
           </>
         )}
@@ -547,7 +600,7 @@ export function LeadForm({
       {/* ----------------------------------------------------------------- */}
       {/* Footer navigation                                                 */}
       {/* ----------------------------------------------------------------- */}
-      <div className="max-w-4xl mx-auto mt-6 flex items-center justify-between border-t border-neutral-200 pt-5 dark:border-neutral-700/50">
+      <div className="max-w-4xl mx-auto mt-6 flex items-center justify-between border-t border-neutral-200 pt-5 dark:border-neutral-700/50 max-lg:sticky max-lg:bottom-0 max-lg:-mx-6 max-lg:px-6 max-lg:py-3 max-lg:bg-white/95 max-lg:dark:bg-neutral-900/95 max-lg:backdrop-blur max-lg:z-10 max-lg:mt-0">
         <div>
           {step > 1 ? (
             <button
@@ -575,10 +628,13 @@ export function LeadForm({
           ) : (
             <button
               onClick={handleSubmit}
-              className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.98] cursor-pointer"
+              disabled={isSubmitting}
+              className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Save size={13} strokeWidth={2} />
-              {isEdit ? 'Update Lead' : 'Create Lead'}
+              {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} strokeWidth={2} />}
+              {isSubmitting
+                ? isEdit ? 'Saving…' : 'Creating…'
+                : isEdit ? 'Update Lead' : 'Create Lead'}
             </button>
           )}
         </div>

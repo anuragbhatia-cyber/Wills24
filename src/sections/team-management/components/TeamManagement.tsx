@@ -43,12 +43,11 @@ import {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const TABS = [
-  { key: 'lawyers', label: 'Lawyers Directory', icon: Scale },
   { key: 'employees', label: 'Employees (HRMS)', icon: Briefcase },
   { key: 'users', label: 'Permissions', icon: Shield },
 ] as const
 
-type TabKey = (typeof TABS)[number]['key']
+type TabKey = 'lawyers' | 'employees' | 'users'
 
 const ROLE_LABEL: Record<User['role'], string> = {
   admin: 'Admin',
@@ -211,8 +210,9 @@ export function TeamManagement({
   onEditEmployee,
   onToggleEmployeeStatus,
   onViewEmployee,
-}: TeamManagementProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>('lawyers')
+  view = 'team',
+}: TeamManagementProps & { view?: 'team' | 'lawyers-only' }) {
+  const [activeTab, setActiveTab] = useState<TabKey>(view === 'lawyers-only' ? 'lawyers' : 'employees')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' }>({
     key: 'name',
@@ -391,19 +391,13 @@ export function TeamManagement({
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
-            Team Management
+            {view === 'lawyers-only' ? 'Lawyers Directory' : 'Team Management'}
           </h1>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-            {users.filter((u) => u.status === 'active').length} active users
-            <span className="mx-2 text-neutral-300 dark:text-neutral-600">|</span>
-            {lawyers.filter((l) => l.availability === 'available').length} lawyers available
-            <span className="mx-2 text-neutral-300 dark:text-neutral-600">|</span>
-            {employees.filter((e) => e.status === 'active').length} employees
-          </p>
         </div>
       </div>
 
       {/* Tabs */}
+      {view !== 'lawyers-only' && (
       <div className="flex gap-1 border-b border-neutral-200 dark:border-neutral-800">
         {TABS.map((tab) => {
           const active = activeTab === tab.key
@@ -427,6 +421,7 @@ export function TeamManagement({
           )
         })}
       </div>
+      )}
 
       {/* Content */}
       {activeTab === 'users' && (
@@ -466,6 +461,7 @@ export function TeamManagement({
           onEdit={(id) => { const l = lawyers.find((x) => x.id === id); if (l) openEditLawyer(l) }}
           onUpdateAvailability={onUpdateLawyerAvailability}
           onView={onViewLawyer}
+          rowAction={view === 'lawyers-only' ? 'view' : 'expand'}
         />
       )}
       {activeTab === 'employees' && (
@@ -723,9 +719,6 @@ export function TeamManagement({
             <DialogTitle className="text-neutral-900 dark:text-neutral-100">
               {editEmployeeTarget ? 'Edit Employee' : 'Add Employee'}
             </DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">
-              {editEmployeeTarget ? 'Update employee details.' : 'Add a new employee to the system.'}
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
@@ -777,17 +770,6 @@ export function TeamManagement({
                 placeholder="e.g. Senior Executive"
                 className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
-              <select
-                value={employeeForm.status}
-                onChange={(e) => setEmployeeForm((f) => ({ ...f, status: e.target.value as 'active' | 'inactive' }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
             </div>
           </div>
           <DialogFooter>
@@ -862,7 +844,7 @@ function UsersTab({
   return (
     <div className="space-y-4">
       {/* Permissions Matrix */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
           <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
             Role Permissions Matrix
@@ -947,6 +929,7 @@ function LawyersTab({
   onEdit,
   onUpdateAvailability,
   onView,
+  rowAction = 'expand',
 }: {
   lawyers: Lawyer[]
   specializations: string[]
@@ -964,6 +947,7 @@ function LawyersTab({
   onEdit?: (id: string) => void
   onUpdateAvailability?: (id: string, status: Lawyer['availability']) => void
   onView?: (id: string) => void
+  rowAction?: 'expand' | 'view'
 }) {
   return (
     <div className="space-y-4">
@@ -1001,7 +985,7 @@ function LawyersTab({
       </div>
 
       {/* Lawyers Table */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -1031,6 +1015,7 @@ function LawyersTab({
                     onExpand={() => onExpand(lawyer.id)}
                     onEdit={() => onEdit?.(lawyer.id)}
                     onView={() => onView?.(lawyer.id)}
+                    rowAction={rowAction}
                   />
                 )
               })}
@@ -1056,13 +1041,16 @@ function LawyerRow({
   onExpand,
   onEdit,
   onView,
+  rowAction = 'expand',
 }: {
   lawyer: Lawyer
   expanded: boolean
   onExpand: () => void
   onEdit?: () => void
   onView?: () => void
+  rowAction?: 'expand' | 'view'
 }) {
+  const handleRowClick = rowAction === 'view' ? () => onView?.() : onExpand
   return (
     <>
       <tr
@@ -1071,13 +1059,15 @@ function LawyerRow({
             ? 'bg-orange-50/50 dark:bg-orange-900/10'
             : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/40'
         }`}
-        onClick={onExpand}
+        onClick={handleRowClick}
       >
         <td className="px-4 py-3">
-          {expanded ? (
-            <ChevronUp size={14} className="text-orange-500" />
-          ) : (
-            <ChevronDown size={14} className="text-neutral-400" />
+          {rowAction === 'expand' && (
+            expanded ? (
+              <ChevronUp size={14} className="text-orange-500" />
+            ) : (
+              <ChevronDown size={14} className="text-neutral-400" />
+            )
           )}
         </td>
         <td className="px-4 py-3">
@@ -1138,7 +1128,7 @@ function LawyerRow({
   )
 }
 
-function LawyerDetail({ lawyer }: { lawyer: Lawyer }) {
+export function LawyerDetail({ lawyer }: { lawyer: Lawyer }) {
   return (
     <div className="bg-orange-50/30 dark:bg-orange-900/5 px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Profile */}
@@ -1300,7 +1290,7 @@ function EmployeesTab({
       </div>
 
       {/* Employees Table */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -1355,13 +1345,6 @@ function EmployeesTab({
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => onView?.(emp.id)}
-                        className="p-1.5 rounded-md text-neutral-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
-                        title="View details"
-                      >
-                        <Eye size={14} />
-                      </button>
                       <button
                         onClick={() => onEdit?.(emp.id)}
                         className="p-1.5 rounded-md text-neutral-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:text-orange-400 dark:hover:bg-orange-900/20 transition-colors"

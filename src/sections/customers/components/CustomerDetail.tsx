@@ -18,6 +18,7 @@ import {
   Eye,
   UserCircle,
   Hash,
+  Paperclip,
 } from 'lucide-react'
 import {
   Dialog,
@@ -41,7 +42,6 @@ import type {
   DocumentStatus,
   PaymentStatus,
   FollowUpType,
-  FollowUpPriority,
   CustomerStatus,
 } from '@/../product/sections/customers/types'
 
@@ -49,7 +49,7 @@ import type {
 // Constants
 // ---------------------------------------------------------------------------
 
-type TabKey = 'profile' | 'services' | 'cases' | 'documents' | 'payments' | 'followups'
+type TabKey = 'profile' | 'services' | 'cases' | 'documents' | 'payments'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'profile', label: 'Profile' },
@@ -57,7 +57,6 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'cases', label: 'Cases' },
   { key: 'documents', label: 'Documents' },
   { key: 'payments', label: 'Payments' },
-  { key: 'followups', label: 'Follow-ups' },
 ]
 
 const CUSTOMER_STATUS: Record<string, { label: string; dot: string; bg: string; text: string }> = {
@@ -96,12 +95,6 @@ const FOLLOWUP_TYPE_CONFIG: Record<FollowUpType, { label: string; bg: string; te
   update: { label: 'Update', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-400' },
   meeting: { label: 'Meeting', bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400' },
   quotation: { label: 'Quotation', bg: 'bg-orange-50 dark:bg-orange-950/30', text: 'text-orange-700 dark:text-orange-400' },
-}
-
-const PRIORITY_CONFIG: Record<FollowUpPriority, { label: string; color: string }> = {
-  low: { label: 'Low', color: 'text-neutral-400' },
-  normal: { label: 'Normal', color: 'text-blue-500' },
-  high: { label: 'High', color: 'text-red-500' },
 }
 
 // ---------------------------------------------------------------------------
@@ -178,9 +171,11 @@ export function CustomerDetail({
   const [editStatus, setEditStatus] = useState<string>(customer.status)
   const [editCompany, setEditCompany] = useState(customer.company)
 
-  // Quotation form state
-  const [quotationChannel, setQuotationChannel] = useState<'email' | 'whatsapp'>('email')
-  const [quotationMessage, setQuotationMessage] = useState('')
+  // Follow-up form state
+  const [followUpDate, setFollowUpDate] = useState('')
+  const [followUpType, setFollowUpType] = useState('Call')
+  const [followUpNotes, setFollowUpNotes] = useState('')
+  const [followUpAttachments, setFollowUpAttachments] = useState<string[]>([])
 
   function openEditModal() {
     setEditName(customer.name)
@@ -197,8 +192,10 @@ export function CustomerDetail({
   }
 
   function openQuotationModal() {
-    setQuotationChannel('email')
-    setQuotationMessage('')
+    setFollowUpDate('')
+    setFollowUpType('Call')
+    setFollowUpNotes('')
+    setFollowUpAttachments([])
     setQuotationModalOpen(true)
   }
 
@@ -268,21 +265,9 @@ export function CustomerDetail({
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
               >
                 <Send size={12} />
-                Send Quotation
+                Send Followup
               </button>
             </div>
-          </div>
-
-          {/* Quick stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
-            <QuickStat label="Services" value={services.length} />
-            <QuickStat label="Active Cases" value={customer.activeCases} total={customer.totalCases} />
-            <QuickStat label="Total Paid" value={formatCurrency(customer.totalPayments)} />
-            <QuickStat
-              label="Pending"
-              value={customer.pendingAmount > 0 ? formatCurrency(customer.pendingAmount) : '—'}
-              alert={customer.pendingAmount > 0}
-            />
           </div>
       </div>
 
@@ -294,7 +279,6 @@ export function CustomerDetail({
             : tab.key === 'cases' ? cases.length
             : tab.key === 'documents' ? documents.length
             : tab.key === 'payments' ? payments.length
-            : tab.key === 'followups' ? followUps.length
             : null
           return (
             <button
@@ -339,7 +323,6 @@ export function CustomerDetail({
             {activeTab === 'cases' && <CasesTab cases={cases} onViewCase={onViewCase} />}
             {activeTab === 'documents' && <DocumentsTab documents={documents} onDownload={onDownloadDocument} />}
             {activeTab === 'payments' && <PaymentsTab payments={payments} />}
-            {activeTab === 'followups' && <FollowUpsTab followUps={followUps} />}
           </div>
 
           {/* Sidebar — Wealth Manager card */}
@@ -423,50 +406,76 @@ export function CustomerDetail({
         </DialogContent>
       </Dialog>
 
-      {/* ── Send Quotation Modal ──────────────────────────────────────────── */}
+      {/* ── Send Followup Modal ───────────────────────────────────────────── */}
       <Dialog open={quotationModalOpen} onOpenChange={setQuotationModalOpen}>
         <DialogContent className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
           <DialogHeader>
-            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Send Quotation</DialogTitle>
-            <DialogDescription className="text-neutral-500 dark:text-neutral-400">Choose a channel and compose your message.</DialogDescription>
+            <DialogTitle className="text-neutral-900 dark:text-neutral-100">Send Followup</DialogTitle>
+            <DialogDescription className="text-neutral-500 dark:text-neutral-400">Record a new follow-up entry for this customer.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Channel</label>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setQuotationChannel('email')}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    quotationChannel === 'email'
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400'
-                      : 'border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                  }`}
-                >
-                  <Mail size={14} className="inline mr-1.5 -mt-0.5" />
-                  Email
-                </button>
-                <button
-                  onClick={() => setQuotationChannel('whatsapp')}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    quotationChannel === 'whatsapp'
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400'
-                      : 'border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                  }`}
-                >
-                  <Phone size={14} className="inline mr-1.5 -mt-0.5" />
-                  WhatsApp
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Message</label>
-              <textarea
-                rows={4}
-                value={quotationMessage}
-                onChange={(e) => setQuotationMessage(e.target.value)}
-                placeholder="Enter your quotation message..."
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Date</label>
+              <input
+                type="date"
+                value={followUpDate}
+                onChange={(e) => setFollowUpDate(e.target.value)}
                 className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Type</label>
+              <select
+                value={followUpType}
+                onChange={(e) => setFollowUpType(e.target.value)}
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+              >
+                <option value="Call">Call</option>
+                <option value="Email">Email</option>
+                <option value="Meeting">Meeting</option>
+                <option value="Court Visit">Court Visit</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Notes</label>
+              <textarea
+                rows={4}
+                value={followUpNotes}
+                onChange={(e) => setFollowUpNotes(e.target.value)}
+                placeholder="Enter follow-up details..."
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Attachments</label>
+              {followUpAttachments.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {followUpAttachments.map((file, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                      <FileText size={11} />
+                      {file}
+                      <button
+                        onClick={() => setFollowUpAttachments(prev => prev.filter((_, idx) => idx !== i))}
+                        className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  const names = ['Document.pdf', 'Agreement.pdf', 'ID_Proof.jpg', 'Court_Order.pdf', 'Will_Draft.docx', 'Receipt.pdf', 'Affidavit.pdf', 'Photo.png']
+                  const randomFile = names[Math.floor(Math.random() * names.length)]
+                  setFollowUpAttachments(prev => [...prev, randomFile])
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+              >
+                <Paperclip size={12} />
+                Add Attachment
+              </button>
             </div>
           </div>
           <DialogFooter>
@@ -480,7 +489,7 @@ export function CustomerDetail({
               onClick={handleQuotationSend}
               className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
             >
-              Send Quotation
+              Send Followup
             </button>
           </DialogFooter>
         </DialogContent>
@@ -618,7 +627,7 @@ function CasesTab({ cases, onViewCase }: { cases: CustomerCase[]; onViewCase?: (
         return (
           <div
             key={cs.id}
-            className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+            className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
           >
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
               <div className="min-w-0">
@@ -664,7 +673,7 @@ function DocumentsTab({ documents, onDownload }: { documents: CustomerDocument[]
   }
 
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
       {/* Header */}
       <div className="grid grid-cols-[1fr_100px_80px_60px_80px_48px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 hidden sm:grid">
         <span>Document</span>
@@ -765,22 +774,22 @@ function PaymentsTab({ payments }: { payments: CustomerPayment[] }) {
     <div className="space-y-4">
       {/* Summary strip */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Gross Amount</p>
           <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] mt-0.5">{formatCurrency(totalAmount)}</p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">TDS Deducted</p>
           <p className="text-lg font-bold text-red-500 dark:text-red-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] mt-0.5">{formatCurrency(totalTds)}</p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-3">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Net Received</p>
           <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] mt-0.5">{formatCurrency(totalNet)}</p>
         </div>
       </div>
 
       {/* Payment records */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none overflow-hidden">
         <div className="hidden sm:grid grid-cols-[minmax(100px,1fr)_100px_90px_90px_80px_100px_80px] gap-2 px-5 py-3 bg-neutral-50 dark:bg-neutral-800/40 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
           <span>Invoice</span>
           <span className="text-right">Amount</span>
@@ -862,75 +871,6 @@ function PaymentsTab({ payments }: { payments: CustomerPayment[] }) {
   )
 }
 
-// ── Follow-Ups Tab ──────────────────────────────────────────────────────────
-
-function FollowUpsTab({ followUps }: { followUps: CustomerFollowUp[] }) {
-  if (followUps.length === 0) {
-    return <EmptyState icon={<MessageSquare size={32} />} title="No follow-ups" description="No follow-up entries have been recorded." />
-  }
-
-  // Sort by date descending
-  const sorted = [...followUps].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-
-  return (
-    <div className="relative">
-      {/* Timeline line */}
-      <div className="absolute left-[19px] top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800" />
-
-      <div className="space-y-0">
-        {sorted.map((fu, idx) => {
-          const typeCfg = FOLLOWUP_TYPE_CONFIG[fu.type]
-          const priorityCfg = PRIORITY_CONFIG[fu.priority]
-          const isFirst = idx === 0
-
-          return (
-            <div key={fu.id} className="relative pl-12 pb-6">
-              {/* Timeline dot */}
-              <div
-                className={`absolute left-3.5 top-1 w-3 h-3 rounded-full border-2 border-white dark:border-neutral-950 ${
-                  isFirst ? 'bg-orange-500' : 'bg-neutral-300 dark:bg-neutral-600'
-                }`}
-              />
-
-              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${typeCfg.bg} ${typeCfg.text}`}>
-                      {typeCfg.label}
-                    </span>
-                    {fu.priority !== 'normal' && (
-                      <span className={`text-[10px] font-semibold ${priorityCfg.color}`}>
-                        {priorityCfg.label} Priority
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[10px] text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
-                    {formatDateTime(fu.createdAt)}
-                  </span>
-                </div>
-
-                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-1">{fu.title}</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{fu.notes}</p>
-
-                <div className="flex items-center gap-2 mt-3 text-[10px] text-neutral-400 dark:text-neutral-500">
-                  <UserCircle size={11} />
-                  <span>{fu.author}</span>
-                  {fu.caseId && (
-                    <>
-                      <span>·</span>
-                      <span className="font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)]">{fu.caseId}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
 // ===========================================================================
 // Shared Sub-components
 // ===========================================================================
@@ -952,23 +892,9 @@ function StatusPill({ cfg }: { cfg: { label: string; dot: string; bg: string; te
   )
 }
 
-function QuickStat({ label, value, total, alert: isAlert }: { label: string; value: string | number; total?: number; alert?: boolean }) {
-  return (
-    <div className="bg-neutral-50 dark:bg-neutral-800/40 rounded-lg px-3 py-2.5">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{label}</p>
-      <p className={`text-lg font-bold tracking-tight mt-0.5 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] ${isAlert ? 'text-red-500 dark:text-red-400' : 'text-neutral-900 dark:text-neutral-100'}`}>
-        {value}
-        {total !== undefined && (
-          <span className="text-sm font-normal text-neutral-400 dark:text-neutral-500">/{total}</span>
-        )}
-      </p>
-    </div>
-  )
-}
-
 function SectionCard({ title, badge, children }: { title: string; badge?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
       <div className="flex items-center gap-2 mb-4">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
         {badge && (
@@ -1012,7 +938,7 @@ function EmptyState({ icon, title, description }: { icon: React.ReactNode; title
 
 function WealthManagerCard({ wm }: { wm: WealthManager }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 sticky top-16">
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 sticky top-16">
       <h3 className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-4">
         Wealth Manager
       </h3>
