@@ -56,7 +56,7 @@ function getInitials(name: string) {
 }
 
 const INITIAL_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -174,7 +174,7 @@ export function AddCaseForm({
                   onChange={e => { setCustomerSearch(e.target.value); setCustomerDropdownOpen(true); if (!e.target.value) setCustomerId('') }}
                   onFocus={() => setCustomerDropdownOpen(true)}
                   placeholder="Search by name, ID or phone..."
-                  className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                  className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
                 />
                 <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
                 {customerDropdownOpen && !customerId && (
@@ -224,7 +224,7 @@ export function AddCaseForm({
                 <select
                   value={serviceType}
                   onChange={e => setServiceType(e.target.value)}
-                  className="w-full appearance-none px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all cursor-pointer"
+                  className="w-full appearance-none px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all cursor-pointer"
                 >
                   <option value="">Select a service type...</option>
                   {SERVICE_TYPES.map(st => (
@@ -245,7 +245,7 @@ export function AddCaseForm({
                   value={selectedLawyer && !lawyerDropdownOpen ? selectedLawyer.name : lawyerSearch}
                   onChange={e => { setLawyerSearch(e.target.value); setLawyerDropdownOpen(true) }}
                   onFocus={() => setLawyerDropdownOpen(true)}
-                  className="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                  className="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
                 />
                 {lawyerDropdownOpen && (
                   <div className="absolute z-20 left-0 right-0 mt-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -257,7 +257,7 @@ export function AddCaseForm({
                           key={l.id}
                           type="button"
                           onClick={() => { setLawyerId(l.id); setLawyerSearch(''); setLawyerDropdownOpen(false) }}
-                          className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer flex items-center gap-2.5 ${lawyerId === l.id ? 'bg-orange-50 dark:bg-orange-950/20' : ''}`}
+                          className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer flex items-center gap-2.5 ${lawyerId === l.id ? 'bg-yellow-50 dark:bg-yellow-950/20' : ''}`}
                         >
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${getInitialColor(l.name)}`}>
                             {getInitials(l.name)}
@@ -281,7 +281,7 @@ export function AddCaseForm({
                 onChange={e => setDescription(e.target.value)}
                 rows={4}
                 placeholder="Provide details about the case — property information, beneficiaries, special requirements..."
-                className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all resize-none"
+                className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all resize-none"
               />
               <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1 text-right">{description.length} characters</p>
             </FormSection>
@@ -293,7 +293,7 @@ export function AddCaseForm({
                 onChange={e => setNotes(e.target.value)}
                 rows={3}
                 placeholder="Add any internal observations, special instructions, or context..."
-                className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all resize-none"
+                className="w-full px-4 py-3 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all resize-none"
               />
               <div className="mt-3">
                 {noteAttachments.length > 0 && (
@@ -395,7 +395,7 @@ export function AddCaseForm({
                   type="submit"
                   disabled={!isValid || isSubmitting}
                   onClick={handleSubmit}
-                  className="w-full py-2.5 text-sm font-medium rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 bg-orange-500 text-white hover:bg-orange-500 shadow-sm flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 text-sm font-medium rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 bg-yellow-500 text-white hover:bg-yellow-500 shadow-sm flex items-center justify-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                   {isSubmitting
@@ -416,7 +416,7 @@ export function AddCaseForm({
             {checklist.length > 0 && (
               <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckSquare size={14} className="text-orange-500" />
+                  <CheckSquare size={14} className="text-yellow-500" />
                   <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">Document Checklist</h3>
                 </div>
                 <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mb-3">Required documents for {serviceType}</p>
@@ -456,7 +456,7 @@ function FormSection({
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xs dark:shadow-none p-5">
       <div className="flex items-center gap-2 mb-1">
-        <span className="text-orange-500">{icon}</span>
+        <span className="text-yellow-500">{icon}</span>
         <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{title}</h2>
       </div>
       <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mb-4">{description}</p>

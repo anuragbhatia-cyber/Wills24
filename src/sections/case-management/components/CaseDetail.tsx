@@ -73,7 +73,7 @@ const DOC_TYPE_LABELS: Record<DocumentType, string> = {
 }
 
 const AUTHOR_ROLE_CONFIG: Record<AuthorRole, { label: string; bg: string; text: string }> = {
-  lawyer: { label: 'Lawyer', bg: 'bg-orange-50 dark:bg-orange-950/30', text: 'text-orange-700 dark:text-orange-400' },
+  lawyer: { label: 'Lawyer', bg: 'bg-yellow-50 dark:bg-yellow-950/30', text: 'text-yellow-700 dark:text-yellow-400' },
   operations: { label: 'Operations', bg: 'bg-sky-50 dark:bg-sky-950/30', text: 'text-sky-700 dark:text-sky-400' },
   admin: { label: 'Admin', bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400' },
   legal: { label: 'Legal', bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-400' },
@@ -114,7 +114,7 @@ function getInitials(name: string) {
 }
 
 const INITIAL_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -278,14 +278,14 @@ export function CaseDetail({
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                      ? 'border-yellow-500 text-yellow-600 dark:text-yellow-400'
                       : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-300 dark:hover:border-neutral-600'
                   }`}
                 >
                   {tab.icon}
                   {tab.label}
                   {count !== null && (
-                    <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
+                    <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-yellow-400 dark:text-yellow-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
                       {count}
                     </span>
                   )}
@@ -326,7 +326,7 @@ export function CaseDetail({
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -334,7 +334,7 @@ export function CaseDetail({
               <select
                 value={followUpType}
                 onChange={(e) => setFollowUpType(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="Call">Call</option>
                 <option value="Email">Email</option>
@@ -349,7 +349,7 @@ export function CaseDetail({
                 value={followUpNotes}
                 onChange={(e) => setFollowUpNotes(e.target.value)}
                 placeholder="Enter follow-up details..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -393,7 +393,7 @@ export function CaseDetail({
             </button>
             <button
               onClick={handleFollowUpSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Add Follow-up
             </button>
@@ -416,7 +416,7 @@ export function CaseDetail({
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 placeholder="Write your note here..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -460,7 +460,7 @@ export function CaseDetail({
             </button>
             <button
               onClick={handleNoteSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Add Note
             </button>
@@ -482,7 +482,7 @@ export function CaseDetail({
                 value={assignLawyerSearch}
                 onChange={(e) => setAssignLawyerSearch(e.target.value)}
                 placeholder="Search lawyers..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div className="max-h-64 overflow-y-auto space-y-2">
@@ -497,7 +497,7 @@ export function CaseDetail({
                     disabled={isCurrent}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
                       isSelected
-                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30'
+                        ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30'
                         : isCurrent
                           ? 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/40 opacity-60 cursor-not-allowed'
                           : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 cursor-pointer'
@@ -508,7 +508,7 @@ export function CaseDetail({
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{lawyer.name}</p>
                           {isCurrent && (
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400">
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
                               Current
                             </span>
                           )}
@@ -539,7 +539,7 @@ export function CaseDetail({
             <button
               onClick={handleAssignLawyer}
               disabled={!selectedLawyerId}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Assign Lawyer
             </button>
@@ -563,7 +563,7 @@ function FollowUpsTab({ followUps, onAddFollowUp }: { followUps: CaseFollowUp[];
         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Follow-up Timeline</h2>
         <button
           onClick={onAddFollowUp}
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
         >
           <Plus size={12} />
           Add Follow-up
@@ -589,17 +589,17 @@ function FollowUpsTab({ followUps, onAddFollowUp }: { followUps: CaseFollowUp[];
                   <div className="hidden sm:flex shrink-0 relative z-10">
                     <div className={`w-[31px] h-[31px] rounded-full border-2 flex items-center justify-center ${
                       isFirst
-                        ? 'border-orange-400 bg-orange-50 dark:bg-orange-950/40 dark:border-orange-500'
+                        ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950/40 dark:border-yellow-500'
                         : 'border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900'
                     }`}>
-                      <MessageSquare size={12} className={isFirst ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'} />
+                      <MessageSquare size={12} className={isFirst ? 'text-yellow-500' : 'text-neutral-400 dark:text-neutral-500'} />
                     </div>
                   </div>
 
                   {/* Card */}
                   <div className={`flex-1 bg-white dark:bg-neutral-900 rounded-xl border p-4 ${
                     isFirst
-                      ? 'border-orange-200 dark:border-orange-900/50 shadow-sm'
+                      ? 'border-yellow-200 dark:border-yellow-900/50 shadow-sm'
                       : 'border-neutral-200 dark:border-neutral-800'
                   }`}>
                     <div className="flex items-start justify-between gap-3 mb-2">
@@ -744,7 +744,7 @@ function NotesTab({ notes, onAddNote }: { notes: CaseNote[]; onAddNote?: () => v
         </div>
         <button
           onClick={onAddNote}
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
         >
           <Plus size={12} />
           Add Note
@@ -834,7 +834,7 @@ function DocumentsTab({ documents, onDownloadDocument }: { documents: CaseDocume
                   <div className="flex items-center justify-center">
                     <button
                       onClick={() => onDownloadDocument?.(doc.id)}
-                      className="p-1.5 rounded-md text-neutral-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors cursor-pointer"
                       title="Download"
                     >
                       <Download size={14} />
@@ -863,7 +863,7 @@ function DocumentsTab({ documents, onDownloadDocument }: { documents: CaseDocume
                     </div>
                     <button
                       onClick={() => onDownloadDocument?.(doc.id)}
-                      className="p-1.5 rounded-md text-neutral-400 hover:text-orange-500 transition-colors cursor-pointer shrink-0"
+                      className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-500 transition-colors cursor-pointer shrink-0"
                     >
                       <Download size={14} />
                     </button>

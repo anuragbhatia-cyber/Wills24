@@ -76,9 +76,9 @@ const REFUND_STATUS_CONFIG: Record<
   'pending-approval': {
     label: 'Pending Approval',
     icon: <Clock size={12} />,
-    bg: 'bg-orange-50 dark:bg-orange-950/30',
-    text: 'text-orange-700 dark:text-orange-400',
-    dot: 'bg-orange-500',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/30',
+    text: 'text-yellow-700 dark:text-yellow-400',
+    dot: 'bg-yellow-500',
   },
   approved: {
     label: 'Approved',
@@ -327,8 +327,8 @@ export function RefundWorkflow({
             <StatCard
               label="Pending Approval"
               value={stats.pendingCount.toString()}
-              iconBg="bg-orange-100 dark:bg-orange-900/40"
-              iconColor="text-orange-600 dark:text-orange-400"
+              iconBg="bg-yellow-100 dark:bg-yellow-900/40"
+              iconColor="text-yellow-600 dark:text-yellow-400"
               icon={<Clock size={14} />}
             />
             <StatCard
@@ -543,7 +543,7 @@ export function RefundWorkflow({
                                           status === 'done'
                                             ? 'bg-emerald-500 text-white'
                                             : status === 'current'
-                                              ? 'bg-orange-500 text-white ring-4 ring-orange-100 dark:ring-orange-900/30'
+                                              ? 'bg-yellow-500 text-white ring-4 ring-yellow-100 dark:ring-yellow-900/30'
                                               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500'
                                         }`}
                                       >
@@ -564,14 +564,14 @@ export function RefundWorkflow({
                                               status === 'done'
                                                 ? 'text-neutral-900 dark:text-neutral-100'
                                                 : status === 'current'
-                                                  ? 'text-orange-700 dark:text-orange-400'
+                                                  ? 'text-yellow-700 dark:text-yellow-400'
                                                   : 'text-neutral-400 dark:text-neutral-500'
                                             }`}
                                           >
                                             {step.label}
                                           </p>
                                           {status === 'current' && (
-                                            <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400">
+                                            <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-950/40 text-yellow-600 dark:text-yellow-400">
                                               Current
                                             </span>
                                           )}
@@ -676,7 +676,7 @@ export function RefundWorkflow({
                         {relatedPayment && refund.status === 'requested' && (
                           <button
                             onClick={() => openInitiateRefundModal(relatedPayment)}
-                            className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium text-orange-600 dark:text-orange-400 bg-white dark:bg-neutral-800 border border-orange-200 dark:border-orange-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors cursor-pointer"
+                            className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium text-yellow-600 dark:text-yellow-400 bg-white dark:bg-neutral-800 border border-yellow-200 dark:border-yellow-800 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-950/20 transition-colors cursor-pointer"
                           >
                             <RotateCcw size={14} />
                             Initiate Refund
@@ -762,7 +762,7 @@ export function RefundWorkflow({
                   setApproveModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Approve
             </button>
@@ -790,7 +790,7 @@ export function RefundWorkflow({
                   value={rejectModal.reason}
                   onChange={(e) => setRejectModal({ ...rejectModal, reason: e.target.value })}
                   placeholder="Provide a reason for rejecting this refund..."
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
             </div>
@@ -850,7 +850,7 @@ export function RefundWorkflow({
                   setProcessModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Mark as Processed
             </button>
@@ -891,7 +891,7 @@ export function RefundWorkflow({
                   setCompleteModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Mark as Completed
             </button>
@@ -918,7 +918,7 @@ export function RefundWorkflow({
                   type="text"
                   value={initiateRefundModal.paymentId}
                   readOnly
-                  className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -930,7 +930,7 @@ export function RefundWorkflow({
                   value={initiateRefundModal.refundAmount}
                   onChange={(e) => setInitiateRefundModal({ ...initiateRefundModal, refundAmount: e.target.value })}
                   max={initiateRefundModal.paymentAmount}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
                 <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">
                   Maximum: {formatCurrency(initiateRefundModal.paymentAmount)}
@@ -945,7 +945,7 @@ export function RefundWorkflow({
                   value={initiateRefundModal.reason}
                   onChange={(e) => setInitiateRefundModal({ ...initiateRefundModal, reason: e.target.value })}
                   placeholder="Provide a reason for this refund..."
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
             </div>
@@ -964,7 +964,7 @@ export function RefundWorkflow({
                   setInitiateRefundModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Initiate Refund
             </button>

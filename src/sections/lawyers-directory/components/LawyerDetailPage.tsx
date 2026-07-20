@@ -101,7 +101,7 @@ export function LawyerDetailPage({ lawyer, cases, onBack, onViewCase }: LawyerDe
               onClick={() => setActiveTab(tab.key)}
               className={`relative inline-flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'text-orange-600 dark:text-orange-400'
+                  ? 'text-yellow-600 dark:text-yellow-400'
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
               }`}
             >
@@ -109,20 +109,20 @@ export function LawyerDetailPage({ lawyer, cases, onBack, onViewCase }: LawyerDe
               {tab.label}
               {tab.key === 'cases' && (
                 <span className={`text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full ${
-                  isActive ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                  isActive ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                 }`}>
                   {assignedCases.length}
                 </span>
               )}
               {tab.key === 'documents' && (
                 <span className={`text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full ${
-                  isActive ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                  isActive ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                 }`}>
                   {lawyer.documents.length}
                 </span>
               )}
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500 rounded-t" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 rounded-t" />
               )}
             </button>
           )
@@ -220,7 +220,7 @@ export function LawyerDetailPage({ lawyer, cases, onBack, onViewCase }: LawyerDe
                     </span>
                     {isUploaded && (
                       <button
-                        className="p-1.5 rounded-md text-neutral-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:text-orange-400 dark:hover:bg-orange-900/20 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:text-yellow-400 dark:hover:bg-yellow-900/20 transition-colors cursor-pointer"
                         title="Download"
                       >
                         <Download size={14} />

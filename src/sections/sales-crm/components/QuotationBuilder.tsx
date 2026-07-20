@@ -68,9 +68,9 @@ const CATEGORY_ORDER: ServiceCategory[] = ['Wills', 'Trusts', 'Succession Certif
 
 const CATEGORY_COLORS: Record<ServiceCategory, { bg: string; text: string; badge: string }> = {
   Wills: {
-    bg: 'bg-orange-50 dark:bg-orange-950/30',
-    text: 'text-orange-700 dark:text-orange-300',
-    badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/30',
+    text: 'text-yellow-700 dark:text-yellow-300',
+    badge: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   },
   Trusts: {
     bg: 'bg-violet-50 dark:bg-violet-950/30',
@@ -287,7 +287,7 @@ export function QuotationBuilder({
                 placeholder="Search services..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-[36px] w-full rounded-lg border border-neutral-200 bg-white pl-8 pr-3 text-[12px] text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-orange-300 focus:ring-2 focus:ring-orange-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-orange-700 dark:focus:ring-orange-900/30"
+                className="h-[36px] w-full rounded-lg border border-neutral-200 bg-white pl-8 pr-3 text-[12px] text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-yellow-300 focus:ring-2 focus:ring-yellow-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-yellow-700 dark:focus:ring-yellow-900/30"
               />
             </div>
             <div className="flex gap-1">
@@ -354,7 +354,7 @@ export function QuotationBuilder({
                           key={service.id}
                           className={`flex items-start gap-3 px-4 py-3 transition-colors ${
                             inCart
-                              ? 'bg-orange-50/40 dark:bg-orange-950/10'
+                              ? 'bg-yellow-50/40 dark:bg-yellow-950/10'
                               : 'hover:bg-neutral-50/60 dark:hover:bg-neutral-700/10'
                           }`}
                         >
@@ -403,7 +403,7 @@ export function QuotationBuilder({
                                 </span>
                                 <button
                                   onClick={() => updateQuantity(service.id, 1)}
-                                  className="flex h-7 w-7 items-center justify-center rounded-md border border-orange-200 bg-orange-50 text-orange-600 transition-colors hover:bg-orange-100 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-400"
+                                  className="flex h-7 w-7 items-center justify-center rounded-md border border-yellow-200 bg-yellow-50 text-yellow-600 transition-colors hover:bg-yellow-100 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400"
                                 >
                                   <Plus size={12} strokeWidth={2} />
                                 </button>
@@ -411,7 +411,7 @@ export function QuotationBuilder({
                             ) : (
                               <button
                                 onClick={() => addItem(service)}
-                                className="flex h-7 items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-2.5 text-[11px] font-semibold text-orange-600 transition-colors hover:bg-orange-100 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-400"
+                                className="flex h-7 items-center gap-1 rounded-md border border-yellow-200 bg-yellow-50 px-2.5 text-[11px] font-semibold text-yellow-600 transition-colors hover:bg-yellow-100 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400"
                               >
                                 <Plus size={12} strokeWidth={2} />
                                 Add
@@ -434,13 +434,13 @@ export function QuotationBuilder({
           <div className="sticky top-4 rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800 dark:bg-neutral-800/60">
             {/* Header */}
             <div className="flex items-center gap-2 border-b border-neutral-100 px-5 py-3.5 dark:border-neutral-700/50">
-              <ShoppingCart size={14} strokeWidth={2} className="text-orange-500" />
+              <ShoppingCart size={14} strokeWidth={2} className="text-yellow-500" />
               <h2 className="text-[14px] font-semibold text-neutral-800 dark:text-neutral-100">
                 Quotation Preview
               </h2>
               {items.length > 0 && (
                 <span
-                  className="ml-auto rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700 dark:bg-orange-900/40 dark:text-orange-300"
+                  className="ml-auto rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-bold text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
                   style={{ fontFamily: '"IBM Plex Mono", monospace' }}
                 >
                   {items.length} item{items.length > 1 ? 's' : ''}
@@ -451,7 +451,7 @@ export function QuotationBuilder({
             {/* Lead info */}
             <div className="border-b border-neutral-100 px-5 py-3 dark:border-neutral-700/50">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 text-[11px] font-bold text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 text-[11px] font-bold text-white">
                   {lead.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
@@ -532,7 +532,7 @@ export function QuotationBuilder({
                             setDiscount(v === '' ? 0 : Math.max(0, Number(v)))
                           }}
                           placeholder="0"
-                          className="w-24 rounded-md border border-neutral-200 bg-white px-2 py-1 text-right text-[12px] text-neutral-700 placeholder-neutral-300 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                          className="w-24 rounded-md border border-neutral-200 bg-white px-2 py-1 text-right text-[12px] text-neutral-700 placeholder-neutral-300 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                           style={{ fontFamily: '"IBM Plex Mono", monospace' }}
                         />
                       </div>
@@ -569,7 +569,7 @@ export function QuotationBuilder({
                       setSendVia('email')
                       setSendModalOpen(true)
                     }}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-orange-500 py-2.5 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md active:scale-[0.98]"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-yellow-500 py-2.5 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-yellow-500 hover:shadow-md active:scale-[0.98]"
                   >
                     <Send size={13} strokeWidth={2} />
                     Send Quotation
@@ -598,12 +598,12 @@ export function QuotationBuilder({
               onClick={() => setSendVia('email')}
               className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all ${
                 sendVia === 'email'
-                  ? 'border-orange-500 bg-orange-50 dark:border-orange-500 dark:bg-orange-950/20'
+                  ? 'border-yellow-500 bg-yellow-50 dark:border-yellow-500 dark:bg-yellow-950/20'
                   : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600'
               }`}
             >
               <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                sendVia === 'email' ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+                sendVia === 'email' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
               }`}>
                 <Send size={14} strokeWidth={2} />
               </div>
@@ -615,7 +615,7 @@ export function QuotationBuilder({
                 type="radio"
                 checked={sendVia === 'email'}
                 onChange={() => setSendVia('email')}
-                className="accent-orange-500"
+                className="accent-yellow-500"
               />
             </button>
             <button
@@ -623,7 +623,7 @@ export function QuotationBuilder({
               onClick={() => setSendVia('whatsapp')}
               className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all ${
                 sendVia === 'whatsapp'
-                  ? 'border-orange-500 bg-orange-50 dark:border-orange-500 dark:bg-orange-950/20'
+                  ? 'border-yellow-500 bg-yellow-50 dark:border-yellow-500 dark:bg-yellow-950/20'
                   : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600'
               }`}
             >
@@ -640,7 +640,7 @@ export function QuotationBuilder({
                 type="radio"
                 checked={sendVia === 'whatsapp'}
                 onChange={() => setSendVia('whatsapp')}
-                className="accent-orange-500"
+                className="accent-yellow-500"
               />
             </button>
           </div>
@@ -658,7 +658,7 @@ export function QuotationBuilder({
                 else onSendWhatsApp?.()
                 setSendModalOpen(false)
               }}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               <Send size={13} strokeWidth={2} />
               Send

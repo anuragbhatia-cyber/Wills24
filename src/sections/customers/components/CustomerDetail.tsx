@@ -94,7 +94,7 @@ const PAYMENT_STATUS: Record<PaymentStatus, { label: string; dot: string; bg: st
 const FOLLOWUP_TYPE_CONFIG: Record<FollowUpType, { label: string; bg: string; text: string }> = {
   update: { label: 'Update', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-400' },
   meeting: { label: 'Meeting', bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400' },
-  quotation: { label: 'Quotation', bg: 'bg-orange-50 dark:bg-orange-950/30', text: 'text-orange-700 dark:text-orange-400' },
+  quotation: { label: 'Quotation', bg: 'bg-yellow-50 dark:bg-yellow-950/30', text: 'text-yellow-700 dark:text-yellow-400' },
 }
 
 // ---------------------------------------------------------------------------
@@ -218,7 +218,7 @@ export function CustomerDetail({
               >
                 <ArrowLeft size={20} />
               </button>
-              <div className="w-14 h-14 rounded-2xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-lg font-bold text-orange-700 dark:text-orange-300 shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center text-lg font-bold text-yellow-700 dark:text-yellow-300 shrink-0">
                 {getInitials(customer.name)}
               </div>
               <div>
@@ -262,7 +262,7 @@ export function CustomerDetail({
               </button>
               <button
                 onClick={openQuotationModal}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
               >
                 <Send size={12} />
                 Send Followup
@@ -286,7 +286,7 @@ export function CustomerDetail({
               onClick={() => setActiveTab(tab.key)}
               className={`relative px-4 py-2.5 text-[13px] font-medium transition-colors cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? 'text-orange-600 dark:text-orange-400'
+                  ? 'text-yellow-600 dark:text-yellow-400'
                   : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
               }`}
             >
@@ -296,7 +296,7 @@ export function CustomerDetail({
                   <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
                       isActive
-                        ? 'bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400'
+                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-400'
                         : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                     }`}
                     style={{ fontFamily: '"IBM Plex Mono", monospace' }}
@@ -306,7 +306,7 @@ export function CustomerDetail({
                 )}
               </span>
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-t-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-yellow-500 rounded-t-full" />
               )}
             </button>
           )
@@ -346,7 +346,7 @@ export function CustomerDetail({
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -355,7 +355,7 @@ export function CustomerDetail({
                 type="email"
                 value={editEmail}
                 onChange={(e) => setEditEmail(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -364,7 +364,7 @@ export function CustomerDetail({
                 type="tel"
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -372,7 +372,7 @@ export function CustomerDetail({
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -385,7 +385,7 @@ export function CustomerDetail({
                 type="text"
                 value={editCompany}
                 onChange={(e) => setEditCompany(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -398,7 +398,7 @@ export function CustomerDetail({
             </button>
             <button
               onClick={handleEditSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Changes
             </button>
@@ -420,7 +420,7 @@ export function CustomerDetail({
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -428,7 +428,7 @@ export function CustomerDetail({
               <select
                 value={followUpType}
                 onChange={(e) => setFollowUpType(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="Call">Call</option>
                 <option value="Email">Email</option>
@@ -443,7 +443,7 @@ export function CustomerDetail({
                 value={followUpNotes}
                 onChange={(e) => setFollowUpNotes(e.target.value)}
                 placeholder="Enter follow-up details..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -487,7 +487,7 @@ export function CustomerDetail({
             </button>
             <button
               onClick={handleQuotationSend}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Send Followup
             </button>
@@ -596,7 +596,7 @@ function ServicesTab({ services, onViewCase }: { services: CustomerService[]; on
                     {svc.caseId && (
                       <button
                         onClick={() => onViewCase?.(svc.caseId!)}
-                        className="text-[11px] font-medium text-orange-600 dark:text-orange-400 hover:underline cursor-pointer"
+                        className="text-[11px] font-medium text-yellow-600 dark:text-yellow-400 hover:underline cursor-pointer"
                       >
                         View Case
                       </button>
@@ -643,7 +643,7 @@ function CasesTab({ cases, onViewCase }: { cases: CustomerCase[]; onViewCase?: (
               </div>
               <button
                 onClick={() => onViewCase?.(cs.id)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer shrink-0"
+                className="inline-flex items-center gap-1 text-xs font-medium text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 cursor-pointer shrink-0"
               >
                 <Eye size={12} />
                 View Case
@@ -715,7 +715,7 @@ function DocumentsTab({ documents, onDownload }: { documents: CustomerDocument[]
               <div className="flex justify-center">
                 <button
                   onClick={() => onDownload?.(doc.id)}
-                  className="p-1.5 rounded-md text-neutral-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors cursor-pointer"
                 >
                   <Download size={13} />
                 </button>
@@ -745,7 +745,7 @@ function DocumentsTab({ documents, onDownload }: { documents: CustomerDocument[]
                   <StatusPill cfg={statusCfg} />
                   <button
                     onClick={() => onDownload?.(doc.id)}
-                    className="p-1.5 rounded-md text-neutral-400 hover:text-orange-500 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-500 transition-colors cursor-pointer"
                   >
                     <Download size={13} />
                   </button>

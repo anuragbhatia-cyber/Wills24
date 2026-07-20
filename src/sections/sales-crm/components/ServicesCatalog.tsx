@@ -49,7 +49,7 @@ const TABS: { key: FilterTab; label: string }[] = [
 ]
 
 const CATEGORY_COLORS: Record<ServiceCategory, { bg: string; text: string; dot: string }> = {
-  Wills: { bg: 'bg-orange-50 dark:bg-orange-950/30', text: 'text-orange-700 dark:text-orange-400', dot: 'bg-orange-500' },
+  Wills: { bg: 'bg-yellow-50 dark:bg-yellow-950/30', text: 'text-yellow-700 dark:text-yellow-400', dot: 'bg-yellow-500' },
   Trusts: { bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400', dot: 'bg-violet-500' },
   'Succession Certificate': { bg: 'bg-sky-50 dark:bg-sky-950/30', text: 'text-sky-700 dark:text-sky-400', dot: 'bg-sky-500' },
 }
@@ -148,7 +148,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
             </div>
             <button
               onClick={() => onCreate?.()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-500 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-yellow-500 hover:bg-yellow-500 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
             >
               <Plus size={16} strokeWidth={2.5} />
               Add Service
@@ -160,7 +160,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
             <StatCard icon={<Package size={16} />} label="Total" value={stats.total} accent="text-neutral-700 dark:text-neutral-300" />
             <StatCard icon={<CheckCircle2 size={16} />} label="Active" value={stats.active} accent="text-emerald-600 dark:text-emerald-400" />
             <StatCard icon={<XCircle size={16} />} label="Inactive" value={stats.inactive} accent="text-red-500 dark:text-red-400" />
-            <StatCard icon={<IndianRupee size={16} />} label="Avg. Price" value={formatCurrency(stats.avgPrice)} accent="text-orange-600 dark:text-orange-400" />
+            <StatCard icon={<IndianRupee size={16} />} label="Avg. Price" value={formatCurrency(stats.avgPrice)} accent="text-yellow-600 dark:text-yellow-400" />
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
                   {tab.label}
                   <span
                     className={`ml-1.5 text-[10px] font-semibold tabular-nums ${
-                      isActive ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'
+                      isActive ? 'text-yellow-500' : 'text-neutral-400 dark:text-neutral-500'
                     }`}
                   >
                     {tabCounts[tab.key] ?? 0}
@@ -204,7 +204,7 @@ export function ServicesCatalog({ services, onCreate, onEdit, onToggle }: Servic
                 placeholder="Search services..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-56 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                className="w-56 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
               />
             </div>
             <div className="flex items-center bg-neutral-200/50 dark:bg-neutral-800 rounded-lg p-0.5">
@@ -423,7 +423,7 @@ function ServiceCard({
       <div className="flex items-center border-t border-neutral-100 dark:border-neutral-800 divide-x divide-neutral-100 dark:divide-neutral-800">
         <button
           onClick={onEdit}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-colors cursor-pointer"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-yellow-50/50 dark:hover:bg-yellow-950/20 transition-colors cursor-pointer"
         >
           <Pencil size={12} />
           Edit
@@ -510,7 +510,7 @@ function ServiceRow({
       <div className="flex items-center justify-end gap-1">
         <button
           onClick={onEdit}
-          className="p-1.5 text-neutral-400 hover:text-orange-500 rounded-md hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors cursor-pointer"
+          className="p-1.5 text-neutral-400 hover:text-yellow-500 rounded-md hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors cursor-pointer"
           title="Edit service"
         >
           <Pencil size={13} />

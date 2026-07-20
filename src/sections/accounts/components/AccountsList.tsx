@@ -352,8 +352,8 @@ export function AccountsList({
           icon={<Send size={16} />}
           label="Quotations Sent"
           value={kpiStats.totalQuotationsSent}
-          iconBg="bg-orange-100 dark:bg-orange-900/40"
-          iconColor="text-orange-600 dark:text-orange-400"
+          iconBg="bg-yellow-100 dark:bg-yellow-900/40"
+          iconColor="text-yellow-600 dark:text-yellow-400"
         />
       </div>
 
@@ -371,14 +371,14 @@ export function AccountsList({
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                    ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                 }`}
               >
                 {tab.label}
                 <span
                   className={`ml-1.5 text-[10px] font-bold tabular-nums ${
-                    isActive ? 'text-orange-400 dark:text-orange-300' : 'text-neutral-400 dark:text-neutral-500'
+                    isActive ? 'text-yellow-400 dark:text-yellow-300' : 'text-neutral-400 dark:text-neutral-500'
                   }`}
                 >
                   {count}
@@ -397,21 +397,21 @@ export function AccountsList({
               placeholder="Search leads, quotations..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+              className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
               showFilters || hasActiveFilters
-                ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                ? 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300'
                 : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
             }`}
           >
             <Filter size={13} strokeWidth={2} />
             Filters
             {activeFilterCount > 0 && (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[9px] font-bold text-white">
                 {activeFilterCount}
               </span>
             )}
@@ -426,11 +426,11 @@ export function AccountsList({
             Active filters
           </span>
           {filterWM && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               WM: {filterWM}
               <button
                 onClick={() => setFilterWM('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Wealth Manager: ${filterWM}`}
               >
                 <X size={10} />
@@ -438,11 +438,11 @@ export function AccountsList({
             </span>
           )}
           {filterService && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Service: {filterService}
               <button
                 onClick={() => setFilterService('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Service: ${filterService}`}
               >
                 <X size={10} />
@@ -468,7 +468,7 @@ export function AccountsList({
               <select
                 value={filterWM}
                 onChange={(e) => setFilterWM(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Wealth Managers</option>
                 {wmOptions.map((name) => (
@@ -487,7 +487,7 @@ export function AccountsList({
               <select
                 value={filterService}
                 onChange={(e) => setFilterService(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Services</option>
                 {serviceOptions.map((name) => (
@@ -501,7 +501,7 @@ export function AccountsList({
           {hasActiveFilters && (
             <button
               onClick={() => { setFilterWM(''); setFilterService('') }}
-              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
             >
               <X size={12} />
               Clear filters
@@ -520,9 +520,9 @@ export function AccountsList({
                 onClick={toggleSelectAll}
                 className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ${
                   allSelected
-                    ? 'border-orange-500 bg-orange-500'
+                    ? 'border-yellow-500 bg-yellow-500'
                     : selectedIds.size > 0
-                      ? 'border-orange-500 bg-orange-500'
+                      ? 'border-yellow-500 bg-yellow-500'
                       : 'border-neutral-300 dark:border-neutral-600'
                 }`}
               >
@@ -564,7 +564,7 @@ export function AccountsList({
                     setFilterWM('')
                     setFilterService('')
                   }}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors cursor-pointer"
                 >
                   Clear search & filters
                 </button>
@@ -592,7 +592,7 @@ export function AccountsList({
                           aria-label={selectedIds.has(entry.id) ? 'Deselect entry' : 'Select entry'}
                           className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ${
                             selectedIds.has(entry.id)
-                              ? 'border-orange-500 bg-orange-500'
+                              ? 'border-yellow-500 bg-yellow-500'
                               : 'border-neutral-300 dark:border-neutral-600'
                           }`}
                         >
@@ -616,7 +616,7 @@ export function AccountsList({
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); setViewQuotation(entry) }}
-                          className="mt-1.5 text-[11px] font-medium text-orange-600 dark:text-orange-400 hover:underline cursor-pointer"
+                          className="mt-1.5 text-[11px] font-medium text-yellow-600 dark:text-yellow-400 hover:underline cursor-pointer"
                         >
                           View quotation {entry.quotationRef.replace('W24-QT-2026-', 'QT-')}
                         </button>
@@ -636,7 +636,7 @@ export function AccountsList({
                       onClick={() => toggleSelect(entry.id)}
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ${
                         selectedIds.has(entry.id)
-                          ? 'border-orange-500 bg-orange-500'
+                          ? 'border-yellow-500 bg-yellow-500'
                           : 'border-neutral-300 dark:border-neutral-600'
                       }`}
                     >
@@ -671,10 +671,10 @@ export function AccountsList({
                     }}
                     className="group flex items-center gap-1.5 text-left cursor-pointer"
                   >
-                    <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 font-[family-name:var(--font-mono,'IBM_Plex_Mono',ui-monospace,monospace)] group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
                       {entry.quotationRef.replace('W24-QT-2026-', 'QT-')}
                     </span>
-                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 group-hover:underline">
+                    <span className="text-[10px] font-semibold text-yellow-600 dark:text-yellow-400 group-hover:underline">
                       View
                     </span>
                   </button>
@@ -690,7 +690,7 @@ export function AccountsList({
                       <select
                         value={effectiveStatus}
                         onChange={(e) => changeStatus(entry.id, e.target.value as AccountEntryStatus)}
-                        className={`appearance-none cursor-pointer pl-2.5 pr-6 py-0.5 rounded-full text-[10px] font-semibold border border-transparent focus:outline-none focus:ring-1 focus:ring-orange-300 max-w-full truncate ${statusCfg.bg} ${statusCfg.text}`}
+                        className={`appearance-none cursor-pointer pl-2.5 pr-6 py-0.5 rounded-full text-[10px] font-semibold border border-transparent focus:outline-none focus:ring-1 focus:ring-yellow-300 max-w-full truncate ${statusCfg.bg} ${statusCfg.text}`}
                       >
                         {(Object.keys(STATUS_CONFIG) as AccountEntryStatus[]).map((s) => (
                           <option key={s} value={s} className="bg-white text-neutral-800 dark:bg-neutral-800 dark:text-neutral-100">
@@ -821,7 +821,7 @@ export function AccountsList({
                   type="text"
                   value={editModal.name}
                   onChange={(e) => setEditModal({ ...editModal, name: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -832,7 +832,7 @@ export function AccountsList({
                   type="number"
                   value={editModal.amount}
                   onChange={(e) => setEditModal({ ...editModal, amount: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -843,7 +843,7 @@ export function AccountsList({
                   type="date"
                   value={editModal.dueDate}
                   onChange={(e) => setEditModal({ ...editModal, dueDate: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -853,7 +853,7 @@ export function AccountsList({
                 <select
                   value={editModal.status}
                   onChange={(e) => setEditModal({ ...editModal, status: e.target.value as AccountEntryStatus })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 >
                   <option value="pi-sent">PI Sent</option>
                   <option value="payment-received">Payment Received</option>
@@ -869,7 +869,7 @@ export function AccountsList({
                   rows={3}
                   value={editModal.notes}
                   onChange={(e) => setEditModal({ ...editModal, notes: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
             </div>
@@ -888,7 +888,7 @@ export function AccountsList({
                   setEditModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Changes
             </button>
@@ -915,7 +915,7 @@ export function AccountsList({
                   type="date"
                   value={followUpModal.date}
                   onChange={(e) => setFollowUpModal({ ...followUpModal, date: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -925,7 +925,7 @@ export function AccountsList({
                 <select
                   value={followUpModal.type}
                   onChange={(e) => setFollowUpModal({ ...followUpModal, type: e.target.value as 'call' | 'email' | 'meeting' })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 >
                   <option value="call">Call</option>
                   <option value="email">Email</option>
@@ -941,7 +941,7 @@ export function AccountsList({
                   value={followUpModal.notes}
                   onChange={(e) => setFollowUpModal({ ...followUpModal, notes: e.target.value })}
                   placeholder="Add any notes about this follow-up..."
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
             </div>
@@ -960,7 +960,7 @@ export function AccountsList({
                   setFollowUpModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Schedule Follow-up
             </button>
@@ -987,7 +987,7 @@ export function AccountsList({
                   type="email"
                   value={sendPIModal.email}
                   onChange={(e) => setSendPIModal({ ...sendPIModal, email: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -999,7 +999,7 @@ export function AccountsList({
                   value={sendPIModal.message}
                   onChange={(e) => setSendPIModal({ ...sendPIModal, message: e.target.value })}
                   placeholder="Add a personal message to include with the invoice..."
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -1049,7 +1049,7 @@ export function AccountsList({
                   setSendPIModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Send PI
             </button>
@@ -1076,7 +1076,7 @@ export function AccountsList({
                   type="email"
                   value={sendInvoiceModal.email}
                   onChange={(e) => setSendInvoiceModal({ ...sendInvoiceModal, email: e.target.value })}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -1088,7 +1088,7 @@ export function AccountsList({
                   value={sendInvoiceModal.message}
                   onChange={(e) => setSendInvoiceModal({ ...sendInvoiceModal, message: e.target.value })}
                   placeholder="Add a personal message to include with the invoice..."
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
               </div>
               <div>
@@ -1138,7 +1138,7 @@ export function AccountsList({
                   setSendInvoiceModal(null)
                 }
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Send Invoice
             </button>
@@ -1217,7 +1217,7 @@ export function AccountsList({
           <DialogFooter>
             <button
               onClick={() => setViewQuotation(null)}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Close
             </button>
@@ -1296,13 +1296,13 @@ function MenuItem({
       onClick={onClick}
       className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors cursor-pointer ${
         highlight
-          ? 'text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium'
+          ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 font-medium'
           : accent
             ? 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50'
             : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700/50'
       }`}
     >
-      <span className={highlight ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'}>{icon}</span>
+      <span className={highlight ? 'text-yellow-500' : 'text-neutral-400 dark:text-neutral-500'}>{icon}</span>
       <span className="text-sm">{label}</span>
     </button>
   )

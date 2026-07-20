@@ -44,7 +44,7 @@ const TIER_OPTIONS: { value: WMTier; label: string; icon: React.ReactNode; descr
   { value: 'platinum', label: 'Platinum', icon: <Gem size={16} />, description: '100 wills with 15 months validity', color: 'border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-400', wills: 100, price: '₹1,50,000', validity: '15 months' },
   { value: 'gold', label: 'Gold', icon: <Crown size={16} />, description: '25 wills with 9 months validity', color: 'border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400', wills: 25, price: '₹50,000', validity: '9 months' },
   { value: 'silver', label: 'Silver', icon: <Award size={16} />, description: '5 wills with 6 months validity', color: 'border-neutral-400 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400', wills: 5, price: '₹15,000', validity: '6 months' },
-  { value: 'bronze', label: 'Bronze', icon: <Medal size={16} />, description: '1 will with 2 months validity', color: 'border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-400', wills: 1, price: '₹5,000', validity: '2 months' },
+  { value: 'bronze', label: 'Bronze', icon: <Medal size={16} />, description: '1 will with 2 months validity', color: 'border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400', wills: 1, price: '₹5,000', validity: '2 months' },
 ]
 
 const PERMISSION_OPTIONS: { value: WMPermission; label: string; description: string }[] = [
@@ -54,7 +54,7 @@ const PERMISSION_OPTIONS: { value: WMPermission; label: string; description: str
   { value: 'documents', label: 'Documents', description: 'View and upload documents' },
 ]
 
-const INPUT_CLASS = 'w-full px-3 py-2.5 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all'
+const INPUT_CLASS = 'w-full px-3 py-2.5 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all'
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -227,7 +227,7 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
                       onClick={() => setGender(opt.value)}
                       className={`px-4 py-2 text-xs font-medium rounded-lg border transition-all cursor-pointer ${
                         gender === opt.value
-                          ? 'border-orange-400 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400'
+                          ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400'
                           : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:hover:border-neutral-600'
                       }`}
                     >
@@ -273,7 +273,7 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
                               key={s}
                               onClick={() => { setState(s); setStateDropdownOpen(false) }}
                               className={`w-full px-3 py-2 text-left text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer ${
-                                state === s ? 'text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-950/20' : 'text-neutral-700 dark:text-neutral-300'
+                                state === s ? 'text-yellow-600 dark:text-yellow-400 font-medium bg-yellow-50 dark:bg-yellow-950/20' : 'text-neutral-700 dark:text-neutral-300'
                               }`}
                             >
                               {s}
@@ -444,7 +444,7 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
                       }`}
                     >
                       {selected && (
-                        <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
+                        <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center">
                           <Check size={12} className="text-white" />
                         </div>
                       )}
@@ -481,13 +481,13 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
                       onClick={() => togglePermission(opt.value)}
                       className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer ${
                         checked
-                          ? 'border-orange-300 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20'
+                          ? 'border-yellow-300 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/20'
                           : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-600'
                       }`}
                     >
                       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                         checked
-                          ? 'border-orange-500 bg-orange-500'
+                          ? 'border-yellow-500 bg-yellow-500'
                           : 'border-neutral-300 dark:border-neutral-600'
                       }`}>
                         {checked && <Check size={12} className="text-white" />}
@@ -548,7 +548,7 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
                     <p className="text-[10px] font-medium text-neutral-500 dark:text-neutral-400 mb-1.5">Permissions</p>
                     <div className="flex flex-wrap gap-1">
                       {permissions.length > 0 ? permissions.map((p) => (
-                        <span key={p} className="inline-block px-1.5 py-0.5 text-[9px] font-medium bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 rounded border border-orange-200 dark:border-orange-800/60">
+                        <span key={p} className="inline-block px-1.5 py-0.5 text-[9px] font-medium bg-yellow-50 dark:bg-yellow-950/20 text-yellow-600 dark:text-yellow-400 rounded border border-yellow-200 dark:border-yellow-800/60">
                           {PERMISSION_OPTIONS.find((o) => o.value === p)?.label}
                         </span>
                       )) : (
@@ -594,7 +594,7 @@ export function AddWMForm({ onSubmit, onCancel, initialData, mode = 'create' }: 
           disabled={!isFormValid || isSubmitting}
           className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg shadow-sm transition-colors cursor-pointer ${
             isFormValid && !isSubmitting
-              ? 'text-white bg-orange-500 hover:bg-orange-500'
+              ? 'text-white bg-yellow-500 hover:bg-yellow-500'
               : 'text-neutral-400 bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-600 cursor-not-allowed'
           }`}
         >

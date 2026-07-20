@@ -231,9 +231,9 @@ export function LeadForm({
                   <div
                     className={`flex items-center justify-center w-9 h-9 rounded-full text-sm font-semibold transition-colors shrink-0 ${
                       isCompleted
-                        ? 'bg-orange-500 text-white'
+                        ? 'bg-yellow-500 text-white'
                         : isActive
-                        ? 'bg-orange-500 text-white'
+                        ? 'bg-yellow-500 text-white'
                         : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400'
                     }`}
                   >
@@ -247,7 +247,7 @@ export function LeadForm({
                   </div>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-px mx-4 ${step > stepNum ? 'bg-orange-400' : 'bg-neutral-200 dark:bg-neutral-700'}`} />
+                  <div className={`flex-1 h-px mx-4 ${step > stepNum ? 'bg-yellow-400' : 'bg-neutral-200 dark:bg-neutral-700'}`} />
                 )}
               </div>
             )
@@ -490,8 +490,8 @@ export function LeadForm({
                   </FormField>
 
                   {selectedWM && (
-                    <div className="mt-2.5 flex items-center gap-3 rounded-lg border border-orange-100 bg-orange-50/50 px-3 py-2.5 dark:border-orange-900/30 dark:bg-orange-950/20">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100 text-[11px] font-bold text-orange-600 dark:bg-orange-900/40 dark:text-orange-400">
+                    <div className="mt-2.5 flex items-center gap-3 rounded-lg border border-yellow-100 bg-yellow-50/50 px-3 py-2.5 dark:border-yellow-900/30 dark:bg-yellow-950/20">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-100 text-[11px] font-bold text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400">
                         {selectedWM.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                       </div>
                       <div>
@@ -620,7 +620,7 @@ export function LeadForm({
           {step < 3 ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.98] cursor-pointer"
+              className="flex items-center gap-1.5 rounded-lg bg-yellow-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-yellow-600 hover:shadow-md active:scale-[0.98] cursor-pointer"
             >
               Next
               <ArrowRight size={14} strokeWidth={2} />
@@ -629,7 +629,7 @@ export function LeadForm({
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-600 hover:shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 rounded-lg bg-yellow-500 px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-yellow-600 hover:shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} strokeWidth={2} />}
               {isSubmitting
@@ -660,21 +660,21 @@ function FormSection({
     <div
       className={`rounded-xl border bg-white dark:bg-neutral-800/60 ${
         highlight
-          ? 'border-orange-200 dark:border-orange-900/40'
+          ? 'border-yellow-200 dark:border-yellow-900/40'
           : 'border-neutral-200/80 dark:border-neutral-800'
       }`}
     >
       <div
         className={`border-b px-5 py-3.5 ${
           highlight
-            ? 'border-orange-100 bg-orange-50/30 dark:border-orange-900/30 dark:bg-orange-950/10'
+            ? 'border-yellow-100 bg-yellow-50/30 dark:border-yellow-900/30 dark:bg-yellow-950/10'
             : 'border-neutral-100 dark:border-neutral-700/50'
         }`}
       >
         <h3 className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">
           {title}
           {highlight && (
-            <span className="ml-1.5 text-[10px] font-medium text-orange-500">Mandatory</span>
+            <span className="ml-1.5 text-[10px] font-medium text-yellow-500">Mandatory</span>
           )}
         </h3>
       </div>
@@ -719,7 +719,7 @@ function inputClass(hasError: boolean): string {
   return `w-full rounded-lg border px-3 py-2 text-[13px] text-neutral-800 placeholder-neutral-400 outline-none transition-colors dark:text-neutral-200 dark:placeholder-neutral-500 ${
     hasError
       ? 'border-rose-300 bg-rose-50/30 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 dark:border-rose-700 dark:bg-rose-950/10 dark:focus:ring-rose-900/30'
-      : 'border-neutral-200 bg-white focus:border-orange-300 focus:ring-2 focus:ring-orange-100 dark:border-neutral-700 dark:bg-neutral-800 dark:focus:border-orange-700 dark:focus:ring-orange-900/30'
+      : 'border-neutral-200 bg-white focus:border-yellow-300 focus:ring-2 focus:ring-yellow-100 dark:border-neutral-700 dark:bg-neutral-800 dark:focus:border-yellow-700 dark:focus:ring-yellow-900/30'
   }`
 }
 

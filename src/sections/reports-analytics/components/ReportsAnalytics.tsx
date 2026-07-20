@@ -137,7 +137,7 @@ const TIER_BADGE: Record<string, { icon: React.ReactNode; cls: string }> = {
   },
   bronze: {
     icon: <Medal className="w-3 h-3" />,
-    cls: 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400',
+    cls: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400',
   },
 }
 
@@ -262,7 +262,7 @@ function SortTh({
       >
         {label}
         <ArrowUpDown
-          className={`w-3 h-3 ${active ? 'text-orange-500' : 'text-neutral-300 dark:text-neutral-600'}`}
+          className={`w-3 h-3 ${active ? 'text-yellow-500' : 'text-neutral-300 dark:text-neutral-600'}`}
         />
       </div>
     </th>
@@ -409,7 +409,7 @@ export function ReportsAnalytics({
                 }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                   preset === p
-                    ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                    ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                 }`}
               >
@@ -427,7 +427,7 @@ export function ReportsAnalytics({
               }}
               className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 preset === 'Custom'
-                  ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                  ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
               }`}
             >
@@ -481,7 +481,7 @@ export function ReportsAnalytics({
             <div
               className={`relative w-9 h-5 rounded-full transition-colors ${
                 compare
-                  ? 'bg-orange-500'
+                  ? 'bg-yellow-500'
                   : 'bg-neutral-300 dark:bg-neutral-600'
               }`}
             >
@@ -497,7 +497,7 @@ export function ReportsAnalytics({
 
         <button
           onClick={() => onExportAll?.('excel')}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/40 transition-colors"
         >
           <Download className="w-3.5 h-3.5" />
           Download All
@@ -513,7 +513,7 @@ export function ReportsAnalytics({
               onClick={() => handleTabChange(tab.key)}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.key
-                  ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                  ? 'border-yellow-500 text-yellow-600 dark:text-yellow-400'
                   : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-300 dark:hover:border-neutral-600'
               }`}
             >
@@ -540,7 +540,7 @@ export function ReportsAnalytics({
               title="Pipeline Funnel"
               subtitle="Lead conversion stages"
               icon={GitMerge}
-              iconColor="text-orange-500"
+              iconColor="text-yellow-500"
             >
               <div className="p-5 space-y-3">
                 {sales.pipelineByStage.map((stage, i) => {
@@ -557,7 +557,7 @@ export function ReportsAnalytics({
                       </div>
                       <div className="h-5 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
                         <div
-                          className="h-full rounded-md bg-gradient-to-r from-orange-500 to-yellow-400"
+                          className="h-full rounded-md bg-gradient-to-r from-yellow-600 to-yellow-300"
                           style={{ width: `${w}%`, opacity: 1 - i * 0.15 }}
                         />
                       </div>
@@ -591,7 +591,7 @@ export function ReportsAnalytics({
                       </div>
                       <div className="h-4 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
                         <div
-                          className="h-full rounded-md bg-orange-500 dark:bg-orange-400"
+                          className="h-full rounded-md bg-yellow-500 dark:bg-yellow-400"
                           style={{ width: `${w}%` }}
                         />
                       </div>
@@ -805,7 +805,7 @@ export function ReportsAnalytics({
               title="WM Conversion Funnel"
               subtitle="Partner-sourced lead journey"
               icon={GitMerge}
-              iconColor="text-orange-500"
+              iconColor="text-yellow-500"
             >
               <div className="p-5 space-y-3">
                 {wmPerformance.conversionFunnel.map((stage, i) => {
@@ -818,7 +818,7 @@ export function ReportsAnalytics({
                       </div>
                       <div className="h-5 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
                         <div
-                          className="h-full rounded-md bg-gradient-to-r from-orange-500 to-yellow-400"
+                          className="h-full rounded-md bg-gradient-to-r from-yellow-600 to-yellow-300"
                           style={{ width: `${w}%`, opacity: 1 - i * 0.15 }}
                         />
                       </div>

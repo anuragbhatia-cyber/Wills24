@@ -79,7 +79,7 @@ function getInitials(name: string) {
 }
 
 const INITIAL_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -382,7 +382,7 @@ export function CaseList({
           </button>
           <button
             onClick={onCreate}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
           >
             <Plus size={13} />
             Add New Case
@@ -396,8 +396,8 @@ export function CaseList({
           icon={<Briefcase size={16} />}
           label="Total Cases"
           value={kpiStats.totalCases}
-          iconBg="bg-orange-100 dark:bg-orange-900/40"
-          iconColor="text-orange-600 dark:text-orange-400"
+          iconBg="bg-yellow-100 dark:bg-yellow-900/40"
+          iconColor="text-yellow-600 dark:text-yellow-400"
         />
         <KpiCard
           icon={<Clock size={16} />}
@@ -442,12 +442,12 @@ export function CaseList({
                   onClick={() => setActiveTab(tab.key)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                      ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                       : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                   }`}
                 >
                   {tab.label}
-                  <span className={`ml-1.5 text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                  <span className={`ml-1.5 text-[10px] font-bold tabular-nums ${isActive ? 'text-yellow-400 dark:text-yellow-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
                     {count}
                   </span>
                 </button>
@@ -463,21 +463,21 @@ export function CaseList({
                 placeholder="Search cases, customers..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
               />
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
                 showFilters || hasActiveFilters
-                  ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                  ? 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300'
                   : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
               }`}
             >
               <Filter size={13} strokeWidth={2} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[9px] font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -492,11 +492,11 @@ export function CaseList({
             Active filters
           </span>
           {filterLawyer && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Lawyer: {filterLawyer}
               <button
                 onClick={() => setFilterLawyer('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Lawyer: ${filterLawyer}`}
               >
                 <X size={10} />
@@ -504,11 +504,11 @@ export function CaseList({
             </span>
           )}
           {filterServiceType && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Service: {filterServiceType}
               <button
                 onClick={() => setFilterServiceType('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Service: ${filterServiceType}`}
               >
                 <X size={10} />
@@ -534,7 +534,7 @@ export function CaseList({
               <select
                 value={filterLawyer}
                 onChange={(e) => setFilterLawyer(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Lawyers</option>
                 {lawyerOptions.map((name) => (
@@ -553,7 +553,7 @@ export function CaseList({
               <select
                 value={filterServiceType}
                 onChange={(e) => setFilterServiceType(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Service Types</option>
                 {serviceTypeOptions.map((name) => (
@@ -567,7 +567,7 @@ export function CaseList({
           {hasActiveFilters && (
             <button
               onClick={() => { setFilterLawyer(''); setFilterServiceType('') }}
-              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
             >
               <X size={12} />
               Clear filters
@@ -579,13 +579,13 @@ export function CaseList({
 
       {/* ── Bulk Action Bar ─────────────────────────────────────────────── */}
       {selectedIds.size > 0 && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-orange-200 bg-orange-50 px-4 py-2.5 dark:border-orange-800 dark:bg-orange-950/30">
-          <span className="text-[12px] font-medium text-orange-700 dark:text-orange-300">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-2.5 dark:border-yellow-800 dark:bg-yellow-950/30">
+          <span className="text-[12px] font-medium text-yellow-700 dark:text-yellow-300">
             {selectedIds.size} selected
           </span>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-orange-600/70 dark:text-orange-400/70">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-yellow-600/70 dark:text-yellow-400/70">
               Move to
             </span>
             <div className="relative">
@@ -594,21 +594,21 @@ export function CaseList({
                 onChange={(e) => {
                   if (e.target.value) requestBulkMove(e.target.value as CaseStatus)
                 }}
-                className="h-[30px] appearance-none rounded-md border border-orange-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-orange-700 outline-none focus:border-orange-400 dark:border-orange-700 dark:bg-neutral-900 dark:text-orange-300"
+                className="h-[30px] appearance-none rounded-md border border-yellow-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-yellow-700 outline-none focus:border-yellow-400 dark:border-yellow-700 dark:bg-neutral-900 dark:text-yellow-300"
               >
                 <option value="">Select status…</option>
                 {BULK_MOVE_STATUSES.map((s) => (
                   <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
                 ))}
               </select>
-              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-orange-500" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500" />
             </div>
           </div>
 
-          <div className="h-4 w-px bg-orange-200 dark:bg-orange-800" />
+          <div className="h-4 w-px bg-yellow-200 dark:bg-yellow-800" />
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-orange-600/70 dark:text-orange-400/70 inline-flex items-center gap-1">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-yellow-600/70 dark:text-yellow-400/70 inline-flex items-center gap-1">
               <Scale size={11} />
               Lawyer
             </span>
@@ -618,19 +618,19 @@ export function CaseList({
                 onChange={(e) => {
                   if (e.target.value) requestBulkLawyer(e.target.value)
                 }}
-                className="h-[30px] appearance-none rounded-md border border-orange-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-orange-700 outline-none focus:border-orange-400 dark:border-orange-700 dark:bg-neutral-900 dark:text-orange-300"
+                className="h-[30px] appearance-none rounded-md border border-yellow-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-yellow-700 outline-none focus:border-yellow-400 dark:border-yellow-700 dark:bg-neutral-900 dark:text-yellow-300"
               >
                 <option value="">Assign lawyer…</option>
                 {lawyerOptions.map((name) => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
-              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-orange-500" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500" />
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-orange-600/70 dark:text-orange-400/70 inline-flex items-center gap-1">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-yellow-600/70 dark:text-yellow-400/70 inline-flex items-center gap-1">
               <UserCircle size={11} />
               Employee
             </span>
@@ -640,20 +640,20 @@ export function CaseList({
                 onChange={(e) => {
                   if (e.target.value) requestBulkEmployee(e.target.value)
                 }}
-                className="h-[30px] appearance-none rounded-md border border-orange-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-orange-700 outline-none focus:border-orange-400 dark:border-orange-700 dark:bg-neutral-900 dark:text-orange-300"
+                className="h-[30px] appearance-none rounded-md border border-yellow-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-yellow-700 outline-none focus:border-yellow-400 dark:border-yellow-700 dark:bg-neutral-900 dark:text-yellow-300"
               >
                 <option value="">Assign employee…</option>
                 {employeeOptions.map((name) => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
-              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-orange-500" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500" />
             </div>
           </div>
 
           <button
             onClick={clearSelection}
-            className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+            className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
           >
             <X size={12} />
             Cancel
@@ -671,7 +671,7 @@ export function CaseList({
                 aria-label="Select all"
                 className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
                   allFilteredSelected || someFilteredSelected
-                    ? 'border-orange-500 bg-orange-500'
+                    ? 'border-yellow-500 bg-yellow-500'
                     : 'border-neutral-300 dark:border-neutral-600'
                 }`}
               >
@@ -713,7 +713,7 @@ export function CaseList({
               {cases.length === 0 ? (
                 <button
                   onClick={onCreate}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm transition-colors cursor-pointer"
                 >
                   <Plus size={13} />
                   Add your first case
@@ -725,7 +725,7 @@ export function CaseList({
                     setFilterLawyer('')
                     setFilterServiceType('')
                   }}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors cursor-pointer"
                 >
                   Clear search & filters
                 </button>
@@ -746,7 +746,7 @@ export function CaseList({
                   <div
                     className={`hidden lg:grid grid-cols-[40px_100px_minmax(140px,1.5fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_90px_80px_48px] gap-2 px-5 py-3.5 items-center hover:bg-neutral-50 dark:hover:bg-neutral-800/30 transition-colors cursor-pointer ${
                       !isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''
-                    } ${isSelected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''}`}
+                    } ${isSelected ? 'bg-yellow-50/50 dark:bg-yellow-950/20' : ''}`}
                     onClick={() => onView?.(cs.id)}
                   >
                     {/* Select checkbox */}
@@ -756,8 +756,8 @@ export function CaseList({
                         aria-label={isSelected ? 'Deselect case' : 'Select case'}
                         className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
                           isSelected
-                            ? 'border-orange-500 bg-orange-500'
-                            : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+                            ? 'border-yellow-500 bg-yellow-500'
+                            : 'border-neutral-300 dark:border-neutral-600 hover:border-yellow-400'
                         }`}
                       >
                         {isSelected && <Check size={10} className="text-white" strokeWidth={3} />}
@@ -839,7 +839,7 @@ export function CaseList({
                   </div>
 
                   {/* ── Mobile / Tablet card ──────────────────────── */}
-                  <div className={`lg:hidden ${!isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''} ${isSelected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''}`}>
+                  <div className={`lg:hidden ${!isLast ? 'border-b border-neutral-100 dark:border-neutral-800/60' : ''} ${isSelected ? 'bg-yellow-50/50 dark:bg-yellow-950/20' : ''}`}>
                     <div
                       className="px-5 py-4 cursor-pointer"
                       onClick={() => setExpandedRow(isExpanded ? null : cs.id)}
@@ -852,8 +852,8 @@ export function CaseList({
                               aria-label={isSelected ? 'Deselect case' : 'Select case'}
                               className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
                                 isSelected
-                                  ? 'border-orange-500 bg-orange-500'
-                                  : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+                                  ? 'border-yellow-500 bg-yellow-500'
+                                  : 'border-neutral-300 dark:border-neutral-600 hover:border-yellow-400'
                               }`}
                             >
                               {isSelected && <Check size={10} className="text-white" strokeWidth={3} />}
@@ -936,7 +936,7 @@ export function CaseList({
                 type="text"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -944,7 +944,7 @@ export function CaseList({
               <select
                 value={editType}
                 onChange={(e) => setEditType(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="Will Drafting">Will Drafting</option>
                 <option value="Trust Formation">Trust Formation</option>
@@ -958,7 +958,7 @@ export function CaseList({
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value as CaseStatus)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="in-progress">In Progress</option>
                 <option value="completed">Completed</option>
@@ -971,7 +971,7 @@ export function CaseList({
                 <select
                   value={editLawyer}
                   onChange={(e) => setEditLawyer(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 >
                   {lawyerOptions.map((name) => (
                     <option key={name} value={name}>{name}</option>
@@ -983,7 +983,7 @@ export function CaseList({
                 <select
                   value={editEmployee}
                   onChange={(e) => setEditEmployee(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 >
                   {employeeOptions.map((name) => (
                     <option key={name} value={name}>{name}</option>
@@ -997,7 +997,7 @@ export function CaseList({
                 rows={3}
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -1010,7 +1010,7 @@ export function CaseList({
             </button>
             <button
               onClick={handleEditSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Changes
             </button>
@@ -1054,9 +1054,9 @@ export function CaseList({
                 if (bulkMoveConfirm.status) bulkMoveToStatus(bulkMoveConfirm.status)
                 setBulkMoveConfirm({ open: false, status: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
-              Move {selectedIds.size} case{selectedIds.size === 1 ? '' : 's'} <span className="ml-1 text-[10px] text-orange-100/80 font-mono">↵</span>
+              Move {selectedIds.size} case{selectedIds.size === 1 ? '' : 's'} <span className="ml-1 text-[10px] text-yellow-100/80 font-mono">↵</span>
             </button>
           </DialogFooter>
         </DialogContent>
@@ -1088,7 +1088,7 @@ export function CaseList({
                 if (bulkLawyerConfirm.lawyer) bulkAssignLawyer(bulkLawyerConfirm.lawyer)
                 setBulkLawyerConfirm({ open: false, lawyer: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Reassign {selectedIds.size} case{selectedIds.size === 1 ? '' : 's'}
             </button>
@@ -1122,7 +1122,7 @@ export function CaseList({
                 if (bulkEmployeeConfirm.employee) bulkAssignEmployee(bulkEmployeeConfirm.employee)
                 setBulkEmployeeConfirm({ open: false, employee: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Reassign {selectedIds.size} case{selectedIds.size === 1 ? '' : 's'}
             </button>
@@ -1185,7 +1185,7 @@ function SortHeader({
       aria-sort={isActive ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
       <span>{label}</span>
-      <ArrowUpDown size={10} className={isActive ? 'text-orange-500' : 'text-neutral-300 dark:text-neutral-600'} />
+      <ArrowUpDown size={10} className={isActive ? 'text-yellow-500' : 'text-neutral-300 dark:text-neutral-600'} />
     </button>
   )
 }

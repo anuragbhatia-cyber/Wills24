@@ -100,7 +100,7 @@ const SEVERITY_CONFIG: Record<string, { dot: string; badge: string; pulse: boole
 }
 
 const ROLE_DOT: Record<string, string> = {
-  admin: 'bg-orange-500',
+  admin: 'bg-yellow-500',
   operations: 'bg-blue-500',
   system: 'bg-neutral-400 dark:bg-neutral-500',
   partner: 'bg-violet-500',
@@ -132,7 +132,7 @@ const ACTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 }
 
 const MODULE_STYLE: Record<string, string> = {
-  'sales-crm': 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30',
+  'sales-crm': 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/30',
   'case-management': 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30',
   'partners': 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/30',
   'accounts': 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30',
@@ -233,8 +233,8 @@ function SalesTrendChart({ data, formatValue }: { data: { month: string; value: 
       <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
         <defs>
           <linearGradient id="salesAreaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f97316" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#f97316" stopOpacity="0.02" />
+            <stop offset="0%" stopColor="#eab308" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#eab308" stopOpacity="0.02" />
           </linearGradient>
         </defs>
         {/* Grid lines */}
@@ -249,7 +249,7 @@ function SalesTrendChart({ data, formatValue }: { data: { month: string; value: 
         {/* Line */}
         <path
           d={points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.xPct} ${100 - p.yPct}`).join(' ')}
-          fill="none" stroke="#f97316" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round"
+          fill="none" stroke="#eab308" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round"
         />
       </svg>
 
@@ -258,12 +258,12 @@ function SalesTrendChart({ data, formatValue }: { data: { month: string; value: 
         <>
           {/* Vertical line */}
           <div
-            className="absolute top-0 bottom-0 w-px bg-orange-400/50 pointer-events-none"
+            className="absolute top-0 bottom-0 w-px bg-yellow-400/50 pointer-events-none"
             style={{ left: `${points[hoverIndex].xPct}%` }}
           />
           {/* Dot */}
           <div
-            className="absolute w-3 h-3 rounded-full bg-white border-2 border-orange-500 shadow-sm pointer-events-none -translate-x-1/2 -translate-y-1/2"
+            className="absolute w-3 h-3 rounded-full bg-white border-2 border-yellow-500 shadow-sm pointer-events-none -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${points[hoverIndex].xPct}%`,
               top: `${100 - points[hoverIndex].yPct}%`,
@@ -291,7 +291,7 @@ function SalesTrendChart({ data, formatValue }: { data: { month: string; value: 
       <div className="absolute -bottom-10 left-0 right-0 flex justify-between">
         {data.map((pt, i) => (
           <div key={i} className="flex flex-col items-center" style={{ width: `${100 / data.length}%` }}>
-            <span className={`text-[10px] font-mono transition-colors ${hoverIndex === i ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-neutral-500 dark:text-neutral-400'}`}>
+            <span className={`text-[10px] font-mono transition-colors ${hoverIndex === i ? 'text-yellow-600 dark:text-yellow-400 font-semibold' : 'text-neutral-500 dark:text-neutral-400'}`}>
               {formatValue(pt.value)}
             </span>
             <span className={`text-[10px] transition-colors ${hoverIndex === i ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500 dark:text-neutral-400'}`}>
@@ -614,7 +614,7 @@ export function DashboardHome({
       value: formatCurrency(scaledKpiStats.totalSales),
       icon: IndianRupee,
 
-      iconColor: 'text-orange-500',
+      iconColor: 'text-yellow-500',
     },
     {
       label: 'Active Cases',
@@ -731,7 +731,7 @@ export function DashboardHome({
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-neutral-50 tracking-tight">
             {getGreeting()},{' '}
-            <span className="text-orange-500">{firstName}</span>
+            <span className="text-yellow-500">{firstName}</span>
           </h1>
           <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400 font-mono">
             {new Date('2026-04-17').toLocaleDateString('en-IN', {
@@ -753,7 +753,7 @@ export function DashboardHome({
               }}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 selectedPreset === preset
-                  ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                  ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                   : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
               }`}
             >
@@ -777,7 +777,7 @@ export function DashboardHome({
           title="Sales Trend"
           subtitle="Last 6 months"
           icon={TrendingUp}
-          iconColor="text-orange-500"
+          iconColor="text-yellow-500"
         >
           <div className="px-5 pt-5 pb-12">
             <SalesTrendChart data={salesTrend} formatValue={formatCurrency} />
@@ -862,7 +862,7 @@ export function DashboardHome({
                   </div>
                   <div className="h-6 bg-neutral-100 dark:bg-neutral-800 rounded-md overflow-hidden">
                     <div
-                      className="h-full rounded-md bg-gradient-to-r from-orange-500 to-yellow-400"
+                      className="h-full rounded-md bg-gradient-to-r from-yellow-600 to-yellow-300"
                       style={{ width: `${w}%`, opacity }}
                     />
                   </div>
@@ -871,7 +871,7 @@ export function DashboardHome({
             })}
             <p className="pt-2 text-xs text-neutral-600 dark:text-neutral-400 text-center font-mono">
               Overall conversion:{' '}
-              <strong className="text-orange-600 dark:text-orange-400">
+              <strong className="text-yellow-600 dark:text-yellow-400">
                 {scaledKpiStats.conversionRate}%
               </strong>
             </p>
@@ -894,7 +894,7 @@ export function DashboardHome({
               <button
                 key={action.id}
                 onClick={() => onQuickAction?.(action.id)}
-                className="flex items-center gap-3 p-3 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none hover:border-orange-300 dark:hover:border-orange-700 hover:shadow-md transition-all group text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none hover:border-yellow-300 dark:hover:border-yellow-700 hover:shadow-md transition-all group text-left cursor-pointer"
               >
                 <div
                   className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center ${modStyle} group-hover:scale-110 transition-transform`}

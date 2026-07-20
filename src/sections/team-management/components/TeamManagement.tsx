@@ -59,7 +59,7 @@ const ROLE_LABEL: Record<User['role'], string> = {
 }
 
 const ROLE_COLOR: Record<User['role'], string> = {
-  admin: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  admin: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
   sales: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
   operations: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
   legal: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -142,16 +142,16 @@ function SortTh({
   const active = current.key === sortKey
   return (
     <th
-      className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer select-none hover:text-orange-600 dark:hover:text-orange-400 transition-colors whitespace-nowrap"
+      className="px-4 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer select-none hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors whitespace-nowrap"
       onClick={() => onSort(sortKey)}
     >
       <span className="inline-flex items-center gap-1">
         {label}
         {active ? (
           current.dir === 'asc' ? (
-            <ChevronUp size={13} className="text-orange-500" />
+            <ChevronUp size={13} className="text-yellow-500" />
           ) : (
-            <ChevronDown size={13} className="text-orange-500" />
+            <ChevronDown size={13} className="text-yellow-500" />
           )
         ) : (
           <ArrowUpDown size={12} className="opacity-30" />
@@ -408,14 +408,14 @@ export function TeamManagement({
               onClick={() => handleTabChange(tab.key)}
               className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
                 active
-                  ? 'text-orange-600 dark:text-orange-400'
+                  ? 'text-yellow-600 dark:text-yellow-400'
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
               }`}
             >
               <Icon size={16} />
               {tab.label}
               {active && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500 rounded-t" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 rounded-t" />
               )}
             </button>
           )
@@ -502,7 +502,7 @@ export function TeamManagement({
                 value={userForm.name}
                 onChange={(e) => setUserForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Full name"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -512,7 +512,7 @@ export function TeamManagement({
                 value={userForm.email}
                 onChange={(e) => setUserForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="user@example.com"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -520,7 +520,7 @@ export function TeamManagement({
               <select
                 value={userForm.role}
                 onChange={(e) => setUserForm((f) => ({ ...f, role: e.target.value as User['role'] }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="admin">Admin</option>
                 <option value="sales">Sales</option>
@@ -535,7 +535,7 @@ export function TeamManagement({
               <select
                 value={userForm.status}
                 onChange={(e) => setUserForm((f) => ({ ...f, status: e.target.value as 'active' | 'inactive' }))}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -551,7 +551,7 @@ export function TeamManagement({
             </button>
             <button
               onClick={handleSaveUser}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               {editUserTarget ? 'Save Changes' : 'Add User'}
             </button>
@@ -581,7 +581,7 @@ export function TeamManagement({
               onClick={handleToggleUserStatusConfirm}
               className={toggleUserStatusTarget?.status === 'active'
                 ? "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                : "rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                : "rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
               }
             >
               {toggleUserStatusTarget?.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -604,9 +604,9 @@ export function TeamManagement({
 
           {/* Step indicator */}
           <div className="flex items-center gap-2 py-1">
-            <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${lawyerFormStep >= 1 ? 'bg-orange-500 text-white' : 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>1</div>
-            <div className={`h-px flex-1 ${lawyerFormStep >= 2 ? 'bg-orange-500' : 'bg-neutral-200 dark:bg-neutral-700'}`} />
-            <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${lawyerFormStep >= 2 ? 'bg-orange-500 text-white' : 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>2</div>
+            <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${lawyerFormStep >= 1 ? 'bg-yellow-500 text-white' : 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>1</div>
+            <div className={`h-px flex-1 ${lawyerFormStep >= 2 ? 'bg-yellow-500' : 'bg-neutral-200 dark:bg-neutral-700'}`} />
+            <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${lawyerFormStep >= 2 ? 'bg-yellow-500 text-white' : 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>2</div>
           </div>
 
           {/* Step 1: Lawyer Details */}
@@ -614,35 +614,35 @@ export function TeamManagement({
             <div className="space-y-4 py-2">
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Name</label>
-                <input type="text" value={lawyerForm.name} onChange={(e) => setLawyerForm((f) => ({ ...f, name: e.target.value }))} placeholder="Full name" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                <input type="text" value={lawyerForm.name} onChange={(e) => setLawyerForm((f) => ({ ...f, name: e.target.value }))} placeholder="Full name" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                  <input type="email" value={lawyerForm.email} onChange={(e) => setLawyerForm((f) => ({ ...f, email: e.target.value }))} placeholder="lawyer@example.com" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                  <input type="email" value={lawyerForm.email} onChange={(e) => setLawyerForm((f) => ({ ...f, email: e.target.value }))} placeholder="lawyer@example.com" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Phone</label>
-                  <input type="tel" value={lawyerForm.phone} onChange={(e) => setLawyerForm((f) => ({ ...f, phone: e.target.value }))} placeholder="+91 XXXXX XXXXX" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                  <input type="tel" value={lawyerForm.phone} onChange={(e) => setLawyerForm((f) => ({ ...f, phone: e.target.value }))} placeholder="+91 XXXXX XXXXX" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Specialization</label>
-                <input type="text" value={lawyerForm.specialization} onChange={(e) => setLawyerForm((f) => ({ ...f, specialization: e.target.value }))} placeholder="e.g. Property Law, Family Law" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                <input type="text" value={lawyerForm.specialization} onChange={(e) => setLawyerForm((f) => ({ ...f, specialization: e.target.value }))} placeholder="e.g. Property Law, Family Law" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Bar Council ID</label>
-                  <input type="text" value={lawyerForm.barCouncilId} onChange={(e) => setLawyerForm((f) => ({ ...f, barCouncilId: e.target.value }))} placeholder="BAR/XXXX/XXXX" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                  <input type="text" value={lawyerForm.barCouncilId} onChange={(e) => setLawyerForm((f) => ({ ...f, barCouncilId: e.target.value }))} placeholder="BAR/XXXX/XXXX" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Location</label>
-                  <input type="text" value={lawyerForm.location} onChange={(e) => setLawyerForm((f) => ({ ...f, location: e.target.value }))} placeholder="e.g. Mumbai" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                  <input type="text" value={lawyerForm.location} onChange={(e) => setLawyerForm((f) => ({ ...f, location: e.target.value }))} placeholder="e.g. Mumbai" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Years of Experience</label>
-                <input type="number" value={lawyerForm.experienceYears} onChange={(e) => setLawyerForm((f) => ({ ...f, experienceYears: e.target.value }))} placeholder="e.g. 10" min="0" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
+                <input type="number" value={lawyerForm.experienceYears} onChange={(e) => setLawyerForm((f) => ({ ...f, experienceYears: e.target.value }))} placeholder="e.g. 10" min="0" className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" />
               </div>
             </div>
           )}
@@ -654,7 +654,7 @@ export function TeamManagement({
               {/* Bar Council Certificate */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Bar Council Certificate</label>
-                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-center hover:border-orange-400 dark:hover:border-orange-600 transition-colors cursor-pointer">
+                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-center hover:border-yellow-400 dark:hover:border-yellow-600 transition-colors cursor-pointer">
                   <div className="flex flex-col items-center gap-1.5">
                     <Upload size={20} className="text-neutral-400" />
                     <span className="text-sm text-neutral-500 dark:text-neutral-400">Click to upload or drag & drop</span>
@@ -665,7 +665,7 @@ export function TeamManagement({
               {/* ID Proof */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">ID Proof (Aadhaar / PAN)</label>
-                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-center hover:border-orange-400 dark:hover:border-orange-600 transition-colors cursor-pointer">
+                <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-center hover:border-yellow-400 dark:hover:border-yellow-600 transition-colors cursor-pointer">
                   <div className="flex flex-col items-center gap-1.5">
                     <Upload size={20} className="text-neutral-400" />
                     <span className="text-sm text-neutral-500 dark:text-neutral-400">Click to upload or drag & drop</span>
@@ -687,7 +687,7 @@ export function TeamManagement({
                 </button>
                 <button
                   onClick={() => setLawyerFormStep(2)}
-                  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                  className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
                 >
                   Next
                 </button>
@@ -702,7 +702,7 @@ export function TeamManagement({
                 </button>
                 <button
                   onClick={() => { handleSaveLawyer(); setLawyerFormStep(1) }}
-                  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                  className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
                 >
                   {editLawyerTarget ? 'Save Changes' : 'Add Lawyer'}
                 </button>
@@ -728,7 +728,7 @@ export function TeamManagement({
                 value={employeeForm.name}
                 onChange={(e) => setEmployeeForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Full name"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -738,7 +738,7 @@ export function TeamManagement({
                 value={employeeForm.email}
                 onChange={(e) => setEmployeeForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="employee@example.com"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -748,7 +748,7 @@ export function TeamManagement({
                 value={employeeForm.phone}
                 onChange={(e) => setEmployeeForm((f) => ({ ...f, phone: e.target.value }))}
                 placeholder="+91 XXXXX XXXXX"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -758,7 +758,7 @@ export function TeamManagement({
                 value={employeeForm.department}
                 onChange={(e) => setEmployeeForm((f) => ({ ...f, department: e.target.value }))}
                 placeholder="e.g. Sales, Legal, Operations"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -768,7 +768,7 @@ export function TeamManagement({
                 value={employeeForm.designation}
                 onChange={(e) => setEmployeeForm((f) => ({ ...f, designation: e.target.value }))}
                 placeholder="e.g. Senior Executive"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -781,7 +781,7 @@ export function TeamManagement({
             </button>
             <button
               onClick={handleSaveEmployee}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               {editEmployeeTarget ? 'Save Changes' : 'Add Employee'}
             </button>
@@ -811,7 +811,7 @@ export function TeamManagement({
               onClick={handleToggleEmployeeStatusConfirm}
               className={toggleEmployeeStatusTarget?.status === 'active'
                 ? "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                : "rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                : "rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
               }
             >
               {toggleEmployeeStatusTarget?.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -887,7 +887,7 @@ function UsersTab({
                           <select
                             value={level}
                             onChange={(e) => onPermissionChange?.(row.module, role, e.target.value as PermissionLevel)}
-                            className={`text-xs font-medium pl-2.5 pr-6 py-1 rounded-md border cursor-pointer appearance-none w-[80px] focus:outline-none focus:ring-1 focus:ring-orange-500 transition-colors ${selectCls}`}
+                            className={`text-xs font-medium pl-2.5 pr-6 py-1 rounded-md border cursor-pointer appearance-none w-[80px] focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-colors ${selectCls}`}
                           >
                             <option value="full">Full</option>
                             <option value="read">Read</option>
@@ -961,13 +961,13 @@ function LawyersTab({
               placeholder="Search lawyers..."
               value={search}
               onChange={(e) => onSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500"
             />
           </div>
           <select
             value={specFilter}
             onChange={(e) => onSpecFilter(e.target.value)}
-            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500/30"
           >
             <option value="all">All Specializations</option>
             {specializations.map((s) => (
@@ -977,7 +977,7 @@ function LawyersTab({
         </div>
         <button
           onClick={() => onAdd?.()}
-          className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-500 text-white transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-500 text-white transition-colors"
         >
           <Plus size={15} />
           Add Lawyer
@@ -1056,7 +1056,7 @@ function LawyerRow({
       <tr
         className={`border-t border-neutral-100 dark:border-neutral-800 cursor-pointer transition-colors ${
           expanded
-            ? 'bg-orange-50/50 dark:bg-orange-900/10'
+            ? 'bg-yellow-50/50 dark:bg-yellow-900/10'
             : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/40'
         }`}
         onClick={handleRowClick}
@@ -1064,7 +1064,7 @@ function LawyerRow({
         <td className="px-4 py-3">
           {rowAction === 'expand' && (
             expanded ? (
-              <ChevronUp size={14} className="text-orange-500" />
+              <ChevronUp size={14} className="text-yellow-500" />
             ) : (
               <ChevronDown size={14} className="text-neutral-400" />
             )
@@ -1109,7 +1109,7 @@ function LawyerRow({
             </button>
             <button
               onClick={() => onEdit?.()}
-              className="p-1.5 rounded-md text-neutral-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:text-orange-400 dark:hover:bg-orange-900/20 transition-colors"
+              className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:text-yellow-400 dark:hover:bg-yellow-900/20 transition-colors"
               title="Edit"
             >
               <Pencil size={14} />
@@ -1118,7 +1118,7 @@ function LawyerRow({
         </td>
       </tr>
       {expanded && (
-        <tr className="border-t border-orange-200/50 dark:border-orange-800/30">
+        <tr className="border-t border-yellow-200/50 dark:border-yellow-800/30">
           <td colSpan={10} className="px-0 py-0">
             <LawyerDetail lawyer={lawyer} />
           </td>
@@ -1130,7 +1130,7 @@ function LawyerRow({
 
 export function LawyerDetail({ lawyer }: { lawyer: Lawyer }) {
   return (
-    <div className="bg-orange-50/30 dark:bg-orange-900/5 px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="bg-yellow-50/30 dark:bg-yellow-900/5 px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Profile */}
       <div className="space-y-3">
         <h4 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
@@ -1257,13 +1257,13 @@ function EmployeesTab({
               placeholder="Search employees..."
               value={search}
               onChange={(e) => onSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500"
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500"
             />
           </div>
           <select
             value={deptFilter}
             onChange={(e) => onDeptFilter(e.target.value)}
-            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500/30"
           >
             <option value="all">All Departments</option>
             {departments.map((d) => (
@@ -1273,7 +1273,7 @@ function EmployeesTab({
           <select
             value={statusFilter}
             onChange={(e) => onStatusFilter(e.target.value)}
-            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+            className="text-sm rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500/30"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -1282,7 +1282,7 @@ function EmployeesTab({
         </div>
         <button
           onClick={() => onAdd?.()}
-          className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-500 text-white transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-500 text-white transition-colors"
         >
           <Plus size={15} />
           Add Employee
@@ -1347,7 +1347,7 @@ function EmployeesTab({
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => onEdit?.(emp.id)}
-                        className="p-1.5 rounded-md text-neutral-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:text-orange-400 dark:hover:bg-orange-900/20 transition-colors"
+                        className="p-1.5 rounded-md text-neutral-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:text-yellow-400 dark:hover:bg-yellow-900/20 transition-colors"
                         title="Edit"
                       >
                         <Pencil size={14} />

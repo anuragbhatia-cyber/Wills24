@@ -35,11 +35,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none dark:hidden">
         <div
           className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full opacity-[0.07]"
-          style={{ background: 'radial-gradient(circle, #f97316 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #eab308 0%, transparent 70%)' }}
         />
         <div
           className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full opacity-[0.05]"
-          style={{ background: 'radial-gradient(circle, #f97316 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #eab308 0%, transparent 70%)' }}
         />
       </div>
       {/* Dark mode bg */}
@@ -49,7 +49,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         {/* Card */}
         <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl shadow-neutral-900/8 dark:shadow-black/30 border border-neutral-200/50 dark:border-neutral-800 overflow-hidden">
           {/* Orange accent bar */}
-          <div className="h-1 bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500" />
+          <div className="h-1 bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500" />
 
           <div className="px-10 pt-10 pb-9">
             {/* Logo */}
@@ -77,7 +77,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@wills24.ai"
-                className="w-full h-12 px-4 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800/50 text-[15px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-300 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 dark:focus:border-orange-500 transition-all"
+                className="w-full h-12 px-4 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800/50 text-[15px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-300 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-400 dark:focus:border-yellow-500 transition-all"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
@@ -94,7 +94,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full h-12 px-4 pr-11 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800/50 text-[15px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-300 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 dark:focus:border-orange-500 transition-all"
+                  className="w-full h-12 px-4 pr-11 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800/50 text-[15px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-300 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-400 dark:focus:border-yellow-500 transition-all"
                   onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                 />
                 <button
@@ -111,7 +111,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             <button
               onClick={handleLogin}
               disabled={!isValid || loading}
-              className="w-full h-12 rounded-xl font-semibold text-[14px] transition-all flex items-center justify-center gap-2.5 disabled:cursor-not-allowed bg-orange-500 hover:bg-orange-600 text-white disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
+              className="w-full h-12 rounded-xl font-semibold text-[14px] transition-all flex items-center justify-center gap-2.5 disabled:cursor-not-allowed bg-yellow-500 hover:bg-yellow-600 text-white disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
             >
               {loading ? (
                 <div className="w-4.5 h-4.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

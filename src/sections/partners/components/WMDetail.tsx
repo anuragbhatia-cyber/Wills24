@@ -73,7 +73,7 @@ const TIER_CONFIG: Record<WMTier, { label: string; icon: React.ReactNode; bg: st
   platinum: { label: 'Platinum', icon: <Gem size={12} />, bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-400', border: 'border-violet-200 dark:border-violet-800/60' },
   gold: { label: 'Gold', icon: <Crown size={12} />, bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-800/60' },
   silver: { label: 'Silver', icon: <Award size={12} />, bg: 'bg-neutral-100 dark:bg-neutral-800', text: 'text-neutral-600 dark:text-neutral-400', border: 'border-neutral-300 dark:border-neutral-700' },
-  bronze: { label: 'Bronze', icon: <Medal size={12} />, bg: 'bg-orange-50 dark:bg-orange-950/20', text: 'text-orange-700 dark:text-orange-400', border: 'border-orange-200 dark:border-orange-800/60' },
+  bronze: { label: 'Bronze', icon: <Medal size={12} />, bg: 'bg-yellow-50 dark:bg-yellow-950/20', text: 'text-yellow-700 dark:text-yellow-400', border: 'border-yellow-200 dark:border-yellow-800/60' },
 }
 
 const TXN_TYPE_CONFIG: Record<WalletTransactionType, { label: string; icon: React.ReactNode; color: string; sign: string }> = {
@@ -115,7 +115,7 @@ function getInitials(name: string) {
 }
 
 const AVATAR_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -246,7 +246,7 @@ export function WMDetail({
               </button>
               <button
                 onClick={() => setShowEditModal(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
               >
                 <Pencil size={13} />
                 Edit Profile
@@ -284,14 +284,14 @@ export function WMDetail({
                 onClick={() => setActiveTab(tab.key)}
                 className={`inline-flex items-center gap-1.5 px-4 py-3 text-xs font-medium border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                    ? 'border-yellow-500 text-yellow-600 dark:text-yellow-400'
                     : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-300 dark:hover:border-neutral-600'
                 }`}
               >
                 {tab.icon}
                 {tab.label}
                 {count !== null && (
-                  <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
+                  <span className={`text-[10px] font-bold tabular-nums ${isActive ? 'text-yellow-400 dark:text-yellow-500' : 'text-neutral-400 dark:text-neutral-600'}`}>
                     {count}
                   </span>
                 )}
@@ -345,7 +345,7 @@ export function WMDetail({
               onClick={handleToggleStatusConfirm}
               className={wm.status === 'active'
                 ? "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                : "rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                : "rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
               }
             >
               {wm.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -371,7 +371,7 @@ export function WMDetail({
                 value={teamMemberForm.name}
                 onChange={(e) => setTeamMemberForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Full name"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -381,7 +381,7 @@ export function WMDetail({
                 value={teamMemberForm.email}
                 onChange={(e) => setTeamMemberForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="email@example.com"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -391,7 +391,7 @@ export function WMDetail({
                 value={teamMemberForm.phone}
                 onChange={(e) => setTeamMemberForm((f) => ({ ...f, phone: e.target.value }))}
                 placeholder="+91 XXXXX XXXXX"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -401,7 +401,7 @@ export function WMDetail({
                 value={teamMemberForm.designation}
                 onChange={(e) => setTeamMemberForm((f) => ({ ...f, designation: e.target.value }))}
                 placeholder="e.g. Relationship Manager"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -414,7 +414,7 @@ export function WMDetail({
             </button>
             <button
               onClick={handleAddTeamMemberSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Add Member
             </button>
@@ -437,7 +437,7 @@ function DetailsTab({ wm }: { wm: WealthManager }) {
       {/* Contact */}
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
-          <User size={14} className="text-orange-500" />
+          <User size={14} className="text-yellow-500" />
           Contact Information
         </h3>
         <div className="space-y-3">
@@ -451,7 +451,7 @@ function DetailsTab({ wm }: { wm: WealthManager }) {
       {/* Address */}
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
-          <MapPin size={14} className="text-orange-500" />
+          <MapPin size={14} className="text-yellow-500" />
           Address
         </h3>
         <div className="space-y-3">
@@ -467,7 +467,7 @@ function DetailsTab({ wm }: { wm: WealthManager }) {
       {/* Company */}
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-5 md:col-span-2">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
-          <Building2 size={14} className="text-orange-500" />
+          <Building2 size={14} className="text-yellow-500" />
           Company Details
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -611,7 +611,7 @@ function TeamTab({
         <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Team Members</h2>
         <button
           onClick={onAddTeamMember}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
         >
           <UserPlus size={12} />
           Add Member
@@ -712,7 +712,7 @@ function CustomersTab({
           {customers.map((cust) => (
             <div
               key={cust.id}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 hover:border-orange-300 dark:hover:border-orange-800 transition-colors cursor-pointer group"
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs dark:shadow-none p-4 hover:border-yellow-300 dark:hover:border-yellow-800 transition-colors cursor-pointer group"
               onClick={() => onViewCustomer?.(cust.customerId)}
             >
               <div className="flex items-start justify-between gap-3">
@@ -728,7 +728,7 @@ function CustomersTab({
                     </div>
                   </div>
                 </div>
-                <ChevronRight size={14} className="text-neutral-300 dark:text-neutral-600 group-hover:text-orange-500 transition-colors shrink-0 mt-1" />
+                <ChevronRight size={14} className="text-neutral-300 dark:text-neutral-600 group-hover:text-yellow-500 transition-colors shrink-0 mt-1" />
               </div>
 
               <div className="mt-3 flex items-center gap-2 flex-wrap">

@@ -85,9 +85,9 @@ const TIER_CONFIG: Record<WMTier, { label: string; icon: React.ReactNode; bg: st
   bronze: {
     label: 'Bronze',
     icon: <Medal size={11} />,
-    bg: 'bg-orange-50 dark:bg-orange-950/20',
-    text: 'text-orange-700 dark:text-orange-400',
-    border: 'border-orange-200 dark:border-orange-800/60',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/20',
+    text: 'text-yellow-700 dark:text-yellow-400',
+    border: 'border-yellow-200 dark:border-yellow-800/60',
   },
 }
 
@@ -116,7 +116,7 @@ function getInitials(name: string) {
 }
 
 const AVATAR_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -303,7 +303,7 @@ export function WMList({
           </button>
           <button
             onClick={onCreate}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
           >
             <Plus size={13} />
             Add Partner
@@ -317,8 +317,8 @@ export function WMList({
           icon={<IndianRupee size={16} />}
           label="Total Sales"
           value={formatCurrency(kpiStats.totalSales)}
-          iconBg="bg-orange-100 dark:bg-orange-900/40"
-          iconColor="text-orange-600 dark:text-orange-400"
+          iconBg="bg-yellow-100 dark:bg-yellow-900/40"
+          iconColor="text-yellow-600 dark:text-yellow-400"
         />
         <KpiCard
           icon={<Users size={16} />}
@@ -359,12 +359,12 @@ export function WMList({
                   onClick={() => setActiveTab(tab.key)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                      ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                       : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                   }`}
                 >
                   {tab.label}
-                  <span className={`ml-1.5 text-[10px] font-bold tabular-nums ${isActive ? 'text-orange-400 dark:text-orange-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                  <span className={`ml-1.5 text-[10px] font-bold tabular-nums ${isActive ? 'text-yellow-400 dark:text-yellow-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
                     {count}
                   </span>
                 </button>
@@ -421,21 +421,21 @@ export function WMList({
                 placeholder="Search partners, company..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
               />
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
                 showFilters || hasActiveFilters
-                  ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                  ? 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300'
                   : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
               }`}
             >
               <Filter size={13} strokeWidth={2} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[9px] font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -450,11 +450,11 @@ export function WMList({
             Active filters
           </span>
           {filterCity && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               City: {filterCity}
               <button
                 onClick={() => setFilterCity('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter City: ${filterCity}`}
               >
                 <X size={10} />
@@ -462,11 +462,11 @@ export function WMList({
             </span>
           )}
           {filterState && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               State: {filterState}
               <button
                 onClick={() => setFilterState('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter State: ${filterState}`}
               >
                 <X size={10} />
@@ -492,7 +492,7 @@ export function WMList({
               <select
                 value={filterCity}
                 onChange={(e) => setFilterCity(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Cities</option>
                 {cityOptions.map((name) => (
@@ -511,7 +511,7 @@ export function WMList({
               <select
                 value={filterState}
                 onChange={(e) => setFilterState(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All States</option>
                 {stateOptions.map((name) => (
@@ -525,7 +525,7 @@ export function WMList({
           {hasActiveFilters && (
             <button
               onClick={() => { setFilterCity(''); setFilterState('') }}
-              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
             >
               <X size={12} />
               Clear filters
@@ -571,7 +571,7 @@ export function WMList({
               {wealthManagers.length === 0 ? (
                 <button
                   onClick={onCreate}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm transition-colors cursor-pointer"
                 >
                   <Plus size={13} />
                   Add your first partner
@@ -583,7 +583,7 @@ export function WMList({
                     setFilterCity('')
                     setFilterState('')
                   }}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors cursor-pointer"
                 >
                   Clear search & filters
                 </button>
@@ -824,7 +824,7 @@ export function WMList({
               onClick={handleToggleStatusConfirm}
               className={toggleStatusWM?.status === 'active'
                 ? "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                : "rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                : "rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
               }
             >
               {toggleStatusWM?.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -888,7 +888,7 @@ function SortHeader({
       aria-sort={isActive ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
       <span>{label}</span>
-      <ArrowUpDown size={10} className={isActive ? 'text-orange-500' : 'text-neutral-300 dark:text-neutral-600'} />
+      <ArrowUpDown size={10} className={isActive ? 'text-yellow-500' : 'text-neutral-300 dark:text-neutral-600'} />
     </button>
   )
 }

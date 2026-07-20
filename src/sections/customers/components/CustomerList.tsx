@@ -98,7 +98,7 @@ function getInitials(name: string) {
 }
 
 const INITIAL_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -440,7 +440,7 @@ export function CustomerList({
           </button>
           <button
             onClick={() => setAddModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-colors cursor-pointer"
           >
             <Plus size={13} />
             New Customer
@@ -454,8 +454,8 @@ export function CustomerList({
           icon={<Users size={16} />}
           label="Total Customers"
           value={kpiStats.totalCustomers}
-          iconBg="bg-orange-100 dark:bg-orange-900/40"
-          iconColor="text-orange-600 dark:text-orange-400"
+          iconBg="bg-yellow-100 dark:bg-yellow-900/40"
+          iconColor="text-yellow-600 dark:text-yellow-400"
         />
         <KpiCard
           icon={<Briefcase size={16} />}
@@ -501,14 +501,14 @@ export function CustomerList({
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'bg-white dark:bg-neutral-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                    ? 'bg-white dark:bg-neutral-700 text-yellow-600 dark:text-yellow-400 shadow-sm'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                 }`}
               >
                 {tab.label}
                 <span
                   className={`ml-1.5 text-[10px] font-bold tabular-nums ${
-                    isActive ? 'text-orange-400 dark:text-orange-300' : 'text-neutral-400 dark:text-neutral-500'
+                    isActive ? 'text-yellow-400 dark:text-yellow-300' : 'text-neutral-400 dark:text-neutral-500'
                   }`}
                 >
                   {count}
@@ -527,21 +527,21 @@ export function CustomerList({
               placeholder="Search customers, services..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+              className="w-64 pl-8 pr-3 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-400 transition-all"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all cursor-pointer ${
               showFilters || hasActiveFilters
-                ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+                ? 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300'
                 : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
             }`}
           >
             <Filter size={13} strokeWidth={2} />
             Filters
             {activeFilterCount > 0 && (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[9px] font-bold text-white">
                 {activeFilterCount}
               </span>
             )}
@@ -556,11 +556,11 @@ export function CustomerList({
             Active filters
           </span>
           {filterWM && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               WM: {filterWM}
               <button
                 onClick={() => setFilterWM('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Wealth Manager: ${filterWM}`}
               >
                 <X size={10} />
@@ -568,11 +568,11 @@ export function CustomerList({
             </span>
           )}
           {filterService && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Service: {filterService}
               <button
                 onClick={() => setFilterService('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Service: ${filterService}`}
               >
                 <X size={10} />
@@ -598,7 +598,7 @@ export function CustomerList({
               <select
                 value={filterWM}
                 onChange={(e) => setFilterWM(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Wealth Managers</option>
                 {wmOptions.map((name) => (
@@ -617,7 +617,7 @@ export function CustomerList({
               <select
                 value={filterService}
                 onChange={(e) => setFilterService(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Services</option>
                 {serviceOptions.map((name) => (
@@ -631,7 +631,7 @@ export function CustomerList({
           {hasActiveFilters && (
             <button
               onClick={() => { setFilterWM(''); setFilterService('') }}
-              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
             >
               <X size={12} />
               Clear filters
@@ -655,7 +655,7 @@ export function CustomerList({
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -664,7 +664,7 @@ export function CustomerList({
                 type="email"
                 value={editEmail}
                 onChange={(e) => setEditEmail(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -673,7 +673,7 @@ export function CustomerList({
                 type="tel"
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -681,7 +681,7 @@ export function CustomerList({
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value as CustomerStatus)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -694,7 +694,7 @@ export function CustomerList({
                 type="text"
                 value={editCompany}
                 onChange={(e) => setEditCompany(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -707,7 +707,7 @@ export function CustomerList({
             </button>
             <button
               onClick={handleEditSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Changes
             </button>
@@ -741,9 +741,9 @@ export function CustomerList({
                   <div
                     className={`flex h-7 w-7 items-center justify-center rounded-full border-2 text-[11px] font-semibold transition-colors ${
                       isComplete
-                        ? 'border-orange-500 bg-orange-500 text-white'
+                        ? 'border-yellow-500 bg-yellow-500 text-white'
                         : isActive
-                        ? 'border-orange-500 text-orange-600 bg-white dark:bg-neutral-900'
+                        ? 'border-yellow-500 text-yellow-600 bg-white dark:bg-neutral-900'
                         : 'border-neutral-300 dark:border-neutral-600 text-neutral-400'
                     }`}
                   >
@@ -752,7 +752,7 @@ export function CustomerList({
                   <span
                     className={`text-[12px] font-medium whitespace-nowrap ${
                       isActive
-                        ? 'text-orange-600 dark:text-orange-400'
+                        ? 'text-yellow-600 dark:text-yellow-400'
                         : isComplete
                         ? 'text-neutral-700 dark:text-neutral-300'
                         : 'text-neutral-400'
@@ -779,7 +779,7 @@ export function CustomerList({
                   {i < STEPS.length - 1 && (
                     <div
                       className={`mx-2 h-px flex-1 ${
-                        addStep > s.key ? 'bg-orange-500' : 'bg-neutral-200 dark:bg-neutral-700'
+                        addStep > s.key ? 'bg-yellow-500' : 'bg-neutral-200 dark:bg-neutral-700'
                       }`}
                     />
                   )}
@@ -805,7 +805,7 @@ export function CustomerList({
                         type="text"
                         value={addName}
                         onChange={(e) => setAddName(e.target.value)}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -815,7 +815,7 @@ export function CustomerList({
                           type="date"
                           value={addDob}
                           onChange={(e) => setAddDob(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                       <div>
@@ -825,7 +825,7 @@ export function CustomerList({
                           value={addPan}
                           onChange={(e) => setAddPan(e.target.value.toUpperCase())}
                           placeholder="ABCDE1234F"
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-mono text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-mono text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                     </div>
@@ -846,7 +846,7 @@ export function CustomerList({
                           type="tel"
                           value={addPhone}
                           onChange={(e) => setAddPhone(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                       <div>
@@ -857,7 +857,7 @@ export function CustomerList({
                           type="email"
                           value={addEmail}
                           onChange={(e) => setAddEmail(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                     </div>
@@ -868,7 +868,7 @@ export function CustomerList({
                           type="text"
                           value={addCity}
                           onChange={(e) => setAddCity(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                       <div>
@@ -877,7 +877,7 @@ export function CustomerList({
                           type="text"
                           value={addState}
                           onChange={(e) => setAddState(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                         />
                       </div>
                     </div>
@@ -887,7 +887,7 @@ export function CustomerList({
                         value={addAddress}
                         onChange={(e) => setAddAddress(e.target.value)}
                         rows={2}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                   </div>
@@ -904,7 +904,7 @@ export function CustomerList({
                         type="text"
                         value={addCompany}
                         onChange={(e) => setAddCompany(e.target.value)}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                     <div>
@@ -913,7 +913,7 @@ export function CustomerList({
                         type="text"
                         value={addDesignation}
                         onChange={(e) => setAddDesignation(e.target.value)}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                   </div>
@@ -931,7 +931,7 @@ export function CustomerList({
                         value={addWealthManagerName}
                         onChange={(e) => setAddWealthManagerName(e.target.value)}
                         placeholder="Assigned partner / WM name"
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                     <div>
@@ -940,7 +940,7 @@ export function CustomerList({
                         value={addNotes}
                         onChange={(e) => setAddNotes(e.target.value)}
                         rows={2}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                   </div>
@@ -964,8 +964,8 @@ export function CustomerList({
                         onClick={() => toggleService(svc)}
                         className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors cursor-pointer ${
                           selected
-                            ? 'border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-400 dark:bg-orange-950/30 dark:text-orange-300'
-                            : 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:border-orange-300'
+                            ? 'border-yellow-500 bg-yellow-50 text-yellow-700 dark:border-yellow-400 dark:bg-yellow-950/30 dark:text-yellow-300'
+                            : 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:border-yellow-300'
                         }`}
                       >
                         {selected && <Check size={12} strokeWidth={3} />}
@@ -990,7 +990,7 @@ export function CustomerList({
                 </h3>
                 <label
                   htmlFor="add-customer-files"
-                  className="flex flex-col items-center justify-center cursor-pointer rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/30 px-4 py-8 text-center hover:border-orange-400 hover:bg-orange-50/40 dark:hover:bg-orange-950/10 transition-colors"
+                  className="flex flex-col items-center justify-center cursor-pointer rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/30 px-4 py-8 text-center hover:border-yellow-400 hover:bg-yellow-50/40 dark:hover:bg-yellow-950/10 transition-colors"
                 >
                   <Upload size={24} className="mb-2 text-neutral-400" />
                   <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -1057,7 +1057,7 @@ export function CustomerList({
                         onChange={(e) => setAddPaymentAmount(e.target.value)}
                         placeholder="0"
                         min="0"
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-mono text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-mono text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
                       />
                     </div>
                     <div>
@@ -1065,7 +1065,7 @@ export function CustomerList({
                       <select
                         value={addPaymentMode}
                         onChange={(e) => setAddPaymentMode(e.target.value as typeof addPaymentMode)}
-                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                       >
                         {PAYMENT_MODES.map((m) => (
                           <option key={m.value} value={m.value}>{m.label}</option>
@@ -1079,7 +1079,7 @@ export function CustomerList({
                       type="date"
                       value={addPaymentDate}
                       onChange={(e) => setAddPaymentDate(e.target.value)}
-                      className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                      className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                     />
                   </div>
                 </div>
@@ -1110,7 +1110,7 @@ export function CustomerList({
                 <button
                   onClick={() => setAddStep((s) => (s + 1) as 1 | 2 | 3 | 4)}
                   disabled={addStep === 1 && !profileStepValid}
-                  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed cursor-pointer"
+                  className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Next
                 </button>
@@ -1118,7 +1118,7 @@ export function CustomerList({
                 <button
                   onClick={handleAddSubmit}
                   disabled={!profileStepValid || isSubmittingAdd}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmittingAdd && <Loader2 size={13} className="animate-spin" />}
                   {isSubmittingAdd ? 'Adding…' : 'Add Customer'}
@@ -1144,7 +1144,7 @@ export function CustomerList({
                   onClick={() => setQuotationChannel('email')}
                   className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
                     quotationChannel === 'email'
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400'
+                      ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400'
                       : 'border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
@@ -1155,7 +1155,7 @@ export function CustomerList({
                   onClick={() => setQuotationChannel('whatsapp')}
                   className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
                     quotationChannel === 'whatsapp'
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400'
+                      ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400'
                       : 'border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
@@ -1171,7 +1171,7 @@ export function CustomerList({
                 value={quotationMessage}
                 onChange={(e) => setQuotationMessage(e.target.value)}
                 placeholder="Enter your quotation message..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
           </div>
@@ -1184,7 +1184,7 @@ export function CustomerList({
             </button>
             <button
               onClick={handleQuotationSend}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Send Quotation
             </button>
@@ -1227,7 +1227,7 @@ export function CustomerList({
               {customers.length === 0 ? (
                 <button
                   onClick={() => setAddModalOpen(true)}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm transition-colors cursor-pointer"
                 >
                   <Plus size={13} />
                   Add your first customer
@@ -1239,7 +1239,7 @@ export function CustomerList({
                     setFilterWM('')
                     setFilterService('')
                   }}
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors cursor-pointer"
                 >
                   Clear search & filters
                 </button>
@@ -1309,7 +1309,7 @@ export function CustomerList({
                         </span>
                       ))}
                       {customer.servicesAvailed.length > 2 && (
-                        <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 rounded">
+                        <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 rounded">
                           +{customer.servicesAvailed.length - 2}
                         </span>
                       )}
@@ -1634,7 +1634,7 @@ function SortHeader({
       <span>{label}</span>
       <ArrowUpDown
         size={10}
-        className={isActive ? 'text-orange-500' : 'text-neutral-300 dark:text-neutral-600'}
+        className={isActive ? 'text-yellow-500' : 'text-neutral-300 dark:text-neutral-600'}
       />
     </button>
   )
@@ -1658,11 +1658,11 @@ function MenuItem({
       onClick={onClick}
       className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors cursor-pointer ${
         accent
-          ? 'text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium'
+          ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 font-medium'
           : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700/50'
       }`}
     >
-      <span className={accent ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'}>{icon}</span>
+      <span className={accent ? 'text-yellow-500' : 'text-neutral-400 dark:text-neutral-500'}>{icon}</span>
       <span className="text-sm">{label}</span>
     </button>
   )
@@ -1708,7 +1708,7 @@ function MobileAction({
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-lg transition-colors cursor-pointer ${
         accent
-          ? 'bg-orange-500 text-white hover:bg-orange-500'
+          ? 'bg-yellow-500 text-white hover:bg-yellow-500'
           : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
       }`}
     >

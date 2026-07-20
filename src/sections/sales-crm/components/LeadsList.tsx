@@ -51,9 +51,9 @@ const STATUS_CONFIG: Record<
 > = {
   new: {
     label: 'New',
-    dot: 'bg-orange-500',
-    bg: 'bg-orange-50 dark:bg-orange-950/40',
-    text: 'text-orange-700 dark:text-orange-300',
+    dot: 'bg-yellow-500',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/40',
+    text: 'text-yellow-700 dark:text-yellow-300',
   },
   assigned: {
     label: 'Assigned',
@@ -409,7 +409,7 @@ export function LeadsList({
           </button>
           <button
             onClick={() => onCreateLead?.()}
-            className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-3.5 py-[7px] text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md active:scale-[0.98]"
+            className="flex items-center gap-1.5 rounded-lg bg-yellow-500 px-3.5 py-[7px] text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-yellow-500 hover:shadow-md active:scale-[0.98]"
           >
             <Plus size={14} strokeWidth={2.5} />
             Add Lead
@@ -431,7 +431,7 @@ export function LeadsList({
                 onClick={() => setActiveTab(tab)}
                 className={`relative flex shrink-0 items-center gap-1.5 px-3.5 py-2.5 text-[12px] font-medium transition-colors ${
                   isActive
-                    ? 'text-orange-600 dark:text-orange-400'
+                    ? 'text-yellow-600 dark:text-yellow-400'
                     : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
                 }`}
               >
@@ -439,7 +439,7 @@ export function LeadsList({
                 <span
                   className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
                     isActive
-                      ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300'
+                      ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
                       : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                   }`}
                   style={{ fontFamily: '"IBM Plex Mono", monospace' }}
@@ -447,7 +447,7 @@ export function LeadsList({
                   {count}
                 </span>
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-orange-500" />
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-yellow-500" />
                 )}
               </button>
             )
@@ -472,7 +472,7 @@ export function LeadsList({
             placeholder="Search by name, ID, email, phone, company..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-[36px] w-full rounded-lg border border-neutral-200 bg-white pl-8 pr-3 text-[12px] text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-orange-300 focus:ring-2 focus:ring-orange-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-orange-700 dark:focus:ring-orange-900/30"
+            className="h-[36px] w-full rounded-lg border border-neutral-200 bg-white pl-8 pr-3 text-[12px] text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-yellow-300 focus:ring-2 focus:ring-yellow-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:border-yellow-700 dark:focus:ring-yellow-900/30"
           />
           {searchQuery && (
             <button
@@ -489,14 +489,14 @@ export function LeadsList({
           onClick={() => setShowFilters(!showFilters)}
           className={`flex h-[36px] items-center gap-1.5 rounded-lg border px-3 text-[12px] font-medium transition-all ${
             showFilters || hasActiveFilters
-              ? 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300'
+              ? 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300'
               : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
           }`}
         >
           <Filter size={13} strokeWidth={2} />
           Filters
           {activeFilterCount > 0 && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[9px] font-bold text-white">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[9px] font-bold text-white">
               {activeFilterCount}
             </span>
           )}
@@ -510,11 +510,11 @@ export function LeadsList({
             Active filters
           </span>
           {sourceFilter && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Source: {sourceFilter}
               <button
                 onClick={() => setSourceFilter('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Source: ${sourceFilter}`}
               >
                 <X size={10} />
@@ -522,11 +522,11 @@ export function LeadsList({
             </span>
           )}
           {employeeFilter && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[11px] font-medium text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300">
               Assignee: {employeeFilter}
               <button
                 onClick={() => setEmployeeFilter('')}
-                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-orange-100 dark:hover:bg-orange-900/40 cursor-pointer"
+                className="ml-0.5 inline-flex items-center justify-center rounded-full p-0.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 cursor-pointer"
                 aria-label={`Clear filter Assignee: ${employeeFilter}`}
               >
                 <X size={10} />
@@ -553,7 +553,7 @@ export function LeadsList({
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Sources</option>
                 {sources.map((s) => (
@@ -578,7 +578,7 @@ export function LeadsList({
               <select
                 value={employeeFilter}
                 onChange={(e) => setEmployeeFilter(e.target.value)}
-                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-orange-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                className="h-[30px] appearance-none rounded-md border border-neutral-200 bg-white pl-2.5 pr-7 text-[12px] text-neutral-700 outline-none focus:border-yellow-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
               >
                 <option value="">All Employees</option>
                 {employees.map((e) => (
@@ -601,7 +601,7 @@ export function LeadsList({
                 setSourceFilter('')
                 setEmployeeFilter('')
               }}
-              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400"
+              className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400"
             >
               <X size={12} />
               Clear filters
@@ -615,13 +615,13 @@ export function LeadsList({
       {/* Bulk Action Bar                                                   */}
       {/* ----------------------------------------------------------------- */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 px-4 py-2.5 dark:border-orange-800 dark:bg-orange-950/30">
-          <span className="text-[12px] font-medium text-orange-700 dark:text-orange-300">
+        <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-2.5 dark:border-yellow-800 dark:bg-yellow-950/30">
+          <span className="text-[12px] font-medium text-yellow-700 dark:text-yellow-300">
             {selectedIds.size} selected
           </span>
 
           <div className="ml-2 flex items-center gap-2">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-orange-600/70 dark:text-orange-400/70">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-yellow-600/70 dark:text-yellow-400/70">
               Move to
             </span>
             <div className="relative">
@@ -630,20 +630,20 @@ export function LeadsList({
                 onChange={(e) => {
                   if (e.target.value) requestBulkMove(e.target.value as LeadStatus)
                 }}
-                className="h-[30px] appearance-none rounded-md border border-orange-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-orange-700 outline-none focus:border-orange-400 dark:border-orange-700 dark:bg-neutral-900 dark:text-orange-300"
+                className="h-[30px] appearance-none rounded-md border border-yellow-200 bg-white pl-2.5 pr-7 text-[12px] font-medium text-yellow-700 outline-none focus:border-yellow-400 dark:border-yellow-700 dark:bg-neutral-900 dark:text-yellow-300"
               >
                 <option value="">Select stage…</option>
                 {TAB_ORDER.filter((t) => t !== 'all').map((s) => (
                   <option key={s} value={s}>{TAB_LABELS[s]}</option>
                 ))}
               </select>
-              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-orange-500" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500" />
             </div>
           </div>
 
           <button
             onClick={clearSelection}
-            className="ml-auto flex items-center gap-1 text-[11px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 cursor-pointer"
+            className="ml-auto flex items-center gap-1 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 cursor-pointer"
           >
             <X size={12} />
             Cancel
@@ -663,7 +663,7 @@ export function LeadsList({
               aria-label="Select all"
               className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
                 allFilteredSelected || someFilteredSelected
-                  ? 'border-orange-500 bg-orange-500'
+                  ? 'border-yellow-500 bg-yellow-500'
                   : 'border-neutral-300 dark:border-neutral-600'
               }`}
             >
@@ -715,7 +715,7 @@ export function LeadsList({
             {leads.length === 0 ? (
               <button
                 onClick={() => onCreateLead?.()}
-                className="mt-3 inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors cursor-pointer"
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm transition-colors cursor-pointer"
               >
                 <Plus size={13} />
                 Add your first lead
@@ -727,7 +727,7 @@ export function LeadsList({
                   setSourceFilter('')
                   setEmployeeFilter('')
                 }}
-                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors cursor-pointer"
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors cursor-pointer"
               >
                 Clear search & filters
               </button>
@@ -857,9 +857,9 @@ export function LeadsList({
                 if (bulkMoveConfirm.status) bulkMoveToStatus(bulkMoveConfirm.status)
                 setBulkMoveConfirm({ open: false, status: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
-              Move {selectedIds.size} lead{selectedIds.size === 1 ? '' : 's'} <span className="ml-1 text-[10px] text-orange-100/80 font-mono">↵</span>
+              Move {selectedIds.size} lead{selectedIds.size === 1 ? '' : 's'} <span className="ml-1 text-[10px] text-yellow-100/80 font-mono">↵</span>
             </button>
           </DialogFooter>
         </DialogContent>
@@ -883,7 +883,7 @@ export function LeadsList({
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
             <div>
@@ -891,7 +891,7 @@ export function LeadsList({
               <select
                 value={followUpType}
                 onChange={(e) => setFollowUpType(e.target.value as 'Call' | 'Email' | 'Meeting' | 'WhatsApp')}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="Call">Call</option>
                 <option value="Email">Email</option>
@@ -906,7 +906,7 @@ export function LeadsList({
                 onChange={(e) => setFollowUpNotes(e.target.value)}
                 rows={3}
                 placeholder="Add notes about this follow-up..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
           </div>
@@ -924,7 +924,7 @@ export function LeadsList({
                 }
                 setFollowUpModal({ open: false, lead: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-500 transition-colors"
             >
               Save Follow-up
             </button>
@@ -954,7 +954,7 @@ export function LeadsList({
                     value="email"
                     checked={quotationVia === 'email'}
                     onChange={() => setQuotationVia('email')}
-                    className="accent-orange-500"
+                    className="accent-yellow-500"
                   />
                   <Mail size={14} className="text-neutral-500 dark:text-neutral-400" />
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">Email</span>
@@ -966,7 +966,7 @@ export function LeadsList({
                     value="whatsapp"
                     checked={quotationVia === 'whatsapp'}
                     onChange={() => setQuotationVia('whatsapp')}
-                    className="accent-orange-500"
+                    className="accent-yellow-500"
                   />
                   <Phone size={14} className="text-neutral-500 dark:text-neutral-400" />
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">WhatsApp</span>
@@ -980,7 +980,7 @@ export function LeadsList({
                 onChange={(e) => setQuotationMessage(e.target.value)}
                 rows={4}
                 placeholder="Add a personal message to accompany the quotation..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
           </div>
@@ -999,7 +999,7 @@ export function LeadsList({
                 }
                 setSendQuotationModal({ open: false, lead: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-500 transition-colors"
             >
               <span className="flex items-center gap-1.5">
                 <Send size={14} />
@@ -1022,7 +1022,7 @@ export function LeadsList({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 p-8 transition-colors hover:border-orange-400 dark:hover:border-orange-600">
+            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 p-8 transition-colors hover:border-yellow-400 dark:hover:border-yellow-600">
               <Upload size={32} className="mb-3 text-neutral-400 dark:text-neutral-500" />
               <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Drop your file here or click to browse
@@ -1030,7 +1030,7 @@ export function LeadsList({
               <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">
                 Supports .csv, .xlsx, .xls (max 5MB)
               </p>
-              <button className="mt-4 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 transition-colors">
+              <button className="mt-4 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-500 transition-colors">
                 Choose File
               </button>
             </div>
@@ -1053,7 +1053,7 @@ export function LeadsList({
                 onImportLeads?.()
                 setImportModal(false)
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-500 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-500 transition-colors"
             >
               Import
             </button>
@@ -1104,8 +1104,8 @@ function LeadRow({
     <>
     {/* ── Mobile card (< lg) ──────────────────────────────────────────── */}
     <div
-      className={`lg:hidden px-4 py-3 transition-colors hover:bg-orange-50/30 dark:hover:bg-orange-950/10 cursor-pointer ${
-        selected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
+      className={`lg:hidden px-4 py-3 transition-colors hover:bg-yellow-50/30 dark:hover:bg-yellow-950/10 cursor-pointer ${
+        selected ? 'bg-yellow-50/50 dark:bg-yellow-950/20' : ''
       }`}
       onClick={onView}
     >
@@ -1116,8 +1116,8 @@ function LeadRow({
             aria-label={selected ? 'Deselect lead' : 'Select lead'}
             className={`mt-0.5 flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
               selected
-                ? 'border-orange-500 bg-orange-500'
-                : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+                ? 'border-yellow-500 bg-yellow-500'
+                : 'border-neutral-300 dark:border-neutral-600 hover:border-yellow-400'
             }`}
           >
             {selected && <Check size={10} className="text-white" strokeWidth={3} />}
@@ -1163,8 +1163,8 @@ function LeadRow({
 
     {/* ── Desktop row (≥ lg) ──────────────────────────────────────────── */}
     <div
-      className={`group hidden lg:grid grid-cols-[40px_80px_90px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px_80px_40px] gap-4 items-center px-4 py-3 transition-colors hover:bg-orange-50/30 dark:hover:bg-orange-950/10 ${
-        selected ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
+      className={`group hidden lg:grid grid-cols-[40px_80px_90px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px_80px_40px] gap-4 items-center px-4 py-3 transition-colors hover:bg-yellow-50/30 dark:hover:bg-yellow-950/10 ${
+        selected ? 'bg-yellow-50/50 dark:bg-yellow-950/20' : ''
       }`}
       onClick={onView}
       style={{ cursor: 'pointer' }}
@@ -1176,8 +1176,8 @@ function LeadRow({
           aria-label={selected ? 'Deselect lead' : 'Select lead'}
           className={`flex h-4 w-4 items-center justify-center rounded border transition-colors cursor-pointer ${
             selected
-              ? 'border-orange-500 bg-orange-500'
-              : 'border-neutral-300 dark:border-neutral-600 hover:border-orange-400'
+              ? 'border-yellow-500 bg-yellow-500'
+              : 'border-neutral-300 dark:border-neutral-600 hover:border-yellow-400'
           }`}
         >
           {selected && <Check size={10} className="text-white" strokeWidth={3} />}

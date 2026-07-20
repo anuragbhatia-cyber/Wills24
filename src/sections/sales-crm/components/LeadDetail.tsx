@@ -71,9 +71,9 @@ const STATUS_CONFIG: Record<
 > = {
   new: {
     label: 'New',
-    dot: 'bg-orange-500',
-    bg: 'bg-orange-50 dark:bg-orange-950/40',
-    text: 'text-orange-700 dark:text-orange-300',
+    dot: 'bg-yellow-500',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/40',
+    text: 'text-yellow-700 dark:text-yellow-300',
   },
   assigned: {
     label: 'Assigned',
@@ -149,8 +149,8 @@ const FOLLOWUP_TYPE_CONFIG: Record<
   quotation: {
     label: 'Quotation',
     icon: FileText,
-    color: 'text-orange-600 dark:text-orange-400',
-    bg: 'bg-orange-50 dark:bg-orange-950/40',
+    color: 'text-yellow-600 dark:text-yellow-400',
+    bg: 'bg-yellow-50 dark:bg-yellow-950/40',
   },
 }
 
@@ -220,7 +220,7 @@ function getInitials(name: string): string {
 }
 
 const INITIAL_COLORS = [
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
   'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -406,7 +406,7 @@ export function LeadDetail({
             </button>
             <button
               onClick={() => onAssignToAccounts?.(lead.id)}
-              className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-3 py-[7px] text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md active:scale-[0.98]"
+              className="flex items-center gap-1.5 rounded-lg bg-yellow-500 px-3 py-[7px] text-[12px] font-semibold text-white shadow-sm transition-all hover:bg-yellow-500 hover:shadow-md active:scale-[0.98]"
             >
               <ArrowRightLeft size={12} strokeWidth={2} />
               Assign to Accounts
@@ -436,7 +436,7 @@ export function LeadDetail({
                   onClick={() => setActiveTab(t.id)}
                   className={`relative px-4 py-2.5 text-[13px] font-medium transition-colors cursor-pointer ${
                     activeTab === t.id
-                      ? 'text-orange-600 dark:text-orange-400'
+                      ? 'text-yellow-600 dark:text-yellow-400'
                       : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
                   }`}
                 >
@@ -446,7 +446,7 @@ export function LeadDetail({
                       <span
                         className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
                           activeTab === t.id
-                            ? 'bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400'
+                            ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-400'
                             : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
                         }`}
                         style={{ fontFamily: '"IBM Plex Mono", monospace' }}
@@ -456,7 +456,7 @@ export function LeadDetail({
                     )}
                   </span>
                   {activeTab === t.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-t-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-yellow-500 rounded-t-full" />
                   )}
                 </button>
               ))}
@@ -557,7 +557,7 @@ export function LeadDetail({
                       id: fu.id,
                       date: fu.createdAt,
                       type: 'follow-up',
-                      dotColor: 'bg-orange-500',
+                      dotColor: 'bg-yellow-500',
                       title: `Follow up added by ${fu.author}`,
                     })
                   })
@@ -568,7 +568,7 @@ export function LeadDetail({
                       id: qt.id,
                       date: qt.createdAt,
                       type: 'quotation',
-                      dotColor: 'bg-orange-500',
+                      dotColor: 'bg-yellow-500',
                       title: `Quotation sent to ${lead.name}`,
                     })
                   })
@@ -631,7 +631,7 @@ export function LeadDetail({
                   <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Quotations</h2>
                   <button
                     onClick={() => onCreateQuotation?.(lead.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
                   >
                     <Plus size={12} />
                     Add Quotation
@@ -644,7 +644,7 @@ export function LeadDetail({
                     <p className="text-[13px] text-neutral-400">No quotations created</p>
                     <button
                       onClick={() => onCreateQuotation?.(lead.id)}
-                      className="mt-2 text-[12px] font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400"
+                      className="mt-2 text-[12px] font-medium text-yellow-600 hover:text-yellow-700 dark:text-yellow-400"
                     >
                       Create first quotation
                     </button>
@@ -742,7 +742,7 @@ export function LeadDetail({
                   <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Follow-ups</h2>
                   <button
                     onClick={openFollowUpModal}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
                   >
                     <Plus size={12} />
                     Add Follow-up
@@ -770,7 +770,7 @@ export function LeadDetail({
                           <div key={fu.id} className="relative pl-12 pb-6">
                             <div
                               className={`absolute left-3.5 top-1 w-3 h-3 rounded-full border-2 border-white dark:border-neutral-950 ${
-                                isFirst ? 'bg-orange-500' : 'bg-neutral-300 dark:bg-neutral-600'
+                                isFirst ? 'bg-yellow-500' : 'bg-neutral-300 dark:bg-neutral-600'
                               }`}
                             />
 
@@ -816,7 +816,7 @@ export function LeadDetail({
                   <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Internal Notes</h2>
                   <button
                     onClick={openNoteModal}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-500 transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer shadow-sm"
                   >
                     <Plus size={12} />
                     Add Note
@@ -897,7 +897,7 @@ export function LeadDetail({
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -907,7 +907,7 @@ export function LeadDetail({
                   type="text"
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 />
               </div>
               <div>
@@ -916,7 +916,7 @@ export function LeadDetail({
                   type="email"
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 />
               </div>
             </div>
@@ -925,7 +925,7 @@ export function LeadDetail({
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value as LeadStatus)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -940,7 +940,7 @@ export function LeadDetail({
                 <select
                   value={editSource}
                   onChange={(e) => setEditSource(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 >
                   <option value="Website">Website</option>
                   <option value="Referral">Referral</option>
@@ -955,7 +955,7 @@ export function LeadDetail({
                   type="text"
                   value={editAssignedEmployee}
                   onChange={(e) => setEditAssignedEmployee(e.target.value)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                 />
               </div>
             </div>
@@ -972,7 +972,7 @@ export function LeadDetail({
                 onEditLead?.(lead.id)
                 setEditModalOpen(false)
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Changes
             </button>
@@ -998,7 +998,7 @@ export function LeadDetail({
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
             <div>
@@ -1006,7 +1006,7 @@ export function LeadDetail({
               <select
                 value={followUpType}
                 onChange={(e) => setFollowUpType(e.target.value as 'Call' | 'Email' | 'Meeting' | 'WhatsApp')}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="Call">Call</option>
                 <option value="Email">Email</option>
@@ -1021,7 +1021,7 @@ export function LeadDetail({
                 onChange={(e) => setFollowUpNotes(e.target.value)}
                 rows={3}
                 placeholder="Add notes about this follow-up..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
           </div>
@@ -1037,7 +1037,7 @@ export function LeadDetail({
                 onAddFollowUp?.(lead.id)
                 setFollowUpModalOpen(false)
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Save Follow-up
             </button>
@@ -1067,7 +1067,7 @@ export function LeadDetail({
                     value="email"
                     checked={quotationVia === 'email'}
                     onChange={() => setQuotationVia('email')}
-                    className="accent-orange-500"
+                    className="accent-yellow-500"
                   />
                   <Mail size={14} className="text-neutral-500 dark:text-neutral-400" />
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">Email</span>
@@ -1079,7 +1079,7 @@ export function LeadDetail({
                     value="whatsapp"
                     checked={quotationVia === 'whatsapp'}
                     onChange={() => setQuotationVia('whatsapp')}
-                    className="accent-orange-500"
+                    className="accent-yellow-500"
                   />
                   <Phone size={14} className="text-neutral-500 dark:text-neutral-400" />
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">WhatsApp</span>
@@ -1093,7 +1093,7 @@ export function LeadDetail({
                 onChange={(e) => setQuotationMessage(e.target.value)}
                 rows={4}
                 placeholder="Add a personal message to accompany the quotation..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
               />
             </div>
           </div>
@@ -1111,7 +1111,7 @@ export function LeadDetail({
                 }
                 setSendQuotationModal({ open: false, quotationId: null })
               }}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               <span className="flex items-center gap-1.5">
                 <Send size={14} />
@@ -1139,7 +1139,7 @@ export function LeadDetail({
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 placeholder="Write your note here..."
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
             </div>
             <div>
@@ -1183,7 +1183,7 @@ export function LeadDetail({
             </button>
             <button
               onClick={handleNoteSave}
-              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
             >
               Add Note
             </button>

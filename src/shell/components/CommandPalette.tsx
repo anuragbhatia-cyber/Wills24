@@ -33,7 +33,7 @@ const TYPE_LABEL = {
 } as const
 
 const TYPE_COLOR = {
-  lead: 'text-orange-600 dark:text-orange-400',
+  lead: 'text-yellow-600 dark:text-yellow-400',
   case: 'text-blue-600 dark:text-blue-400',
   customer: 'text-emerald-600 dark:text-emerald-400',
   partner: 'text-violet-600 dark:text-violet-400',
@@ -228,7 +228,7 @@ export default function CommandPalette() {
                   onClick={() => selectResult(entry)}
                   onMouseEnter={() => setActiveIndex(i)}
                   className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors cursor-pointer ${
-                    isActive ? 'bg-orange-50 dark:bg-orange-950/30' : ''
+                    isActive ? 'bg-yellow-50 dark:bg-yellow-950/30' : ''
                   }`}
                 >
                   <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 ${color}`}>
@@ -247,7 +247,7 @@ export default function CommandPalette() {
                   <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 shrink-0">
                     {TYPE_LABEL[entry.type]}
                   </span>
-                  {isActive && <ArrowRight size={12} className="text-orange-500 shrink-0" />}
+                  {isActive && <ArrowRight size={12} className="text-yellow-500 shrink-0" />}
                 </button>
               )
             })

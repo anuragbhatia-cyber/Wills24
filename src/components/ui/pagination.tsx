@@ -42,7 +42,7 @@ export function Pagination({
               <select
                 value={pageSize}
                 onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                className="h-[26px] rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-[12px] text-neutral-700 dark:text-neutral-300 px-1.5 outline-none focus:border-orange-400 cursor-pointer"
+                className="h-[26px] rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-[12px] text-neutral-700 dark:text-neutral-300 px-1.5 outline-none focus:border-yellow-400 cursor-pointer"
               >
                 {pageSizeOptions.map((opt) => (
                   <option key={opt} value={opt}>

@@ -64,19 +64,19 @@ export default function MainNav({ items, onNavigate }: MainNavProps) {
                   onClick={() => onNavigate?.(item.href)}
                   className={`group relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-150 ${
                     isActive
-                      ? 'bg-orange-500/[0.12] text-orange-400'
+                      ? 'bg-yellow-500/[0.12] text-yellow-400'
                       : 'text-neutral-400 hover:bg-white/[0.04] hover:text-neutral-200'
                   }`}
                 >
                   {/* Active indicator bar */}
                   {isActive && (
-                    <div className="absolute top-1/2 left-0 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-orange-500 shadow-[0_0_8px_rgba(255,145,0,0.5)]" />
+                    <div className="absolute top-1/2 left-0 h-4 w-[3px] -translate-y-1/2 rounded-r-full bg-yellow-500 shadow-[0_0_8px_rgba(255,145,0,0.5)]" />
                   )}
                   <Icon
                     size={18}
                     strokeWidth={isActive ? 2 : 1.5}
                     className={`shrink-0 transition-colors ${
-                      isActive ? 'text-orange-400' : 'text-neutral-500 group-hover:text-neutral-300'
+                      isActive ? 'text-yellow-400' : 'text-neutral-500 group-hover:text-neutral-300'
                     }`}
                   />
                   <span>{item.label}</span>

@@ -43,10 +43,10 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
           <img
             src={user.avatarUrl}
             alt={user.name}
-            className="h-8 w-8 rounded-full object-cover ring-2 ring-orange-500/20"
+            className="h-8 w-8 rounded-full object-cover ring-2 ring-yellow-500/20"
           />
         ) : (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 text-[11px] font-bold text-white shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-yellow-500 to-amber-500 text-[11px] font-bold text-white shadow-sm">
             {initials}
           </div>
         )}

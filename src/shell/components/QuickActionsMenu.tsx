@@ -38,7 +38,7 @@ export default function QuickActionsMenu() {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-2.5 py-1.5 text-[12px] font-semibold text-white shadow-sm hover:bg-orange-600 transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-yellow-500 px-2.5 py-1.5 text-[12px] font-semibold text-white shadow-sm hover:bg-yellow-600 transition-colors cursor-pointer"
         aria-label="Quick create"
         aria-haspopup="menu"
         aria-expanded={isOpen}
@@ -73,7 +73,7 @@ export default function QuickActionsMenu() {
                     setIsOpen(false)
                     navigateToScreen(a.section, a.screen)
                   }}
-                  className="flex w-full items-center gap-2.5 px-3 py-2 text-[13px] text-neutral-700 dark:text-neutral-200 transition-colors hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-700 dark:hover:text-orange-300 cursor-pointer"
+                  className="flex w-full items-center gap-2.5 px-3 py-2 text-[13px] text-neutral-700 dark:text-neutral-200 transition-colors hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:text-yellow-700 dark:hover:text-yellow-300 cursor-pointer"
                 >
                   <Icon size={14} strokeWidth={2} className="text-neutral-500 dark:text-neutral-400" />
                   {a.label}
